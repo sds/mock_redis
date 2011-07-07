@@ -7,6 +7,14 @@ class MockRedis
     keys.each {|k| @data.delete(k) }
   end
 
+  def decr(key)
+    decrby(key, 1)
+  end
+
+  def decrby(key, n)
+    incrby(key, -n)
+  end
+
   def exists(key)
     @data.has_key?(key)
   end
@@ -24,7 +32,11 @@ class MockRedis
       raise RuntimeError, "ERR value is not an integer"
     end
 
-    new_value = @data[key].to_i + n
+    unless looks_like_integer?(n.to_s)
+      raise RuntimeError, "ERR value is not an integer"
+    end
+
+    new_value = @data[key].to_i + n.to_i
     @data[key] = new_value.to_s
     # for some reason, redis-rb doesn't return this as a string.
     new_value

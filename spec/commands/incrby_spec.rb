@@ -23,10 +23,20 @@ describe '#incrby' do
     @redises.incrby(@key, 2).should == 6
   end
 
+  it "accepts an integer-ish string" do
+    @redises.incrby(@key, "2").should == 2
+  end
+
   it "raises an error if the value does not look like an integer" do
     @redises.set(@key, "one")
     lambda do
       @redises.incrby(@key, 1)
+    end.should raise_error(RuntimeError)
+  end
+
+  it "raises an error if the delta does not look like an integer" do
+    lambda do
+      @redises.incrby(@key, "foo")
     end.should raise_error(RuntimeError)
   end
 
