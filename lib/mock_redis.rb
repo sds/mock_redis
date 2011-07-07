@@ -15,12 +15,21 @@ class MockRedis
   end
 
   def keys(format)
-    []
+    @data.keys.grep(redis_pattern_to_ruby_regex(format))
   end
 
   def set(key, value)
     @data[key] = value.to_s
     'OK'
+  end
+
+  private
+
+  def redis_pattern_to_ruby_regex(pattern)
+    Regexp.new(
+      "^#{pattern}$".
+      gsub(/([^\\])\?/, "\\1.").
+      gsub(/([^\\])\*/, "\\1.+"))
   end
 
 end

@@ -19,6 +19,9 @@ class RedisMultiplexer < BlankSlate
     mock_retval, mock_error = catch_errors { @mock_redis.send(method, *args, &blk) }
     real_retval, real_error = catch_errors { @real_redis.send(method, *args, &blk) }
 
+    mock_retval = handle_special_cases(method, mock_retval)
+    real_retval = handle_special_cases(method, real_retval)
+
     if ((mock_retval != real_retval) && !mock_error && !real_error)
       # no exceptions, just different behavior
       raise MismatchedResponse,
@@ -44,6 +47,18 @@ class RedisMultiplexer < BlankSlate
     end
 
     mock_retval
+  end
+
+  # Some commands
+  def handle_special_cases(method, value)
+    case method.to_s
+    when 'keys'
+      # The order is irrelevant, but [a,b] != [b,a] in Ruby, so we
+      # sort the returned values so we can ignore the order.
+      value.sort
+    else
+      value
+    end
   end
 
   # Used in cleanup before() blocks.
