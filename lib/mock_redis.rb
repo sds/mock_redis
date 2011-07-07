@@ -16,11 +16,15 @@ class MockRedis
   end
 
   def incr(key)
+    incrby(key, 1)
+  end
+
+  def incrby(key, n)
     unless can_incr?(@data[key])
       raise RuntimeError, "ERR value is not an integer"
     end
 
-    new_value = @data[key].to_i + 1
+    new_value = @data[key].to_i + n
     @data[key] = new_value.to_s
     # for some reason, redis-rb doesn't return this as a string.
     new_value
