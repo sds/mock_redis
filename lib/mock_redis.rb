@@ -3,20 +3,24 @@ class MockRedis
     @data = {}
   end
 
-  def keys(format)
-    []
+  def del(*keys)
   end
 
-  def del(*keys)
+  def exists(key)
+    @data.has_key?(key)
+  end
+
+  def get(key)
+    @data[key]
+  end
+
+  def keys(format)
+    []
   end
 
   def set(key, value)
     @data[key] = value.to_s
     'OK'
-  end
-
-  def get(key)
-    @data[key]
   end
 
 end
