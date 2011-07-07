@@ -39,13 +39,16 @@ class RedisMultiplexer < BlankSlate
         "Mock failure: raised an error when it shouldn't have.\n" +
         "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" +
         "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
-    elsif (mock_error != real_error)
+    elsif (mock_error && real_error &&
+        (mock_error.class != real_error.class ||
+        mock_error.message != real_error.message))
       raise MismatchedResponse,
         "Mock failure: raised the wrong error.\n" +
         "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" +
         "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
     end
 
+    raise mock_error if mock_error
     mock_retval
   end
 
