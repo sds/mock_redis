@@ -29,4 +29,6 @@ describe '#incrby' do
       @redises.incrby(@key, 1)
     end.should raise_error(RuntimeError)
   end
+
+  it "raises an error if the value is of the wrong type"
 end

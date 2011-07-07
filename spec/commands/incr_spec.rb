@@ -29,4 +29,6 @@ describe '#incr' do
       @redises.incr(@key)
     end.should raise_error(RuntimeError)
   end
+
+  it "raises an error if the value is of the wrong type"
 end
