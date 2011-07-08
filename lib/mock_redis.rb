@@ -3,6 +3,14 @@ class MockRedis
     @data = {}
   end
 
+
+  def append(key, value)
+    assert_string_or_nil_at(key)
+    @data[key] ||= ""
+    @data[key] << value
+    @data[key].length
+  end
+
   def del(*keys)
     keys.
       find_all{|key| @data[key]}.
