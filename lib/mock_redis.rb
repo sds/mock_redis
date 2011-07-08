@@ -57,6 +57,11 @@ class MockRedis
     (@data[key] || []).length
   end
 
+  def lpop(key)
+    assert_list_or_nil_at(key)
+    (@data[key] || []).shift
+  end
+
   def lpush(key, value)
     assert_list_or_nil_at(key)
 
