@@ -4,7 +4,10 @@ class MockRedis
   end
 
   def del(*keys)
-    keys.each {|k| @data.delete(k) }
+    keys.
+      find_all{|key| @data[key]}.
+      each {|k| @data.delete(k)}.
+      length
   end
 
   def decr(key)
