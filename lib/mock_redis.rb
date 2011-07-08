@@ -31,11 +31,11 @@ class MockRedis
   def incrby(key, n)
     assert_string_or_nil_at(key)
     unless can_incr?(@data[key])
-      raise RuntimeError, "ERR value is not an integer"
+      raise RuntimeError, "ERR value is not an integer or out of range"
     end
 
     unless looks_like_integer?(n.to_s)
-      raise RuntimeError, "ERR value is not an integer"
+      raise RuntimeError, "ERR value is not an integer or out of range"
     end
 
     new_value = @data[key].to_i + n.to_i
