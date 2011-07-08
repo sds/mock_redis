@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#get" do
+describe "#get(key)" do
   before do
     @key = 'mock-redis-test:73288'
   end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#decrby' do
+describe '#decrby(key, decrement)' do
   before { @key = 'mock-redis-test:43650' }
 
   it "returns the value after the decrement" do

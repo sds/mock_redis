@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#lrange" do
+describe "#lrange(key, start, stop)" do
   before do
     @key = 'mock-redis-test:68036'
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#lpush" do
+describe "#lpush(key, value)" do
   before { @key = 'mock-redis-test:57367' }
 
   it "returns the new size of the list" do

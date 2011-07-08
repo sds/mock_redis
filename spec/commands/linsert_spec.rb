@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#linsert" do
+describe "#linsert(key, :before|:after, pivot, value)" do
   before { @key = 'mock-redis-test:48733' }
 
   it "returns the new size of the list when the pivot is found" do

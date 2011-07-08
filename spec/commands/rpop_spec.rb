@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#rpop' do
+describe '#rpop(key)' do
   before { @key = 'mock-redis-test:43093' }
 
   it "returns and removes the first element of a list" do

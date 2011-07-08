@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#incrby' do
+describe '#incrby(key, increment)' do
   before { @key = 'mock-redis-test:65374' }
 
   it "returns the value after the increment" do

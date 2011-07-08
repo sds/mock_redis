@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#lindex' do
+describe '#lindex(key, index)' do
   before { @key = 'mock-redis-test:69312' }
 
   it "gets an element from the list by its index" do

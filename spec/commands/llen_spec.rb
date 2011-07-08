@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#llen" do
+describe "#llen(key)" do
   before { @key = 'mock-redis-test:78407' }
 
   it "returns 0 for a nonexistent key" do

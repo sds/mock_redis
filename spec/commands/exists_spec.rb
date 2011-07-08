@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#exists" do
+describe "#exists(key)" do
   before { @key = 'mock-redis-test:45794' }
 
   it "returns false for keys that do not exist" do
