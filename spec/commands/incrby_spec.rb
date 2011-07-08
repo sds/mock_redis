@@ -40,5 +40,10 @@ describe '#incrby' do
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error if the value is of the wrong type"
+  it "raises an error for non-string values" do
+    @redises.lpush(@key, 10)
+    lambda do
+      @redises.incrby(@key, 2)
+    end.should raise_error(RuntimeError)
+  end
 end

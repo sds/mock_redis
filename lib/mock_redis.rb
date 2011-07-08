@@ -29,6 +29,7 @@ class MockRedis
   end
 
   def incrby(key, n)
+    assert_string_or_nil_at(key)
     unless can_incr?(@data[key])
       raise RuntimeError, "ERR value is not an integer"
     end
