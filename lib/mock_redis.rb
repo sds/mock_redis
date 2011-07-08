@@ -46,12 +46,35 @@ class MockRedis
     @data.keys.grep(redis_pattern_to_ruby_regex(format))
   end
 
+  def lindex(key, index)
+    @data[key][index]
+  end
+
+  def llen(key)
+    @data[key].length
+  end
+
+  def lpush(key, value)
+    assert_list_or_nil_at(key)
+
+    @data[key] ||= []
+    @data[key].unshift(value.to_s)
+    llen(key)
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
   end
 
   private
+
+  def assert_list_or_nil_at(key)
+    unless @data[key].nil? || @data[key].kind_of?(Array)
+      # Not the most helpful error, but it's what redis-rb barfs up
+      raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+    end
+  end
 
   def can_incr?(value)
     value.nil? || looks_like_integer?(value)
