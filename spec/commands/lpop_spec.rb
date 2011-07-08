@@ -23,6 +23,13 @@ describe '#lpop' do
     @redises.lpop(@key).should be_nil
   end
 
+  it "removes empty lists" do
+    @redises.lpush(@key, 'foo')
+    @redises.lpop(@key)
+
+    @redises.get(@key).should be_nil
+  end
+
   it "raises an error for non-list values" do
     @redises.set(@key, 'string value')
 

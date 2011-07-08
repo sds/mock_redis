@@ -84,7 +84,9 @@ class MockRedis
 
   def lpop(key)
     assert_list_or_nil_at(key)
-    (@data[key] || []).shift
+    value = (@data[key] || []).shift
+    clean_up_empty_lists_at(key)
+    value
   end
 
   def lpush(key, value)
