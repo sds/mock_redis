@@ -152,6 +152,13 @@ class MockRedis
     'OK'
   end
 
+  def rpop(key)
+    assert_list_or_nil_at(key)
+    value = (@data[key] || []).pop
+    clean_up_empty_lists_at(key)
+    value
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
