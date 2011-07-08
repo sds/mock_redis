@@ -52,7 +52,8 @@ class RedisMultiplexer < BlankSlate
     mock_retval
   end
 
-  # Some commands
+  # Some commands require special handling due to nondeterminism in
+  # the returned values.
   def handle_special_cases(method, value)
     case method.to_s
     when 'keys'
