@@ -61,7 +61,7 @@ class MockRedis
     assert_list_or_nil_at(key)
     return 0 unless @data[key]
 
-    pivot_position = (0..@data[key].length - 1).find do |i|
+    pivot_position = (0..llen(key) - 1).find do |i|
       @data[key][i] == pivot.to_s
     end
 
