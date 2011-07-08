@@ -49,7 +49,8 @@ class MockRedis
   end
 
   def lindex(key, index)
-    @data[key][index]
+    assert_list_or_nil_at(key)
+    (@data[key] || [])[index]
   end
 
   def llen(key)
