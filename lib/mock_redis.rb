@@ -152,6 +152,12 @@ class MockRedis
     modifying_list_at(key) {|list| list.pop if list}
   end
 
+  def rpoplpush(source, destination)
+    value = rpop(source)
+    lpush(destination, value)
+    value
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
