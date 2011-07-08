@@ -66,6 +66,15 @@ describe "#lrem(key, count, value)" do
     @redises.lrange(@key, 0, -1).grep(/bottles/).should be_empty
   end
 
+  it "removes empty lists" do
+    other_key = "mock-redis-test:lrem-#{__LINE__}"
+
+    @redises.lpush(other_key, 'foo')
+    @redises.lrem(other_key, 0, 'foo')
+
+    @redises.get(other_key).should be_nil
+  end
+
   it "raises an error when called on a non-list value" do
     @redises.set(@key, 'a string')
 

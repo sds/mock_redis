@@ -126,6 +126,7 @@ class MockRedis
                         end
 
     indices_to_delete.each {|i| @data[key].delete_at(i)}
+    clean_up_empty_lists_at(key)
     indices_to_delete.length
   end
 
