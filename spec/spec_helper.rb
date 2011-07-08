@@ -52,6 +52,9 @@ class RedisMultiplexer < BlankSlate
     mock_retval
   end
 
+  def mock() @mock_redis end
+  def real() @real_redis end
+
   # Some commands require special handling due to nondeterminism in
   # the returned values.
   def handle_special_cases(method, value)

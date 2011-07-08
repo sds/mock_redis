@@ -1,4 +1,6 @@
 class MockRedis
+  WouldBlock = Class.new(StandardError)
+
   def initialize(*args)
     @data = {}
   end
@@ -9,6 +11,29 @@ class MockRedis
     @data[key] ||= ""
     @data[key] << value
     @data[key].length
+  end
+
+  def blpop(*args)
+    timeout = args.pop
+    if !looks_like_integer?(timeout.to_s)
+      raise RuntimeError, "ERR timeout is not an integer or out of range"
+    elsif timeout < 0
+      raise RuntimeError, "ERR timeout is negative"
+    end
+
+    lists = args
+
+    list_to_pop = lists.find do |list|
+      llen(list) > 0
+    end
+
+    if list_to_pop
+      [list_to_pop, lpop(list_to_pop)]
+    elsif timeout > 0
+      nil
+    else
+      raise WouldBlock, "Can't block forever"
+    end
   end
 
   def del(*keys)
