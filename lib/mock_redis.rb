@@ -20,6 +20,7 @@ class MockRedis
   end
 
   def get(key)
+    assert_string_or_nil_at(key)
     @data[key]
   end
 
@@ -73,6 +74,12 @@ class MockRedis
   def assert_list_or_nil_at(key)
     unless @data[key].nil? || @data[key].kind_of?(Array)
       # Not the most helpful error, but it's what redis-rb barfs up
+      raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+    end
+  end
+
+  def assert_string_or_nil_at(key)
+    unless @data[key].nil? || @data[key].kind_of?(String)
       raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
     end
   end

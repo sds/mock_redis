@@ -20,6 +20,9 @@ describe "#get" do
   end
 
   it "raises an error for non-string values" do
-    pending "need to be able to implement non-string values"
+    @redises.lpush(@key, 10)
+    lambda do
+      @redises.get(@key)
+    end.should raise_error(RuntimeError)
   end
 end
