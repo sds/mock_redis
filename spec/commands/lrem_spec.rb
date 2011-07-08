@@ -1,0 +1,76 @@
+require 'spec_helper'
+
+describe "#lrem(key, count, value)" do
+  before do
+    @key = 'mock-redis-test:66767'
+
+    %w[99 bottles of beer on the wall
+       99 bottles of beer
+       take one down
+       pass it around
+       98 bottles of beer on the wall].reverse.each do |x|
+      @redises.lpush(@key, x)
+    end
+  end
+
+  it "deletes the first count instances of key when count > 0" do
+    @redises.lrem(@key, 2, 'bottles')
+
+    @redises.lrange(@key, 0, 8).should == %w[
+      99 of beer on the wall
+      99 of beer
+    ]
+
+    @redises.lrange(@key, -7, -1).should == %w[98 bottles of beer on the wall]
+  end
+
+  it "deletes the last count instances of key when count < 0" do
+    @redises.lrem(@key, -2, 'bottles')
+
+    @redises.lrange(@key, 0, 9).should == %w[
+      99 bottles of beer on the wall
+      99 of beer
+    ]
+
+    @redises.lrange(@key, -6, -1).should == %w[98 of beer on the wall]
+  end
+
+  it "deletes all instances of key when count == 0" do
+    @redises.lrem(@key, 0, 'bottles')
+    @redises.lrange(@key, 0, -1).grep(/bottles/).should be_empty
+  end
+
+  it "returns the number of elements deleted" do
+    @redises.lrem(@key, 2, 'bottles').should == 2
+  end
+
+  it "returns the number of elements deleted even if you ask for more" do
+    @redises.lrem(@key, 10, 'bottles').should == 3
+  end
+
+  it "stringifies value" do
+    @redises.lrem(@key, 0, 99).should == 2
+  end
+
+  it "returns 0 when run against a nonexistent value" do
+    @redises.lrem("mock-redis-test:bogus-key", 0, 1).should == 0
+  end
+
+  it "returns 0 when run against an empty list" do
+    @redises.llen(@key).times { @redises.lpop(@key) } # empty the list
+    @redises.lrem(@key, 0, "beer").should == 0
+  end
+
+  it "treats non-integer count as 0" do
+    @redises.lrem(@key, 'foo', 'bottles').should == 3
+    @redises.lrange(@key, 0, -1).grep(/bottles/).should be_empty
+  end
+
+  it "raises an error when called on a non-list value" do
+    @redises.set(@key, 'a string')
+
+    lambda do
+      @redises.lrem(@key, 0, 'foo')
+    end.should raise_error(RuntimeError)
+  end
+end

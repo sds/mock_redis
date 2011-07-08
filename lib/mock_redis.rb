@@ -106,6 +106,27 @@ class MockRedis
     (@data[key] || [])[start..stop]
   end
 
+  def lrem(key, count, value)
+    assert_list_or_nil_at(key)
+    count = count.to_i
+    value = value.to_s
+
+    indices_with_value = (0..(llen(key) - 1)).find_all do |i|
+      @data[key][i] == value
+    end
+
+    indices_to_delete = if count == 0
+                          indices_with_value.reverse
+                        elsif count > 0
+                          indices_with_value.take(count).reverse
+                        else
+                          indices_with_value.reverse.take(-count)
+                        end
+
+    indices_to_delete.each {|i| @data[key].delete_at(i)}
+    indices_to_delete.length
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
