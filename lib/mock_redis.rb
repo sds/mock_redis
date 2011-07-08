@@ -87,17 +87,14 @@ class MockRedis
   end
 
   def lpush(key, value)
-    assert_list_or_nil_at(key)
-
     @data[key] ||= []
-    @data[key].unshift(value.to_s)
-    llen(key)
+    lpushx(key, value)
   end
 
   def lpushx(key, value)
     assert_list_or_nil_at(key)
-    return 0 unless @data[key]
-    lpush(key, value)
+    @data[key].unshift(value.to_s) if @data[key]
+    llen(key)
   end
 
   def lrange(key, start, stop)
@@ -159,11 +156,8 @@ class MockRedis
   end
 
   def rpush(key, value)
-    assert_list_or_nil_at(key)
-
     @data[key] ||= []
-    @data[key].push(value.to_s)
-    llen(key)
+    rpushx(key, value)
   end
 
   def rpushx(key, value)
