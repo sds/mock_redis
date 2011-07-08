@@ -127,6 +127,21 @@ class MockRedis
     indices_to_delete.length
   end
 
+  def lset(key, index, value)
+    assert_list_or_nil_at(key)
+
+    unless @data[key]
+      raise RuntimeError, "ERR no such key"
+    end
+
+    unless (0...llen(key)).include?(index)
+      raise RuntimeError, "ERR index out of range"
+    end
+
+    @data[key][index] = value.to_s
+    'OK'
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
