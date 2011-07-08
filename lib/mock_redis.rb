@@ -71,6 +71,12 @@ class MockRedis
     llen(key)
   end
 
+  def lpushx(key, value)
+    assert_list_or_nil_at(key)
+    return 0 unless @data[key]
+    lpush(key, value)
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
