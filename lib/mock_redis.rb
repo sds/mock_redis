@@ -142,6 +142,13 @@ class MockRedis
     'OK'
   end
 
+  def ltrim(key, start, stop)
+    assert_list_or_nil_at(key)
+    @data[key] = @data[key][start..stop]
+    clean_up_empty_lists_at(key)
+    'OK'
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
@@ -159,6 +166,12 @@ class MockRedis
   def assert_string_or_nil_at(key)
     unless @data[key].nil? || @data[key].kind_of?(String)
       raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+    end
+  end
+
+  def clean_up_empty_lists_at(key)
+    if @data[key] && @data[key].empty?
+      @data[key] = nil
     end
   end
 
