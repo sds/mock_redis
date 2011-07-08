@@ -83,10 +83,7 @@ class MockRedis
   end
 
   def lpop(key)
-    assert_list_or_nil_at(key)
-    value = (@data[key] || []).shift
-    clean_up_empty_lists_at(key)
-    value
+    modifying_list_at(key) {|list| list.shift if list}
   end
 
   def lpush(key, value)
@@ -109,25 +106,24 @@ class MockRedis
   end
 
   def lrem(key, count, value)
-    assert_list_or_nil_at(key)
     count = count.to_i
     value = value.to_s
 
-    indices_with_value = (0..(llen(key) - 1)).find_all do |i|
-      @data[key][i] == value
+    modifying_list_at(key) do |list|
+      indices_with_value = (0..(llen(key) - 1)).find_all do |i|
+        list[i] == value
+      end
+
+      indices_to_delete = if count == 0
+                            indices_with_value.reverse
+                          elsif count > 0
+                            indices_with_value.take(count).reverse
+                          else
+                            indices_with_value.reverse.take(-count)
+                          end
+
+      indices_to_delete.each {|i| list.delete_at(i)}.length
     end
-
-    indices_to_delete = if count == 0
-                          indices_with_value.reverse
-                        elsif count > 0
-                          indices_with_value.take(count).reverse
-                        else
-                          indices_with_value.reverse.take(-count)
-                        end
-
-    indices_to_delete.each {|i| @data[key].delete_at(i)}
-    clean_up_empty_lists_at(key)
-    indices_to_delete.length
   end
 
   def lset(key, index, value)
@@ -146,17 +142,14 @@ class MockRedis
   end
 
   def ltrim(key, start, stop)
-    assert_list_or_nil_at(key)
-    @data[key] = @data[key][start..stop]
-    clean_up_empty_lists_at(key)
-    'OK'
+    modifying_list_at(key) do |list|
+      list.replace(list[start..stop] || []) if list
+      'OK'
+    end
   end
 
   def rpop(key)
-    assert_list_or_nil_at(key)
-    value = (@data[key] || []).pop
-    clean_up_empty_lists_at(key)
-    value
+    modifying_list_at(key) {|list| list.pop if list}
   end
 
   def set(key, value)
@@ -191,6 +184,13 @@ class MockRedis
 
   def looks_like_integer?(str)
     str =~ /^-?\d+$/
+  end
+
+  def modifying_list_at(key)
+    assert_list_or_nil_at(key)
+    retval = yield @data[key]
+    clean_up_empty_lists_at(key)
+    retval
   end
 
   def redis_pattern_to_ruby_regex(pattern)
