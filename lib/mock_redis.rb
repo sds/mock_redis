@@ -51,7 +51,8 @@ class MockRedis
   end
 
   def llen(key)
-    @data[key].length
+    assert_list_or_nil_at(key)
+    (@data[key] || []).length
   end
 
   def lpush(key, value)
