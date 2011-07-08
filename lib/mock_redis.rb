@@ -53,6 +53,30 @@ class MockRedis
     (@data[key] || [])[index]
   end
 
+  def linsert(key, position, pivot, value)
+    unless %w[before after].include?(position.to_s)
+      raise RuntimeError, "ERR syntax error"
+    end
+
+    assert_list_or_nil_at(key)
+    return 0 unless @data[key]
+
+    pivot_position = (0..@data[key].length - 1).find do |i|
+      @data[key][i] == pivot.to_s
+    end
+
+    return -1 unless pivot_position
+
+    insertion_index = if position.to_s == 'before'
+                        pivot_position
+                      else
+                        pivot_position + 1
+                      end
+
+    @data[key].insert(insertion_index, value.to_s)
+    llen(key)
+  end
+
   def llen(key)
     assert_list_or_nil_at(key)
     (@data[key] || []).length
