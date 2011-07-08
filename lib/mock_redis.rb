@@ -101,6 +101,11 @@ class MockRedis
     lpush(key, value)
   end
 
+  def lrange(key, start, stop)
+    assert_list_or_nil_at(key)
+    (@data[key] || [])[start..stop]
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
