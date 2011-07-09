@@ -14,21 +14,24 @@ class MockRedis
   end
 
   def blpop(*args)
-    timeout = args.pop
-    if !looks_like_integer?(timeout.to_s)
-      raise RuntimeError, "ERR timeout is not an integer or out of range"
-    elsif timeout < 0
-      raise RuntimeError, "ERR timeout is negative"
+    lists, timeout = extract_timeout(args)
+    nonempty_list = first_nonempty_list(lists)
+
+    if nonempty_list
+      [nonempty_list, lpop(nonempty_list)]
+    elsif timeout > 0
+      nil
+    else
+      raise WouldBlock, "Can't block forever"
     end
+  end
 
-    lists = args
+  def brpop(*args)
+    lists, timeout = extract_timeout(args)
+    nonempty_list = first_nonempty_list(lists)
 
-    list_to_pop = lists.find do |list|
-      llen(list) > 0
-    end
-
-    if list_to_pop
-      [list_to_pop, lpop(list_to_pop)]
+    if nonempty_list
+      [nonempty_list, rpop(nonempty_list)]
     elsif timeout > 0
       nil
     else
@@ -230,6 +233,21 @@ class MockRedis
 
   def can_incr?(value)
     value.nil? || looks_like_integer?(value)
+  end
+
+  def extract_timeout(arglist)
+    timeout = arglist.last
+    if !looks_like_integer?(timeout.to_s)
+      raise RuntimeError, "ERR timeout is not an integer or out of range"
+    elsif timeout < 0
+      raise RuntimeError, "ERR timeout is negative"
+    end
+
+    [arglist[0..-2], arglist.last]
+  end
+
+  def first_nonempty_list(keys)
+    keys.find{|k| llen(k) > 0}
   end
 
   def looks_like_integer?(str)
