@@ -39,6 +39,18 @@ class MockRedis
     end
   end
 
+  def brpoplpush(source, destination, timeout)
+    assert_valid_timeout(timeout)
+
+    if llen(source) > 0
+      rpoplpush(source, destination)
+    elsif timeout > 0
+      nil
+    else
+      raise WouldBlock, "Can't block forever"
+    end
+  end
+
   def del(*keys)
     keys.
       find_all{|key| @data[key]}.
@@ -225,6 +237,15 @@ class MockRedis
     end
   end
 
+  def assert_valid_timeout(timeout)
+    if !looks_like_integer?(timeout.to_s)
+      raise RuntimeError, "ERR timeout is not an integer or out of range"
+    elsif timeout < 0
+      raise RuntimeError, "ERR timeout is negative"
+    end
+    timeout
+  end
+
   def clean_up_empty_lists_at(key)
     if @data[key] && @data[key].empty?
       @data[key] = nil
@@ -236,13 +257,7 @@ class MockRedis
   end
 
   def extract_timeout(arglist)
-    timeout = arglist.last
-    if !looks_like_integer?(timeout.to_s)
-      raise RuntimeError, "ERR timeout is not an integer or out of range"
-    elsif timeout < 0
-      raise RuntimeError, "ERR timeout is negative"
-    end
-
+    timeout = assert_valid_timeout(arglist.last)
     [arglist[0..-2], arglist.last]
   end
 
