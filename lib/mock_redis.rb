@@ -15,6 +15,8 @@ class MockRedis
 
   def auth(_) 'OK' end
 
+  def bgrewriteaof() "Background append only file rewriting started" end
+
   def blpop(*args)
     lists, timeout = extract_timeout(args)
     nonempty_list = first_nonempty_list(lists)
