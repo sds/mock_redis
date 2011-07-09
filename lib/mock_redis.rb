@@ -13,6 +13,8 @@ class MockRedis
     @data[key].length
   end
 
+  def auth(_) 'OK' end
+
   def blpop(*args)
     lists, timeout = extract_timeout(args)
     nonempty_list = first_nonempty_list(lists)
