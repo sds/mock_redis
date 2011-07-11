@@ -118,6 +118,11 @@ class MockRedis
     end
   end
 
+  def hexists(key, field)
+    assert_hashy(key)
+    !!(@data[key] && @data[key].has_key?(field))
+  end
+
   def hget(key, field)
     assert_hashy(key)
     (@data[key] || {})[field]
