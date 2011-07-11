@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#mget(key)" do
+describe "#mget(key [, key, ...])" do
   before do
     @key1 = "mock-redis-test:mget1"
     @key2 = "mock-redis-test:mget2"
