@@ -97,6 +97,11 @@ class MockRedis
     end
   end
 
+  def getrange(key, start, stop)
+    assert_string_or_nil_at(key)
+    (@data[key] || "")[start..stop]
+  end
+
   def incr(key)
     incrby(key, 1)
   end
