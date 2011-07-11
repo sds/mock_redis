@@ -36,6 +36,8 @@ describe '#brpoplpush(source, destination, timeout)' do
     end.should raise_error(RuntimeError)
   end
 
+  it_should_behave_like "a list-only command"
+
   context "[mock only]" do
     it "ignores positive timeouts and returns nil" do
       @redises.mock.brpoplpush('mock-redis-test:not-here', @list1, 1).

@@ -12,10 +12,5 @@ describe "#llen(key)" do
     @redises.llen(@key).should == 5
   end
 
-  it "raises an error when the value at key is not a list" do
-    @redises.set(@key, "string value")
-    lambda do
-      @redises.llen(@key)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

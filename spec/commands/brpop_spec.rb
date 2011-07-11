@@ -26,13 +26,6 @@ describe '#brpop(key [, key, ...,], timeout)' do
       [@list1, 'two']
   end
 
-  it "errors out on non-list keys" do
-    @redises.set(@list1, 'a string')
-    lambda do
-      @redises.brpop(@list1, @list2, 1)
-    end.should raise_error(RuntimeError)
-  end
-
   it "raises an error on non-integer timeout" do
     lambda do
       @redises.brpop(@list1, @list2, 0.5)
@@ -44,6 +37,8 @@ describe '#brpop(key [, key, ...,], timeout)' do
       @redises.brpop(@list1, @list2, -1)
     end.should raise_error(RuntimeError)
   end
+
+  it_should_behave_like "a list-only command"
 
   context "[mock only]" do
     it "ignores positive timeouts and returns nil" do

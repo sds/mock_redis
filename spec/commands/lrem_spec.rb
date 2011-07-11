@@ -75,11 +75,5 @@ describe "#lrem(key, count, value)" do
     @redises.get(other_key).should be_nil
   end
 
-  it "raises an error when called on a non-list value" do
-    @redises.set(@key, 'a string')
-
-    lambda do
-      @redises.lrem(@key, 0, 'foo')
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

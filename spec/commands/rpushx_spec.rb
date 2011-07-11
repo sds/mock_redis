@@ -23,16 +23,11 @@ describe "#rpushx(key, value)" do
     @redises.lindex(@key, 1).should == "ernie"
   end
 
-  it "raises an error when run against a non-list" do
-    @redises.set(@key, 'string value')
-    lambda do
-      @redises.rpushx(@key, 1)
-    end.should raise_error(RuntimeError)
-  end
-
   it "stores values as strings" do
     @redises.rpush(@key, 1)
     @redises.rpushx(@key, 2)
     @redises.lindex(@key, 1).should == "2"
   end
+
+  it_should_behave_like "a list-only command"
 end

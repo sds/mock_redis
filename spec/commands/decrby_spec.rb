@@ -30,10 +30,5 @@ describe '#decrby(key, decrement)' do
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error for non-string values" do
-    @redises.lpush(@key, 10)
-    lambda do
-      @redises.decrby(@key, 2)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a string-only command"
 end

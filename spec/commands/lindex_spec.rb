@@ -35,11 +35,5 @@ describe '#lindex(key, index)' do
     @redises.lindex(@key, 0).should be_nil
   end
 
-  it "raises an error for non-list values" do
-    @redises.set(@key, 'string value')
-
-    lambda do
-      @redises.lindex(@key, 0)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

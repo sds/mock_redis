@@ -58,16 +58,11 @@ describe "#linsert(key, :before|:after, pivot, value)" do
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error when run against a non-list" do
-    @redises.set(@key, 'string value')
-    lambda do
-      @redises.linsert(@key, :before, 1, 2)
-    end.should raise_error(RuntimeError)
-  end
-
   it "stores values as strings" do
     @redises.lpush(@key, 1)
     @redises.linsert(@key, :before, 1, 2)
     @redises.lindex(@key, 0).should == "2"
   end
+
+  it_should_behave_like "a list-only command"
 end

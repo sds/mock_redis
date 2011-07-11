@@ -20,10 +20,5 @@ describe '#append(key, value)' do
     @redises.get(@key).should == 'foo'
   end
 
-  it "raises an error on a non-string type" do
-    @redises.lpush(@key, 1)
-    lambda do
-      @redises.append(@key, 'foo')
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a string-only command"
 end

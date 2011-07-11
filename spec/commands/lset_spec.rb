@@ -34,10 +34,5 @@ describe "#lset(key, index, value)" do
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an exception for non-list values" do
-    @redises.set(@key, 'stringythingy')
-    lambda do
-      @redises.lset(@key, 100, 'value')
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

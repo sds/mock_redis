@@ -30,11 +30,5 @@ describe '#rpop(key)' do
     @redises.get(@key).should be_nil
   end
 
-  it "raises an error for non-list values" do
-    @redises.set(@key, 'string value')
-
-    lambda do
-      @redises.rpop(@key)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

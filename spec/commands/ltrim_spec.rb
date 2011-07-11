@@ -31,11 +31,5 @@ describe "#ltrim(key, start, stop)" do
     @redises.get(@key).should be_nil
   end
 
-  it "raises an error when called on a non-list value" do
-    @redises.set(@key, 'a string')
-
-    lambda do
-      @redises.ltrim(@key, 0, 1)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

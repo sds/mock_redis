@@ -41,11 +41,5 @@ describe '#rpoplpush(source, destination)' do
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error for non-list destination value" do
-    @redises.set(@list1, 'string value')
-
-    lambda do
-      @redises.rpoplpush(@list1, @list2)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end

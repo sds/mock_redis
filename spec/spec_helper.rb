@@ -3,89 +3,30 @@ require 'redis'
 $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, "..", "..", "lib")))
 require 'mock_redis'
 
-class BlankSlate
-  instance_methods.each {|m| undef_method(m) unless m =~ /^__/}
-end
+Dir["spec/support/**/*.rb"].each {|x| require x}
 
-class RedisMultiplexer < BlankSlate
-  MismatchedResponse = Class.new(StandardError)
-
-  def initialize(*a)
-    @mock_redis = MockRedis.new(*a)
-    @real_redis = Redis.new(*a)
+module TypeCheckingHelper
+  def method_from_description
+    # extracting this from the RSpec description string may or may not
+    # be a good idea. On the one hand, it enforces the convention of
+    # putting the method name in the right place; on the other hand,
+    # it's pretty magic-looking.
+    self.example.full_description.match(/#(\w+)/).captures.first
   end
 
-  def method_missing(method, *args, &blk)
-    mock_retval, mock_error = catch_errors { @mock_redis.send(method, *args, &blk) }
-    real_retval, real_error = catch_errors { @real_redis.send(method, *args, &blk) }
-
-    mock_retval = handle_special_cases(method, mock_retval)
-    real_retval = handle_special_cases(method, real_retval)
-
-    if ((mock_retval != real_retval) && !mock_error && !real_error)
-      # no exceptions, just different behavior
-      raise MismatchedResponse,
-        "Mock failure: responses not equal.\n" +
-        "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" +
-        "MockRedis.#{method}(#{args.inspect}) returned #{mock_retval.inspect}\n"
-    elsif (!mock_error && real_error)
-      raise MismatchedResponse,
-        "Mock failure: didn't raise an error when it should have.\n" +
-        "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" +
-        "MockRedis.#{method}(#{args.inspect}) raised nothing " +
-        "and returned #{mock_retval.inspect}"
-    elsif (!real_error && mock_error)
-      raise MismatchedResponse,
-        "Mock failure: raised an error when it shouldn't have.\n" +
-        "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" +
-        "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
-    elsif (mock_error && real_error &&
-        (mock_error.class != real_error.class ||
-        mock_error.message != real_error.message))
-      raise MismatchedResponse,
-        "Mock failure: raised the wrong error.\n" +
-        "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" +
-        "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
-    end
-
-    raise mock_error if mock_error
-    mock_retval
-  end
-
-  def mock() @mock_redis end
-  def real() @real_redis end
-
-  # Some commands require special handling due to nondeterminism in
-  # the returned values.
-  def handle_special_cases(method, value)
-    case method.to_s
-    when 'keys'
-      # The order is irrelevant, but [a,b] != [b,a] in Ruby, so we
-      # sort the returned values so we can ignore the order.
-      value.sort
+  def args_for_method(method)
+    method_arity = @redises.mock.method(method).arity
+    if method_arity < 0   # -1 comes from def foo(*args)
+      [1, 2, 3]    # probably good enough
     else
-      value
-    end
-  end
-
-  # Used in cleanup before() blocks.
-  def send_without_checking(method, *args)
-    @mock_redis.send(method, *args)
-    @real_redis.send(method, *args)
-  end
-
-  def catch_errors
-    begin
-      retval = yield
-      [retval, nil]
-    rescue StandardError => e
-      [nil, e]
+      1.upto(method_arity - 1).to_a
     end
   end
 end
-
 
 RSpec.configure do |config|
+  config.include(TypeCheckingHelper)
+
   config.before(:all) do
     @redises = RedisMultiplexer.new
   end

@@ -31,11 +31,5 @@ describe "#lrange(key, start, stop)" do
     @redises.lrange(@key, 4, 10).should == %w[v4]
   end
 
-  it "raises an error when called on a non-list value" do
-    @redises.set(@key, 'a string')
-
-    lambda do
-      @redises.lrange(@key, 0, -1)
-    end.should raise_error(RuntimeError)
-  end
+  it_should_behave_like "a list-only command"
 end
