@@ -108,6 +108,28 @@ class MockRedis
     retval
   end
 
+  def hdel(key, field)
+    assert_hashy(key)
+    if @data[key].has_key?(field)
+      @data[key].delete(field)
+      1
+    else
+      0
+    end
+  end
+
+  def hget(key, field)
+    assert_hashy(key)
+    (@data[key] || {})[field]
+  end
+
+  def hset(key, field, value)
+    assert_hashy(key)
+    @data[key] ||= {}
+    @data[key][field] = value.to_s
+    true
+  end
+
   def incr(key)
     incrby(key, 1)
   end
@@ -349,21 +371,35 @@ class MockRedis
 
   private
 
+  def stringy?(key)
+    @data[key].nil? || @data[key].kind_of?(String)
+  end
+
+  def listy?(key)
+    @data[key].nil? || @data[key].kind_of?(Array)
+  end
+
+  def hashy?(key)
+    @data[key].nil? || @data[key].kind_of?(Hash)
+  end
+
   def assert_listy(key)
-    unless @data[key].nil? || @data[key].kind_of?(Array)
+    unless listy?(key)
       # Not the most helpful error, but it's what redis-rb barfs up
       raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
     end
-  end
-
-  def stringy?(key)
-    @data[key].nil? || @data[key].kind_of?(String)
   end
 
   def assert_stringy(key,
       message="ERR Operation against a key holding the wrong kind of value")
     unless stringy?(key)
       raise RuntimeError, message
+    end
+  end
+
+  def assert_hashy(key)
+    unless hashy?(key)
+      raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
     end
   end
 
