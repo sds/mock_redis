@@ -18,7 +18,7 @@ module TypeCheckingHelper
   def args_for_method(method)
     method_arity = @redises.mock.method(method).arity
     if method_arity < 0   # -1 comes from def foo(*args)
-      [1, 2, 3]    # probably good enough
+      [1, 2]    # probably good enough
     else
       1.upto(method_arity - 1).to_a
     end

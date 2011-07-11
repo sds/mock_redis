@@ -144,6 +144,19 @@ class MockRedis
     fields.map{|f| hget(key, f)}
   end
 
+  def hmset(key, *kvpairs)
+    if kvpairs.none?
+      raise RuntimeError, "ERR wrong number of arguments for 'hmset' command"
+    elsif kvpairs.length.odd?
+      raise RuntimeError, "ERR wrong number of arguments for HMSET"
+    end
+
+    kvpairs.each_slice(2) do |(k,v)|
+      hset(key, k, v)
+    end
+    'OK'
+  end
+
   def hset(key, field, value)
     assert_hashy(key)
     @data[key] ||= {}
