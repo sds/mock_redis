@@ -137,6 +137,13 @@ class MockRedis
     hkeys(key).length
   end
 
+  def hmget(key, *fields)
+    unless fields.any?
+      raise RuntimeError, "ERR wrong number of arguments for 'hmget' command"
+    end
+    fields.map{|f| hget(key, f)}
+  end
+
   def hset(key, field, value)
     assert_hashy(key)
     @data[key] ||= {}
