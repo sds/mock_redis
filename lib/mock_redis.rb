@@ -239,6 +239,21 @@ class MockRedis
     end
   end
 
+  def mset(*kvpairs)
+    # a little consistency in error messages would be appreciated, Redis.
+    if kvpairs.length == 0
+      raise RuntimeError, "ERR wrong number of arguments for 'mset' command"
+    elsif kvpairs.length.odd?
+      raise RuntimeError, "ERR wrong number of arguments for MSET"
+    end
+
+    kvpairs.each_slice(2) do |(k,v)|
+      set(k,v)
+    end
+
+    "OK"
+  end
+
   def rpop(key)
     modifying_list_at(key) {|list| list.pop if list}
   end
