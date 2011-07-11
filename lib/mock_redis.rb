@@ -102,6 +102,12 @@ class MockRedis
     (@data[key] || "")[start..stop]
   end
 
+  def getset(key, value)
+    retval = get(key)
+    set(key, value)
+    retval
+  end
+
   def incr(key)
     incrby(key, 1)
   end
