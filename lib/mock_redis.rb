@@ -254,6 +254,19 @@ class MockRedis
     "OK"
   end
 
+  def msetnx(*kvpairs)
+    if kvpairs.length == 0
+      raise RuntimeError, "ERR wrong number of arguments for 'msetnx' command"
+    end
+
+    if kvpairs.each_slice(2).any? {|(k,v)| exists(k)}
+      0
+    else
+      mset(*kvpairs)
+      1
+    end
+  end
+
   def rpop(key)
     modifying_list_at(key) {|list| list.pop if list}
   end
