@@ -244,6 +244,46 @@ class MockRedis
     'OK'
   end
 
+  def setbit(key, offset, value)
+    assert_string_or_nil_at(key, "ERR bit is not an integer or out of range")
+    retval = getbit(key, offset)
+
+    str = @data[key] || ""
+
+    offset_of_byte = offset / 8
+    offset_within_byte = offset % 8
+
+    if offset_of_byte >= str.bytesize
+      padding = "\000" * ((offset_of_byte - str.bytesize) + 1)
+      str += padding
+    end
+
+    char_index = byte_index = offset_within_char = 0
+    str.each_char do |c|
+      if byte_index < offset_of_byte
+        char_index += 1
+        byte_index += c.bytesize
+      else
+        offset_within_char = byte_index - offset_of_byte
+        break
+      end
+    end
+
+    char = str[char_index]
+    char = char.chr if char.respond_to?(:chr)  # ruby 1.8 vs 1.9
+    char_as_number = char.each_byte.reduce(0) do |a, byte|
+      (a << 8) + byte
+    end
+    char_as_number |=
+      (2**((char.bytesize * 8)-1) >>
+      (offset_within_char * 8 + offset_within_byte))
+    str[char_index] = char_as_number.chr
+
+    @data[key] = str
+    retval
+  end
+
+
   private
 
   def assert_list_or_nil_at(key)
@@ -253,9 +293,10 @@ class MockRedis
     end
   end
 
-  def assert_string_or_nil_at(key)
+  def assert_string_or_nil_at(key,
+      message="ERR Operation against a key holding the wrong kind of value")
     unless @data[key].nil? || @data[key].kind_of?(String)
-      raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+      raise RuntimeError, message
     end
   end
 
