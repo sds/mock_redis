@@ -7,7 +7,7 @@ class MockRedis
 
 
   def append(key, value)
-    assert_string_or_nil_at(key)
+    assert_stringy(key)
     @data[key] ||= ""
     @data[key] << value
     @data[key].length
@@ -77,12 +77,12 @@ class MockRedis
   end
 
   def get(key)
-    assert_string_or_nil_at(key)
+    assert_stringy(key)
     @data[key]
   end
 
   def getbit(key, offset)
-    assert_string_or_nil_at(key)
+    assert_stringy(key)
 
     offset_of_byte = offset / 8
     offset_within_byte = offset % 8
@@ -98,7 +98,7 @@ class MockRedis
   end
 
   def getrange(key, start, stop)
-    assert_string_or_nil_at(key)
+    assert_stringy(key)
     (@data[key] || "")[start..stop]
   end
 
@@ -113,7 +113,7 @@ class MockRedis
   end
 
   def incrby(key, n)
-    assert_string_or_nil_at(key)
+    assert_stringy(key)
     unless can_incr?(@data[key])
       raise RuntimeError, "ERR value is not an integer or out of range"
     end
@@ -133,7 +133,7 @@ class MockRedis
   end
 
   def lindex(key, index)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     (@data[key] || [])[index]
   end
 
@@ -142,7 +142,7 @@ class MockRedis
       raise RuntimeError, "ERR syntax error"
     end
 
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     return 0 unless @data[key]
 
     pivot_position = (0..llen(key) - 1).find do |i|
@@ -162,7 +162,7 @@ class MockRedis
   end
 
   def llen(key)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     (@data[key] || []).length
   end
 
@@ -176,13 +176,13 @@ class MockRedis
   end
 
   def lpushx(key, value)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     @data[key].unshift(value.to_s) if @data[key]
     llen(key)
   end
 
   def lrange(key, start, stop)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     (@data[key] || [])[start..stop]
   end
 
@@ -208,7 +208,7 @@ class MockRedis
   end
 
   def lset(key, index, value)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
 
     unless @data[key]
       raise RuntimeError, "ERR no such key"
@@ -229,6 +229,16 @@ class MockRedis
     end
   end
 
+  def mget(*keys)
+    unless keys.length > 0
+      raise RuntimeError, "ERR wrong number of arguments for 'mget' command"
+    end
+
+    keys.map do |key|
+      get(key) if stringy?(key)
+    end
+  end
+
   def rpop(key)
     modifying_list_at(key) {|list| list.pop if list}
   end
@@ -245,7 +255,7 @@ class MockRedis
   end
 
   def rpushx(key, value)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     @data[key].push(value.to_s) if @data[key]
     llen(key)
   end
@@ -256,7 +266,7 @@ class MockRedis
   end
 
   def setbit(key, offset, value)
-    assert_string_or_nil_at(key, "ERR bit is not an integer or out of range")
+    assert_stringy(key, "ERR bit is not an integer or out of range")
     retval = getbit(key, offset)
 
     str = @data[key] || ""
@@ -297,16 +307,20 @@ class MockRedis
 
   private
 
-  def assert_list_or_nil_at(key)
+  def assert_listy(key)
     unless @data[key].nil? || @data[key].kind_of?(Array)
       # Not the most helpful error, but it's what redis-rb barfs up
       raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
     end
   end
 
-  def assert_string_or_nil_at(key,
+  def stringy?(key)
+    @data[key].nil? || @data[key].kind_of?(String)
+  end
+
+  def assert_stringy(key,
       message="ERR Operation against a key holding the wrong kind of value")
-    unless @data[key].nil? || @data[key].kind_of?(String)
+    unless stringy?(key)
       raise RuntimeError, message
     end
   end
@@ -344,7 +358,7 @@ class MockRedis
   end
 
   def modifying_list_at(key)
-    assert_list_or_nil_at(key)
+    assert_listy(key)
     retval = yield @data[key]
     clean_up_empty_lists_at(key)
     retval
