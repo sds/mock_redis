@@ -86,6 +86,8 @@ class MockRedis
 
     offset_of_byte = offset / 8
     offset_within_byte = offset % 8
+
+    # String#getbyte would be lovely, but it's not in 1.8.7.
     byte = @data[key].each_byte.drop(offset_of_byte).first
 
     if byte
