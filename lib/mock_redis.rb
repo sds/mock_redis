@@ -81,6 +81,20 @@ class MockRedis
     @data[key]
   end
 
+  def getbit(key, offset)
+    assert_string_or_nil_at(key)
+
+    offset_of_byte = offset / 8
+    offset_within_byte = offset % 8
+    byte = @data[key].each_byte.drop(offset_of_byte).first
+
+    if byte
+      (byte & (2**7 >> offset_within_byte)) > 0 ? 1 : 0
+    else
+      0
+    end
+  end
+
   def incr(key)
     incrby(key, 1)
   end
