@@ -341,6 +341,11 @@ class MockRedis
     @data[key].length
   end
 
+  def strlen(key)
+    assert_stringy(key)
+    (@data[key] || "").bytesize
+  end
+
 
   private
 
