@@ -26,5 +26,9 @@ describe "#getbit(key, offset)" do
     @redises.get(@key).should == 'h'
   end
 
+  it "treats nonexistent keys as empty strings" do
+    @redises.getbit('mock-redis-test:not-found', 0).should == 0
+  end
+
   it_should_behave_like "a string-only command"
 end
