@@ -54,10 +54,10 @@ class RedisMultiplexer < BlankSlate
   # the returned values.
   def handle_special_cases(method, value)
     case method.to_s
-    when 'keys'
+    when 'keys', 'hkeys'
       # The order is irrelevant, but [a,b] != [b,a] in Ruby, so we
       # sort the returned values so we can ignore the order.
-      value.sort
+      value.sort if value
     else
       value
     end

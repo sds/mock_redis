@@ -128,6 +128,11 @@ class MockRedis
     (@data[key] || {})[field]
   end
 
+  def hkeys(key)
+    assert_hashy(key)
+    (@data[key] || {}).keys
+  end
+
   def hset(key, field, value)
     assert_hashy(key)
     @data[key] ||= {}
