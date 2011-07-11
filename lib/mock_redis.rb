@@ -303,8 +303,7 @@ class MockRedis
     offset_within_byte = offset % 8
 
     if offset_of_byte >= str.bytesize
-      padding = "\000" * ((offset_of_byte - str.bytesize) + 1)
-      str += padding
+      str = zero_pad(str, offset_of_byte+1)
     end
 
     char_index = byte_index = offset_within_char = 0
@@ -330,6 +329,16 @@ class MockRedis
 
     @data[key] = str
     retval
+  end
+
+  def setrange(key, offset, value)
+    assert_stringy(key)
+    value = value.to_s
+    old_value = (@data[key] || "")
+
+    prefix = zero_pad(old_value[0...offset], offset)
+    @data[key] = prefix + value + (old_value[(offset + value.length)..-1] || "")
+    @data[key].length
   end
 
 
@@ -397,6 +406,11 @@ class MockRedis
       "^#{pattern}$".
       gsub(/([^\\])\?/, "\\1.").
       gsub(/([^\\])\*/, "\\1.+"))
+  end
+
+  def zero_pad(string, desired_length)
+    padding = "\000" * [(desired_length - string.length), 0].max
+    string + padding
   end
 
 end
