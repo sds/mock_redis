@@ -1,4 +1,4 @@
-include 'mock_redis/assertions'
+require 'mock_redis/assertions'
 
 class MockRedis
   module StringMethods

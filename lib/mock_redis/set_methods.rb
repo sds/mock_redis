@@ -51,6 +51,7 @@ class MockRedis
         to_a
     end
 
+
     def smembers(key)
       assert_sety(key)
       @data[key].to_a
