@@ -133,6 +133,23 @@ class MockRedis
     (@data[key] || {}).keys
   end
 
+  def hincrby(key, field, increment)
+    assert_hashy(key)
+
+    @data[key] ||= {}
+
+    unless can_incr?(@data[key][field])
+      raise RuntimeError, "ERR hash value is not an integer"
+    end
+    unless looks_like_integer?(increment.to_s)
+      raise RuntimeError, "ERR value is not an integer or out of range"
+    end
+
+    new_value = (@data[key][field] || "0").to_i + increment.to_i
+    @data[key][field] = new_value.to_s
+    new_value
+  end
+
   def hlen(key)
     hkeys(key).length
   end
