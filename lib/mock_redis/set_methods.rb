@@ -37,6 +37,7 @@ class MockRedis
         raise RuntimeError, "ERR wrong number of arguments for 'sdiffstore' command"
       end
       @data[destination] = Set.new(sdiff(*keys))
+      clean_up_empties_at(destination)
       scard(destination)
     end
 
