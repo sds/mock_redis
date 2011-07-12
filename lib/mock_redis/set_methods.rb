@@ -78,6 +78,11 @@ class MockRedis
       with_set_at(key) {|s| !!s.delete?(member.to_s)}
     end
 
+    def sunion(*keys)
+      assert_has_args(keys, 'sunion')
+      with_sets_at(*keys) {|*sets| sets.reduce(&:+).to_a}
+    end
+
     private
     def with_set_at(key)
       assert_sety(key)
