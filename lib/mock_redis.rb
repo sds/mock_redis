@@ -411,6 +411,26 @@ class MockRedis::DataStore
     'PONG'
   end
 
+  def rename(key, newkey)
+    if key == newkey
+      raise RuntimeError, "ERR source and destination objects are the same"
+    end
+    @data[newkey] = @data.delete(key)
+    'OK'
+  end
+
+  def renamenx(key, newkey)
+    if key == newkey
+      raise RuntimeError, "ERR source and destination objects are the same"
+    end
+    if exists(newkey)
+      false
+    else
+      rename(key, newkey)
+      true
+    end
+  end
+
   def rpop(key)
     modifying_list_at(key) {|list| list.pop if list}
   end
