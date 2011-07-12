@@ -58,6 +58,11 @@ class MockRedis
       scard(destination)
     end
 
+    def sismember(key, member)
+      assert_sety(key)
+      (@data[key] || Set.new).include?(member.to_s)
+    end
+
     def smembers(key)
       assert_sety(key)
       @data[key].to_a
