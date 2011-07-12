@@ -456,6 +456,10 @@ class MockRedis::DataStore
     llen(key)
   end
 
+  def save
+    'OK'
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
