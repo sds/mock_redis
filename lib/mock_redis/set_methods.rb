@@ -83,6 +83,14 @@ class MockRedis
       with_sets_at(*keys) {|*sets| sets.reduce(&:+).to_a}
     end
 
+    def sunionstore(destination, *keys)
+      assert_has_args(keys, 'sunionstore')
+      with_set_at(destination) do |dest_set|
+        dest_set.merge(sunion(*keys))
+      end
+      scard(destination)
+    end
+
     private
     def with_set_at(key)
       assert_sety(key)
