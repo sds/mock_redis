@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#hkeys(key, field)" do
+describe "#hkeys(key)" do
   before do
     @key = "mock-redis-test:hkeys"
     @redises.hset(@key, 'k1', 'v1')
