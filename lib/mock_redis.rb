@@ -173,6 +173,11 @@ class MockRedis
     end
   end
 
+  def hvals(key)
+    assert_hashy(key)
+    (@data[key] || {}).values
+  end
+
   def incr(key)
     incrby(key, 1)
   end
