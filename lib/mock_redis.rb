@@ -1,3 +1,5 @@
+require 'set'
+
 class MockRedis
   WouldBlock = Class.new(StandardError)
 
@@ -456,6 +458,19 @@ class MockRedis::DataStore
     llen(key)
   end
 
+  def sadd(key, member)
+    assert_sety(key)
+    member = member.to_s
+
+    @data[key] ||= Set.new
+    if @data[key].include?(member)
+      false
+    else
+      @data[key].add(member)
+      true
+    end
+  end
+
   def save
     'OK'
   end
@@ -513,6 +528,11 @@ class MockRedis::DataStore
     @data[key].length
   end
 
+  def smembers(key)
+    assert_sety(key)
+    @data[key].to_a
+  end
+
   def strlen(key)
     assert_stringy(key)
     (@data[key] || "").bytesize
@@ -520,6 +540,10 @@ class MockRedis::DataStore
 
 
   private
+
+  def sety?(key)
+    @data[key].nil? || @data[key].kind_of?(Set)
+  end
 
   def stringy?(key)
     @data[key].nil? || @data[key].kind_of?(String)
@@ -535,6 +559,13 @@ class MockRedis::DataStore
 
   def assert_listy(key)
     unless listy?(key)
+      # Not the most helpful error, but it's what redis-rb barfs up
+      raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+    end
+  end
+
+  def assert_sety(key)
+    unless sety?(key)
       # Not the most helpful error, but it's what redis-rb barfs up
       raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
     end
