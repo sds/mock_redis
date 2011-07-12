@@ -480,6 +480,19 @@ class MockRedis::DataStore
     (@data[key] || Set.new).length
   end
 
+  def sdiff(*keys)
+    unless keys.any?
+      raise RuntimeError, "ERR wrong number of arguments for 'sdiff' command"
+    end
+
+    keys.
+      each {|k| assert_sety(k)}.
+      map {|k| @data[k]}.
+      compact.
+      reduce {|a,e| a - e}.
+      to_a
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
