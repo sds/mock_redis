@@ -3,7 +3,7 @@ require 'spec_helper'
 describe '#sinterstore(destination, key [, key, ...])' do
   before do
     @numbers     = 'mock-redis-test:sinterstore:numbers'
-    @evens       = 'mock-redis-test:sinterstore:odds'
+    @evens       = 'mock-redis-test:sinterstore:evens'
     @primes      = 'mock-redis-test:sinterstore:primes'
     @destination = 'mock-redis-test:sinterstore:destination'
 
