@@ -5,51 +5,40 @@ class MockRedis
     include Assertions
 
     def hdel(key, field)
-      assert_hashy(key)
-      if @data[key].has_key?(field)
-        @data[key].delete(field)
-        clean_up_empties_at(key)
-        1
-      else
-        0
+      with_hash_at(key) do |hash|
+        hash.delete(field) ? 1 : 0
       end
     end
 
     def hexists(key, field)
-      assert_hashy(key)
-      !!(@data[key] && @data[key].has_key?(field))
+      with_hash_at(key) {|h| h.has_key?(field)}
     end
 
     def hget(key, field)
-      assert_hashy(key)
-      (@data[key] || {})[field]
+      with_hash_at(key) {|h| h[field]}
     end
 
     def hgetall(key)
-      assert_hashy(key)
-      @data[key] || {}
+      with_hash_at(key) {|h| h}
     end
 
     def hincrby(key, field, increment)
-      assert_hashy(key)
+      with_hash_at(key) do |hash|
+        unless can_incr?(@data[key][field])
+          raise RuntimeError, "ERR hash value is not an integer"
+        end
+        unless looks_like_integer?(increment.to_s)
+          raise RuntimeError, "ERR value is not an integer or out of range"
+        end
 
-      @data[key] ||= {}
-
-      unless can_incr?(@data[key][field])
-        raise RuntimeError, "ERR hash value is not an integer"
+        new_value = (hash[field] || "0").to_i + increment.to_i
+        hash[field] = new_value.to_s
+        new_value
       end
-      unless looks_like_integer?(increment.to_s)
-        raise RuntimeError, "ERR value is not an integer or out of range"
-      end
-
-      new_value = (@data[key][field] || "0").to_i + increment.to_i
-      @data[key][field] = new_value.to_s
-      new_value
     end
 
     def hkeys(key)
-      assert_hashy(key)
-      (@data[key] || {}).keys
+      with_hash_at(key, &:keys)
     end
 
     def hlen(key)
@@ -74,9 +63,7 @@ class MockRedis
     end
 
     def hset(key, field, value)
-      assert_hashy(key)
-      @data[key] ||= {}
-      @data[key][field] = value.to_s
+      with_hash_at(key) {|h| h[field] = value.to_s}
       true
     end
 
@@ -90,11 +77,20 @@ class MockRedis
     end
 
     def hvals(key)
-      assert_hashy(key)
-      (@data[key] || {}).values
+      with_hash_at(key, &:values)
     end
 
     private
+
+    def with_hash_at(key)
+      begin
+        assert_hashy(key)
+        @data[key] ||= Hash.new
+        yield @data[key]
+      ensure
+        clean_up_empties_at(key)
+      end
+    end
 
     def hashy?(key)
       @data[key].nil? || @data[key].kind_of?(Hash)
