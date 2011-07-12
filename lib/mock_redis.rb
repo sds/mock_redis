@@ -224,6 +224,10 @@ class MockRedis
     @data.keys.grep(redis_pattern_to_ruby_regex(format))
   end
 
+  def lastsave
+    Time.now.to_i
+  end
+
   def lindex(key, index)
     assert_listy(key)
     (@data[key] || [])[index]
