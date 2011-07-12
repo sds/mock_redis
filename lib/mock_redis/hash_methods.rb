@@ -1,8 +1,10 @@
 require 'mock_redis/assertions'
+require 'mock_redis/utility_methods'
 
 class MockRedis
   module HashMethods
     include Assertions
+    include UtilityMethods
 
     def hdel(key, field)
       with_hash_at(key) do |hash|
@@ -82,14 +84,8 @@ class MockRedis
 
     private
 
-    def with_hash_at(key)
-      begin
-        assert_hashy(key)
-        @data[key] ||= Hash.new
-        yield @data[key]
-      ensure
-        clean_up_empties_at(key)
-      end
+    def with_hash_at(key, &blk)
+      with_thing_at(key, :assert_hashy, proc {{}}, &blk)
     end
 
     def hashy?(key)

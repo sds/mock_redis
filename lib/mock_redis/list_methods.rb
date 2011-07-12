@@ -1,5 +1,11 @@
+require 'mock_redis/assertions'
+require 'mock_redis/utility_methods'
+
 class MockRedis
   module ListMethods
+    include Assertions
+    include UtilityMethods
+
     def blpop(*args)
       lists, timeout = extract_timeout(args)
       nonempty_list = first_nonempty_list(lists)
@@ -158,12 +164,8 @@ class MockRedis
       @data[key] && listy?(key)
     end
 
-    def with_list_at(key)
-      assert_listy(key)
-      @data[key] ||= []
-      retval = yield @data[key]
-      clean_up_empties_at(key)
-      retval
+    def with_list_at(key, &blk)
+      with_thing_at(key, :assert_listy, proc {[]}, &blk)
     end
 
     def listy?(key)

@@ -1,8 +1,10 @@
 require 'mock_redis/assertions'
+require 'mock_redis/utility_methods'
 
 class MockRedis
   module SetMethods
     include Assertions
+    include UtilityMethods
 
     def sadd(key, member)
       with_set_at(key) {|s| !!s.add?(member.to_s)}
@@ -92,12 +94,8 @@ class MockRedis
     end
 
     private
-    def with_set_at(key)
-      assert_sety(key)
-      @data[key] ||= Set.new
-      retval = yield @data[key]
-      clean_up_empties_at(key)
-      retval
+    def with_set_at(key, &blk)
+      with_thing_at(key, :assert_sety, proc {Set.new}, &blk)
     end
 
     def with_sets_at(*keys, &blk)

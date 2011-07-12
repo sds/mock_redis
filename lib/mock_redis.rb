@@ -129,12 +129,6 @@ class MockRedis::DataStore
     timeout
   end
 
-  def clean_up_empties_at(key)
-    if @data[key] && @data[key].empty?
-      del(key)
-    end
-  end
-
   def can_incr?(value)
     value.nil? || looks_like_integer?(value)
   end
