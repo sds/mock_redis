@@ -475,6 +475,11 @@ class MockRedis::DataStore
     'OK'
   end
 
+  def scard(key)
+    assert_sety(key)
+    (@data[key] || Set.new).length
+  end
+
   def set(key, value)
     @data[key] = value.to_s
     'OK'
