@@ -74,6 +74,10 @@ class MockRedis
       with_set_at(key, &:first)
     end
 
+    def srem(key, member)
+      with_set_at(key) {|s| !!s.delete?(member.to_s)}
+    end
+
     private
     def with_set_at(key)
       assert_sety(key)
