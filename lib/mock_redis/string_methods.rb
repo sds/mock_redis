@@ -1,5 +1,8 @@
+include 'mock_redis/assertions'
+
 class MockRedis
   module StringMethods
+    include Assertions
 
     def append(key, value)
       assert_stringy(key)
@@ -69,9 +72,7 @@ class MockRedis
     end
 
     def mget(*keys)
-      unless keys.length > 0
-        raise RuntimeError, "ERR wrong number of arguments for 'mget' command"
-      end
+      assert_has_args(keys, 'mget')
 
       keys.map do |key|
         get(key) if stringy?(key)
@@ -79,10 +80,8 @@ class MockRedis
     end
 
     def mset(*kvpairs)
-      # a little consistency in error messages would be appreciated, Redis.
-      if kvpairs.length == 0
-        raise RuntimeError, "ERR wrong number of arguments for 'mset' command"
-      elsif kvpairs.length.odd?
+      assert_has_args(kvpairs, 'mset')
+      if kvpairs.length.odd?
         raise RuntimeError, "ERR wrong number of arguments for MSET"
       end
 
@@ -94,9 +93,7 @@ class MockRedis
     end
 
     def msetnx(*kvpairs)
-      if kvpairs.length == 0
-        raise RuntimeError, "ERR wrong number of arguments for 'msetnx' command"
-      end
+      assert_has_args(kvpairs, 'msetnx')
 
       if kvpairs.each_slice(2).any? {|(k,v)| exists(k)}
         0

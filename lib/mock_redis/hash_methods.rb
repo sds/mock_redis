@@ -1,5 +1,8 @@
+require 'mock_redis/assertions'
+
 class MockRedis
   module HashMethods
+    include Assertions
 
     def hdel(key, field)
       assert_hashy(key)
@@ -54,16 +57,13 @@ class MockRedis
     end
 
     def hmget(key, *fields)
-      unless fields.any?
-        raise RuntimeError, "ERR wrong number of arguments for 'hmget' command"
-      end
+      assert_has_args(fields, 'hmget')
       fields.map{|f| hget(key, f)}
     end
 
     def hmset(key, *kvpairs)
-      if kvpairs.none?
-        raise RuntimeError, "ERR wrong number of arguments for 'hmset' command"
-      elsif kvpairs.length.odd?
+      assert_has_args(kvpairs, 'hmset')
+      if kvpairs.length.odd?
         raise RuntimeError, "ERR wrong number of arguments for HMSET"
       end
 
