@@ -42,6 +42,10 @@ class MockRedis::DataStore
 
   def bgsave() "Background saving started" end
 
+  def dbsize
+    @data.keys.length
+  end
+
   def del(*keys)
     keys.
       find_all{|key| @data[key]}.
