@@ -16,7 +16,7 @@ module TypeCheckingHelper
   end
 
   def args_for_method(method)
-    method_arity = @redises.mock.method(method).arity
+    method_arity = @redises.real.method(method).arity
     if method_arity < 0   # -1 comes from def foo(*args)
       [1, 2]    # probably good enough
     else

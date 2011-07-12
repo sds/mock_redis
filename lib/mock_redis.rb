@@ -2,7 +2,23 @@ class MockRedis
   WouldBlock = Class.new(StandardError)
 
   def initialize(*args)
+    @ds = MockRedis::DataStore.new(*args)
+  end
+
+  def respond_to?(method, include_private=false)
+    super || @ds.respond_to?(method)
+  end
+
+  def method_missing(method, *args)
+    @ds.expire_keys
+    @ds.send(method, *args)
+  end
+end
+
+class MockRedis::DataStore
+  def initialize(*args)
     @data = {}
+    @expire_times = []
   end
 
 
@@ -28,7 +44,7 @@ class MockRedis
     elsif timeout > 0
       nil
     else
-      raise WouldBlock, "Can't block forever"
+      raise MockRedis::WouldBlock, "Can't block forever"
     end
   end
 
@@ -41,7 +57,7 @@ class MockRedis
     elsif timeout > 0
       nil
     else
-      raise WouldBlock, "Can't block forever"
+      raise MockRedis::WouldBlock, "Can't block forever"
     end
   end
 
@@ -53,13 +69,14 @@ class MockRedis
     elsif timeout > 0
       nil
     else
-      raise WouldBlock, "Can't block forever"
+      raise MockRedis::WouldBlock, "Can't block forever"
     end
   end
 
   def del(*keys)
     keys.
       find_all{|key| @data[key]}.
+      each {|k| persist(k)}.
       each {|k| @data.delete(k)}.
       length
   end
@@ -70,6 +87,23 @@ class MockRedis
 
   def decrby(key, n)
     incrby(key, -n)
+  end
+
+  def expire(key, seconds)
+    expireat(key, Time.now.to_i + seconds.to_i)
+  end
+
+  def expireat(key, timestamp)
+    unless looks_like_integer?(timestamp.to_s)
+      raise RuntimeError, "ERR value is not an integer or out of range"
+    end
+
+    if exists(key)
+      set_expiration(key, Time.at(timestamp.to_i))
+      true
+    else
+      false
+    end
   end
 
   def exists(key)
@@ -363,6 +397,15 @@ class MockRedis
     end
   end
 
+  def persist(key)
+    if exists(key) && has_expiration?(key)
+      remove_expiration(key)
+      true
+    else
+      false
+    end
+  end
+
   def ping
     'PONG'
   end
@@ -492,7 +535,7 @@ class MockRedis
 
   def clean_up_empty_lists_at(key)
     if @data[key] && @data[key].empty?
-      @data[key] = nil
+      del(key)
     end
   end
 
@@ -505,8 +548,13 @@ class MockRedis
     [arglist[0..-2], arglist.last]
   end
 
+
   def first_nonempty_list(keys)
     keys.find{|k| llen(k) > 0}
+  end
+
+  def has_expiration?(key)
+    @expire_times.any? {|(_,k)| k == key}
   end
 
   def looks_like_integer?(str)
@@ -527,9 +575,40 @@ class MockRedis
       gsub(/([^\\])\*/, "\\1.+"))
   end
 
+  def remove_expiration(key)
+    @expire_times.delete_if do |(t, k)|
+      key == k
+    end
+  end
+
+  def set_expiration(key, time)
+    remove_expiration(key)
+
+    @expire_times << [time, key]
+    @expire_times.sort! do |a, b|
+      a.first <=> b.first
+    end
+  end
+
   def zero_pad(string, desired_length)
     padding = "\000" * [(desired_length - string.length), 0].max
     string + padding
   end
 
+  public
+  # This method isn't private, but it also isn't a Redis command, so
+  # it doesn't belong up above with all the Redis commands.
+  def expire_keys
+    now = Time.now
+
+    to_delete = @expire_times.take_while do |(time, key)|
+      time <= now
+    end
+
+    to_delete.each do |(time, key)|
+      del(key)
+    end
+
+    @expire_times.slice!(0, to_delete.length)
+  end
 end
