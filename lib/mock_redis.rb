@@ -54,6 +54,10 @@ class MockRedis::DataStore
       length
   end
 
+  def echo(msg)
+    msg.to_s
+  end
+
   def expire(key, seconds)
     expireat(key, Time.now.to_i + seconds.to_i)
   end
