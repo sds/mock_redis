@@ -1,5 +1,8 @@
+require 'mock_redis/assertions'
+
 class MockRedis
   module SetMethods
+    include Assertions
 
     def sadd(key, member)
       assert_sety(key)
@@ -20,9 +23,7 @@ class MockRedis
     end
 
     def sdiff(*keys)
-      unless keys.any?
-        raise RuntimeError, "ERR wrong number of arguments for 'sdiff' command"
-      end
+      assert_has_args(keys, 'sdiff')
 
       keys.
         each {|k| assert_sety(k)}.
@@ -33,12 +34,21 @@ class MockRedis
     end
 
     def sdiffstore(destination, *keys)
-      unless keys.any?
-        raise RuntimeError, "ERR wrong number of arguments for 'sdiffstore' command"
-      end
+      assert_has_args(keys, 'sdiffstore')
+
       @data[destination] = Set.new(sdiff(*keys))
       clean_up_empties_at(destination)
       scard(destination)
+    end
+
+    def sinter(*keys)
+      assert_has_args(keys, 'sinter')
+
+      keys.
+        each {|k| assert_sety(k)}.
+        map {|k| @data[k] || Set.new}.
+        reduce {|a,e| a & e}.
+        to_a
     end
 
     def smembers(key)
