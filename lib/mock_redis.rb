@@ -146,6 +146,7 @@ class MockRedis::DataStore
     assert_hashy(key)
     if @data[key].has_key?(field)
       @data[key].delete(field)
+      clean_up_empties_at(key)
       1
     else
       0
@@ -533,7 +534,7 @@ class MockRedis::DataStore
     timeout
   end
 
-  def clean_up_empty_lists_at(key)
+  def clean_up_empties_at(key)
     if @data[key] && @data[key].empty?
       del(key)
     end
@@ -564,7 +565,7 @@ class MockRedis::DataStore
   def modifying_list_at(key)
     assert_listy(key)
     retval = yield @data[key]
-    clean_up_empty_lists_at(key)
+    clean_up_empties_at(key)
     retval
   end
 

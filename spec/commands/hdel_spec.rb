@@ -25,5 +25,11 @@ describe "#hdel(key, field)" do
     @redises.hget(@key, 'k2').should == 'v2'
   end
 
+  it "cleans up empty hashes" do
+    @redises.hdel(@key, 'k1')
+    @redises.hdel(@key, 'k2')
+    @redises.get(@key).should be_nil
+  end
+
   it_should_behave_like "a hash-only command"
 end
