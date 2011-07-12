@@ -8,6 +8,8 @@ require 'mock_redis/string_methods'
 class MockRedis
   WouldBlock = Class.new(StandardError)
 
+  undef_method(:type)
+
   def initialize(*args)
     @ds = MockRedis::DataStore.new(*args)
   end
@@ -123,6 +125,22 @@ class MockRedis::DataStore
       (expiration(key) - Time.now).to_i
     else
       -1
+    end
+  end
+
+  def type(key)
+    if !exists(key)
+      'none'
+    elsif hashy?(key)
+      'hash'
+    elsif stringy?(key)
+      'string'
+    elsif listy?(key)
+      'list'
+    elsif sety?(key)
+      'set'
+    else
+      raise ArgumentError, "Not sure how #{@data[key].inspect} got in here"
     end
   end
 
