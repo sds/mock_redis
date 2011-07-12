@@ -1,0 +1,183 @@
+class MockRedis
+  module StringMethods
+
+    def append(key, value)
+      assert_stringy(key)
+      @data[key] ||= ""
+      @data[key] << value
+      @data[key].length
+    end
+
+    def decr(key)
+      decrby(key, 1)
+    end
+
+    def decrby(key, n)
+      incrby(key, -n)
+    end
+
+    def get(key)
+      assert_stringy(key)
+      @data[key]
+    end
+
+    def getbit(key, offset)
+      assert_stringy(key)
+
+      offset_of_byte = offset / 8
+      offset_within_byte = offset % 8
+
+      # String#getbyte would be lovely, but it's not in 1.8.7.
+      byte = (@data[key] || "").each_byte.drop(offset_of_byte).first
+
+      if byte
+        (byte & (2**7 >> offset_within_byte)) > 0 ? 1 : 0
+      else
+        0
+      end
+    end
+
+    def getrange(key, start, stop)
+      assert_stringy(key)
+      (@data[key] || "")[start..stop]
+    end
+
+    def getset(key, value)
+      retval = get(key)
+      set(key, value)
+      retval
+    end
+
+    def incr(key)
+      incrby(key, 1)
+    end
+
+    def incrby(key, n)
+      assert_stringy(key)
+      unless can_incr?(@data[key])
+        raise RuntimeError, "ERR value is not an integer or out of range"
+      end
+
+      unless looks_like_integer?(n.to_s)
+        raise RuntimeError, "ERR value is not an integer or out of range"
+      end
+
+      new_value = @data[key].to_i + n.to_i
+      @data[key] = new_value.to_s
+      # for some reason, redis-rb doesn't return this as a string.
+      new_value
+    end
+
+    def mget(*keys)
+      unless keys.length > 0
+        raise RuntimeError, "ERR wrong number of arguments for 'mget' command"
+      end
+
+      keys.map do |key|
+        get(key) if stringy?(key)
+      end
+    end
+
+    def mset(*kvpairs)
+      # a little consistency in error messages would be appreciated, Redis.
+      if kvpairs.length == 0
+        raise RuntimeError, "ERR wrong number of arguments for 'mset' command"
+      elsif kvpairs.length.odd?
+        raise RuntimeError, "ERR wrong number of arguments for MSET"
+      end
+
+      kvpairs.each_slice(2) do |(k,v)|
+        set(k,v)
+      end
+
+      "OK"
+    end
+
+    def msetnx(*kvpairs)
+      if kvpairs.length == 0
+        raise RuntimeError, "ERR wrong number of arguments for 'msetnx' command"
+      end
+
+      if kvpairs.each_slice(2).any? {|(k,v)| exists(k)}
+        0
+      else
+        mset(*kvpairs)
+        1
+      end
+    end
+
+    def set(key, value)
+      @data[key] = value.to_s
+      'OK'
+    end
+
+    def setbit(key, offset, value)
+      assert_stringy(key, "ERR bit is not an integer or out of range")
+      retval = getbit(key, offset)
+
+      str = @data[key] || ""
+
+      offset_of_byte = offset / 8
+      offset_within_byte = offset % 8
+
+      if offset_of_byte >= str.bytesize
+        str = zero_pad(str, offset_of_byte+1)
+      end
+
+      char_index = byte_index = offset_within_char = 0
+      str.each_char do |c|
+        if byte_index < offset_of_byte
+          char_index += 1
+          byte_index += c.bytesize
+        else
+          offset_within_char = byte_index - offset_of_byte
+          break
+        end
+      end
+
+      char = str[char_index]
+      char = char.chr if char.respond_to?(:chr)  # ruby 1.8 vs 1.9
+      char_as_number = char.each_byte.reduce(0) do |a, byte|
+        (a << 8) + byte
+      end
+      char_as_number |=
+        (2**((char.bytesize * 8)-1) >>
+        (offset_within_char * 8 + offset_within_byte))
+      str[char_index] = char_as_number.chr
+
+      @data[key] = str
+      retval
+    end
+
+    def setrange(key, offset, value)
+      assert_stringy(key)
+      value = value.to_s
+      old_value = (@data[key] || "")
+
+      prefix = zero_pad(old_value[0...offset], offset)
+      @data[key] = prefix + value + (old_value[(offset + value.length)..-1] || "")
+      @data[key].length
+    end
+
+    def strlen(key)
+      assert_stringy(key)
+      (@data[key] || "").bytesize
+    end
+
+
+
+
+    private
+    def stringy?(key)
+      @data[key].nil? || @data[key].kind_of?(String)
+    end
+
+    def assert_stringy(key,
+        message="ERR Operation against a key holding the wrong kind of value")
+      unless stringy?(key)
+        raise RuntimeError, message
+      end
+    end
+
+  end
+end
