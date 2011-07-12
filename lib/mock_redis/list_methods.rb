@@ -39,8 +39,7 @@ class MockRedis
     end
 
     def lindex(key, index)
-      assert_listy(key)
-      (@data[key] || [])[index]
+      with_list_at(key) {|l| l[index]}
     end
 
     def linsert(key, position, pivot, value)
@@ -68,35 +67,33 @@ class MockRedis
     end
 
     def llen(key)
-      assert_listy(key)
-      (@data[key] || []).length
+      with_list_at(key, &:length)
     end
 
     def lpop(key)
-      modifying_list_at(key) {|list| list.shift if list}
+      with_list_at(key, &:shift)
     end
 
     def lpush(key, value)
-      @data[key] ||= []
-      lpushx(key, value)
+      with_list_at(key) {|l| l.unshift(value.to_s)}
+      llen(key)
     end
 
     def lpushx(key, value)
       assert_listy(key)
-      @data[key].unshift(value.to_s) if @data[key]
-      llen(key)
+      return 0 unless list_at?(key)
+      lpush(key, value)
     end
 
     def lrange(key, start, stop)
-      assert_listy(key)
-      (@data[key] || [])[start..stop]
+      with_list_at(key) {|l| l[start..stop]}
     end
 
     def lrem(key, count, value)
       count = count.to_i
       value = value.to_s
 
-      modifying_list_at(key) do |list|
+      with_list_at(key) do |list|
         indices_with_value = (0..(llen(key) - 1)).find_all do |i|
           list[i] == value
         end
@@ -116,7 +113,7 @@ class MockRedis
     def lset(key, index, value)
       assert_listy(key)
 
-      unless @data[key]
+      unless list_at?(key)
         raise RuntimeError, "ERR no such key"
       end
 
@@ -129,14 +126,14 @@ class MockRedis
     end
 
     def ltrim(key, start, stop)
-      modifying_list_at(key) do |list|
+      with_list_at(key) do |list|
         list.replace(list[start..stop] || []) if list
         'OK'
       end
     end
 
     def rpop(key)
-      modifying_list_at(key) {|list| list.pop if list}
+      with_list_at(key) {|list| list.pop if list}
     end
 
     def rpoplpush(source, destination)
@@ -146,19 +143,24 @@ class MockRedis
     end
 
     def rpush(key, value)
-      @data[key] ||= []
-      rpushx(key, value)
+      with_list_at(key) {|l| l.push(value.to_s)}
+      llen(key)
     end
 
     def rpushx(key, value)
       assert_listy(key)
-      @data[key].push(value.to_s) if @data[key]
-      llen(key)
+      return 0 unless list_at?(key)
+      rpush(key, value)
     end
 
     private
-    def modifying_list_at(key)
+    def list_at?(key)
+      @data[key] && listy?(key)
+    end
+
+    def with_list_at(key)
       assert_listy(key)
+      @data[key] ||= []
       retval = yield @data[key]
       clean_up_empties_at(key)
       retval
