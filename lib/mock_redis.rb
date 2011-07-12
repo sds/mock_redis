@@ -411,6 +411,10 @@ class MockRedis::DataStore
     'PONG'
   end
 
+  def randomkey
+    @data.keys[rand(@data.length)]
+  end
+
   def rename(key, newkey)
     if key == newkey
       raise RuntimeError, "ERR source and destination objects are the same"
