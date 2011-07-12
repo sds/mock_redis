@@ -70,6 +70,10 @@ class MockRedis
       end
     end
 
+    def srandmember(key)
+      with_set_at(key, &:first)
+    end
+
     private
     def with_set_at(key)
       assert_sety(key)
