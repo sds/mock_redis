@@ -363,6 +363,10 @@ class MockRedis
     end
   end
 
+  def ping
+    'PONG'
+  end
+
   def rpop(key)
     modifying_list_at(key) {|list| list.pop if list}
   end
