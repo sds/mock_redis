@@ -6,7 +6,7 @@ describe "#type(key)" do
   end
 
   it "returns 'none' for no key" do
-    @redises.mock.type(@key).should == 'none'
+    @redises.type(@key).should == 'none'
   end
 
   it "returns 'string' for a string" do
