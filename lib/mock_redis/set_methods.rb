@@ -51,6 +51,12 @@ class MockRedis
         to_a
     end
 
+    def sinterstore(destination, *keys)
+      assert_has_args(keys, 'sinterstore')
+      @data[destination] = Set.new(sinter(*keys))
+      clean_up_empties_at(destination)
+      scard(destination)
+    end
 
     def smembers(key)
       assert_sety(key)
