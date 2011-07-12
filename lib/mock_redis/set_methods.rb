@@ -62,6 +62,14 @@ class MockRedis
       end
     end
 
+    def spop(key)
+      with_set_at(key) do |set|
+        member = set.first
+        set.delete(member)
+        member
+      end
+    end
+
     private
     def with_set_at(key)
       assert_sety(key)
