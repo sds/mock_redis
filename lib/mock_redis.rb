@@ -118,6 +118,14 @@ class MockRedis::DataStore
     'OK'
   end
 
+  def ttl(key)
+    if has_expiration?(key)
+      (expiration(key) - Time.now).to_i
+    else
+      -1
+    end
+  end
+
   private
 
   def assert_valid_timeout(timeout)
@@ -138,6 +146,9 @@ class MockRedis::DataStore
     [arglist[0..-2], arglist.last]
   end
 
+  def expiration(key)
+    @expire_times.find {|(_,k)| k == key}.first
+  end
 
   def has_expiration?(key)
     @expire_times.any? {|(_,k)| k == key}
