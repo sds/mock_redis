@@ -164,6 +164,15 @@ class MockRedis
     true
   end
 
+  def hsetnx(key, field, value)
+    if hget(key, field)
+      false
+    else
+      hset(key, field, value)
+      true
+    end
+  end
+
   def incr(key)
     incrby(key, 1)
   end
