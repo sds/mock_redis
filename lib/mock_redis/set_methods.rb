@@ -35,9 +35,9 @@ class MockRedis
 
     def sdiffstore(destination, *keys)
       assert_has_args(keys, 'sdiffstore')
-
-      @data[destination] = Set.new(sdiff(*keys))
-      clean_up_empties_at(destination)
+      modifying_set_at(destination) do |set|
+        set.merge(sdiff(*keys))
+      end
       scard(destination)
     end
 
@@ -53,8 +53,9 @@ class MockRedis
 
     def sinterstore(destination, *keys)
       assert_has_args(keys, 'sinterstore')
-      @data[destination] = Set.new(sinter(*keys))
-      clean_up_empties_at(destination)
+      modifying_set_at(destination) do |set|
+        set.merge(sinter(*keys))
+      end
       scard(destination)
     end
 
@@ -68,8 +69,30 @@ class MockRedis
       @data[key].to_a
     end
 
+    def smove(src, dest, member)
+      member = member.to_s
+
+      modifying_set_at(src) do |src_set|
+        modifying_set_at(dest) do |dest_set|
+          if src_set.delete?(member)
+            dest_set.add(member)
+            true
+          else
+            false
+          end
+        end
+      end
+    end
 
     private
+    def modifying_set_at(key)
+      assert_sety(key)
+      @data[key] ||= Set.new
+      retval = yield @data[key]
+      clean_up_empties_at(key)
+      retval
+    end
+
     def sety?(key)
       @data[key].nil? || @data[key].kind_of?(Set)
     end
