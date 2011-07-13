@@ -91,6 +91,11 @@ class MockRedis::DataStore
     data.has_key?(key)
   end
 
+  def flushdb
+    data.keys.each {|k| del(k)}
+    'OK'
+  end
+
   def keys(format)
     data.keys.grep(redis_pattern_to_ruby_regex(format))
   end
