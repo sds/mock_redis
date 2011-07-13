@@ -17,7 +17,7 @@ class RedisMultiplexer < BlankSlate
     mock_retval = handle_special_cases(method, mock_retval)
     real_retval = handle_special_cases(method, real_retval)
 
-    if ((mock_retval != real_retval) && !mock_error && !real_error)
+    if (!equalish?(mock_retval, real_retval) && !mock_error && !real_error)
       # no exceptions, just different behavior
       raise MismatchedResponse,
         "Mock failure: responses not equal.\n" +
@@ -34,9 +34,7 @@ class RedisMultiplexer < BlankSlate
         "Mock failure: raised an error when it shouldn't have.\n" +
         "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" +
         "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
-    elsif (mock_error && real_error &&
-        (mock_error.class != real_error.class ||
-        mock_error.message != real_error.message))
+    elsif (mock_error && real_error && !equalish?(mock_error, real_error))
       raise MismatchedResponse,
         "Mock failure: raised the wrong error.\n" +
         "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" +
@@ -45,6 +43,18 @@ class RedisMultiplexer < BlankSlate
 
     raise mock_error if mock_error
     mock_retval
+  end
+
+  def equalish?(a, b)
+    if a == b
+      true
+    elsif a.is_a?(Array) && b.is_a?(Array)
+      a.zip(b).all? {|(x,y)| equalish?(x,y)}
+    elsif a.is_a?(Exception) && b.is_a?(Exception)
+      a.class == b.class && a.message == b.message
+    else
+      false
+    end
   end
 
   def mock() @mock_redis end
