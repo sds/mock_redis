@@ -6,9 +6,9 @@ class MockRedis
 
     def append(key, value)
       assert_stringy(key)
-      @data[key] ||= ""
-      @data[key] << value
-      @data[key].length
+      data[key] ||= ""
+      data[key] << value
+      data[key].length
     end
 
     def decr(key)
@@ -21,7 +21,7 @@ class MockRedis
 
     def get(key)
       assert_stringy(key)
-      @data[key]
+      data[key]
     end
 
     def getbit(key, offset)
@@ -31,7 +31,7 @@ class MockRedis
       offset_within_byte = offset % 8
 
       # String#getbyte would be lovely, but it's not in 1.8.7.
-      byte = (@data[key] || "").each_byte.drop(offset_of_byte).first
+      byte = (data[key] || "").each_byte.drop(offset_of_byte).first
 
       if byte
         (byte & (2**7 >> offset_within_byte)) > 0 ? 1 : 0
@@ -42,7 +42,7 @@ class MockRedis
 
     def getrange(key, start, stop)
       assert_stringy(key)
-      (@data[key] || "")[start..stop]
+      (data[key] || "")[start..stop]
     end
 
     def getset(key, value)
@@ -57,7 +57,7 @@ class MockRedis
 
     def incrby(key, n)
       assert_stringy(key)
-      unless can_incr?(@data[key])
+      unless can_incr?(data[key])
         raise RuntimeError, "ERR value is not an integer or out of range"
       end
 
@@ -65,8 +65,8 @@ class MockRedis
         raise RuntimeError, "ERR value is not an integer or out of range"
       end
 
-      new_value = @data[key].to_i + n.to_i
-      @data[key] = new_value.to_s
+      new_value = data[key].to_i + n.to_i
+      data[key] = new_value.to_s
       # for some reason, redis-rb doesn't return this as a string.
       new_value
     end
@@ -104,7 +104,7 @@ class MockRedis
     end
 
     def set(key, value)
-      @data[key] = value.to_s
+      data[key] = value.to_s
       'OK'
     end
 
@@ -112,7 +112,7 @@ class MockRedis
       assert_stringy(key, "ERR bit is not an integer or out of range")
       retval = getbit(key, offset)
 
-      str = @data[key] || ""
+      str = data[key] || ""
 
       offset_of_byte = offset / 8
       offset_within_byte = offset % 8
@@ -142,23 +142,23 @@ class MockRedis
         (offset_within_char * 8 + offset_within_byte))
       str[char_index] = char_as_number.chr
 
-      @data[key] = str
+      data[key] = str
       retval
     end
 
     def setrange(key, offset, value)
       assert_stringy(key)
       value = value.to_s
-      old_value = (@data[key] || "")
+      old_value = (data[key] || "")
 
       prefix = zero_pad(old_value[0...offset], offset)
-      @data[key] = prefix + value + (old_value[(offset + value.length)..-1] || "")
-      @data[key].length
+      data[key] = prefix + value + (old_value[(offset + value.length)..-1] || "")
+      data[key].length
     end
 
     def strlen(key)
       assert_stringy(key)
-      (@data[key] || "").bytesize
+      (data[key] || "").bytesize
     end
 
 
@@ -166,7 +166,7 @@ class MockRedis
 
     private
     def stringy?(key)
-      @data[key].nil? || @data[key].kind_of?(String)
+      data[key].nil? || data[key].kind_of?(String)
     end
 
     def assert_stringy(key,

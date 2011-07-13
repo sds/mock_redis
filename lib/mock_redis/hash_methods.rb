@@ -26,7 +26,7 @@ class MockRedis
 
     def hincrby(key, field, increment)
       with_hash_at(key) do |hash|
-        unless can_incr?(@data[key][field])
+        unless can_incr?(data[key][field])
           raise RuntimeError, "ERR hash value is not an integer"
         end
         unless looks_like_integer?(increment.to_s)
@@ -89,7 +89,7 @@ class MockRedis
     end
 
     def hashy?(key)
-      @data[key].nil? || @data[key].kind_of?(Hash)
+      data[key].nil? || data[key].kind_of?(Hash)
     end
 
     def assert_hashy(key)

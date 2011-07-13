@@ -54,10 +54,10 @@ class MockRedis
       end
 
       assert_listy(key)
-      return 0 unless @data[key]
+      return 0 unless data[key]
 
       pivot_position = (0..llen(key) - 1).find do |i|
-        @data[key][i] == pivot.to_s
+        data[key][i] == pivot.to_s
       end
 
       return -1 unless pivot_position
@@ -68,7 +68,7 @@ class MockRedis
                           pivot_position + 1
                         end
 
-      @data[key].insert(insertion_index, value.to_s)
+      data[key].insert(insertion_index, value.to_s)
       llen(key)
     end
 
@@ -127,7 +127,7 @@ class MockRedis
         raise RuntimeError, "ERR index out of range"
       end
 
-      @data[key][index] = value.to_s
+      data[key][index] = value.to_s
       'OK'
     end
 
@@ -161,7 +161,7 @@ class MockRedis
 
     private
     def list_at?(key)
-      @data[key] && listy?(key)
+      data[key] && listy?(key)
     end
 
     def with_list_at(key, &blk)
@@ -169,7 +169,7 @@ class MockRedis
     end
 
     def listy?(key)
-      @data[key].nil? || @data[key].kind_of?(Array)
+      data[key].nil? || data[key].kind_of?(Array)
     end
 
     def assert_listy(key)

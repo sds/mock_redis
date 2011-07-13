@@ -9,6 +9,7 @@ class MockRedis
   WouldBlock = Class.new(StandardError)
 
   undef_method(:type)
+  undef_method(:select)
 
   def initialize(*args)
     @ds = MockRedis::DataStore.new(*args)
@@ -31,10 +32,21 @@ class MockRedis::DataStore
   include MockRedis::StringMethods
 
   def initialize(*args)
-    @data = {}
-    @expire_times = []
+    @current_db = 0
+    @databases = Hash.new {|h,k| h[k] = {}}
+    @expire_times = Hash.new {|h,k| h[k] = []}
   end
 
+  # The data in the current database.
+  def data
+    @databases[@current_db]
+  end
+
+  def expire_times
+    @expire_times[@current_db]
+  end
+
+  # Redis commands go below this line and above 'private'
 
   def auth(_) 'OK' end
 
@@ -43,14 +55,14 @@ class MockRedis::DataStore
   def bgsave() "Background saving started" end
 
   def dbsize
-    @data.keys.length
+    data.keys.length
   end
 
   def del(*keys)
     keys.
-      find_all{|key| @data[key]}.
+      find_all{|key| data[key]}.
       each {|k| persist(k)}.
-      each {|k| @data.delete(k)}.
+      each {|k| data.delete(k)}.
       length
   end
 
@@ -76,11 +88,11 @@ class MockRedis::DataStore
   end
 
   def exists(key)
-    @data.has_key?(key)
+    data.has_key?(key)
   end
 
   def keys(format)
-    @data.keys.grep(redis_pattern_to_ruby_regex(format))
+    data.keys.grep(redis_pattern_to_ruby_regex(format))
   end
 
   def lastsave
@@ -101,14 +113,14 @@ class MockRedis::DataStore
   end
 
   def randomkey
-    @data.keys[rand(@data.length)]
+    data.keys[rand(data.length)]
   end
 
   def rename(key, newkey)
     if key == newkey
       raise RuntimeError, "ERR source and destination objects are the same"
     end
-    @data[newkey] = @data.delete(key)
+    data[newkey] = data.delete(key)
     'OK'
   end
 
@@ -125,6 +137,11 @@ class MockRedis::DataStore
   end
 
   def save
+    'OK'
+  end
+
+  def select(db)
+    @current_db = db.to_i
     'OK'
   end
 
@@ -148,7 +165,7 @@ class MockRedis::DataStore
     elsif sety?(key)
       'set'
     else
-      raise ArgumentError, "Not sure how #{@data[key].inspect} got in here"
+      raise ArgumentError, "Not sure how #{data[key].inspect} got in here"
     end
   end
 
@@ -173,11 +190,11 @@ class MockRedis::DataStore
   end
 
   def expiration(key)
-    @expire_times.find {|(_,k)| k == key}.first
+    expire_times.find {|(_,k)| k == key}.first
   end
 
   def has_expiration?(key)
-    @expire_times.any? {|(_,k)| k == key}
+    expire_times.any? {|(_,k)| k == key}
   end
 
   def looks_like_integer?(str)
@@ -192,7 +209,7 @@ class MockRedis::DataStore
   end
 
   def remove_expiration(key)
-    @expire_times.delete_if do |(t, k)|
+    expire_times.delete_if do |(t, k)|
       key == k
     end
   end
@@ -200,8 +217,8 @@ class MockRedis::DataStore
   def set_expiration(key, time)
     remove_expiration(key)
 
-    @expire_times << [time, key]
-    @expire_times.sort! do |a, b|
+    expire_times << [time, key]
+    expire_times.sort! do |a, b|
       a.first <=> b.first
     end
   end
@@ -217,7 +234,7 @@ class MockRedis::DataStore
   def expire_keys
     now = Time.now
 
-    to_delete = @expire_times.take_while do |(time, key)|
+    to_delete = expire_times.take_while do |(time, key)|
       time <= now
     end
 
@@ -225,6 +242,6 @@ class MockRedis::DataStore
       del(key)
     end
 
-    @expire_times.slice!(0, to_delete.length)
+    expire_times.slice!(0, to_delete.length)
   end
 end

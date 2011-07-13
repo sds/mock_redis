@@ -33,8 +33,12 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    @redises.send_without_checking(:keys, "mock-redis-test:*").each do |key|
-      @redises.send_without_checking(:del, key)
+    # databases mentioned in our tests
+    [1, 0].each do |db|
+      @redises.send_without_checking(:select, db)
+      @redises.send_without_checking(:keys, "mock-redis-test:*").each do |key|
+        @redises.send_without_checking(:del, key)
+      end
     end
   end
 end
