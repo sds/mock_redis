@@ -8,8 +8,8 @@ require 'mock_redis/string_methods'
 class MockRedis
   WouldBlock = Class.new(StandardError)
 
-  undef_method(:type)
-  undef_method(:select)
+  undef_method('type') if instance_methods.map(&:to_s).include?('type')
+  undef_method('select')
 
   def initialize(*args)
     @ds = MockRedis::DataStore.new(*args)
