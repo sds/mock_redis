@@ -146,6 +146,12 @@ class MockRedis
       retval
     end
 
+    def setex(key, seconds, value)
+      set(key, value)
+      expire(key, seconds)
+      'OK'
+    end
+
     def setrange(key, offset, value)
       assert_stringy(key)
       value = value.to_s
