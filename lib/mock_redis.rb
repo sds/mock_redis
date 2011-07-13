@@ -91,6 +91,11 @@ class MockRedis::DataStore
     data.has_key?(key)
   end
 
+  def flushall
+    initialize
+    'OK'
+  end
+
   def flushdb
     data.keys.each {|k| del(k)}
     'OK'
