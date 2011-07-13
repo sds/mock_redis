@@ -12,19 +12,16 @@ class MockRedis
     include SetMethods
     include StringMethods
 
+    attr_reader :data, :expire_times
+
     def initialize(*args)
-      @current_db = 0
-      @databases = Hash.new {|h,k| h[k] = {}}
-      @expire_times = Hash.new {|h,k| h[k] = []}
+      @data = {}
+      @expire_times = []
     end
 
-    # The data in the current database.
-    def data
-      @databases[@current_db]
-    end
-
-    def expire_times
-      @expire_times[@current_db]
+    def initialize_copy(source)
+      @data = @data.clone
+      @expire_times = @expire_times.clone
     end
 
     # Redis commands go below this line and above 'private'
@@ -70,11 +67,6 @@ class MockRedis
 
     def exists(key)
       data.has_key?(key)
-    end
-
-    def flushall
-      initialize
-      'OK'
     end
 
     def flushdb
@@ -128,11 +120,6 @@ class MockRedis
     end
 
     def save
-      'OK'
-    end
-
-    def select(db)
-      @current_db = db.to_i
       'OK'
     end
 
