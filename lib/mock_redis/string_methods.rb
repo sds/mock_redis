@@ -152,6 +152,15 @@ class MockRedis
       'OK'
     end
 
+    def setnx(key, value)
+      if exists(key)
+        false
+      else
+        set(key, value)
+        true
+      end
+    end
+
     def setrange(key, offset, value)
       assert_stringy(key)
       value = value.to_s
