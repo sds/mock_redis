@@ -96,6 +96,10 @@ class MockRedis
       'PONG'
     end
 
+    def quit
+      'OK'
+    end
+
     def randomkey
       data.keys[rand(data.length)]
     end
