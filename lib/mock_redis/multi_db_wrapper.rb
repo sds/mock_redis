@@ -21,6 +21,14 @@ class MockRedis
       current_db.send(method, *args)
     end
 
+    def initialize_copy(source)
+      super
+      @databases = @databases.clone
+      @databases.keys.each do |k|
+        @databases[k] = @databases[k].clone
+      end
+    end
+
     # Redis commands
     def flushall
       @databases.values.each(&:flushdb)

@@ -11,17 +11,22 @@ class MockRedis
   include UndefRedisMethods
 
   def initialize(*args)
-    @ds = TransactionWrapper.new(
+    @db = TransactionWrapper.new(
       ExpireWrapper.new(
         MultiDbWrapper.new(
           Database.new(*args))))
   end
 
   def respond_to?(method, include_private=false)
-    super || @ds.respond_to?(method, include_private)
+    super || @db.respond_to?(method, include_private)
   end
 
   def method_missing(method, *args)
-    @ds.send(method, *args)
+    @db.send(method, *args)
+  end
+
+  def initialize_copy(source)
+    super
+    @db = @db.clone
   end
 end

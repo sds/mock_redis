@@ -5,11 +5,11 @@ class MockRedis
     include UndefRedisMethods
 
     def respond_to?(method, include_private=false)
-      super || @ds.respond_to?(method)
+      super || @db.respond_to?(method)
     end
 
-    def initialize(ds)
-      @ds = ds
+    def initialize(db)
+      @db = db
       @queued_commands = []
       @in_multi = false
     end
@@ -19,9 +19,14 @@ class MockRedis
         @queued_commands << [method, *args]
         'QUEUED'
       else
-        @ds.expire_keys
-        @ds.send(method, *args)
+        @db.expire_keys
+        @db.send(method, *args)
       end
+    end
+
+    def initialize_copy(source)
+      super
+      @db = @db.clone
     end
 
     def discard
