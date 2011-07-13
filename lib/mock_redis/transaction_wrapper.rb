@@ -27,6 +27,7 @@ class MockRedis
     def initialize_copy(source)
       super
       @db = @db.clone
+      @queued_commands = @queued_commands.clone
     end
 
     def discard
