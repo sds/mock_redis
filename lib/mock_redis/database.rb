@@ -6,7 +6,7 @@ require 'mock_redis/set_methods'
 require 'mock_redis/string_methods'
 
 class MockRedis
-  class DataStore
+  class Database
     include HashMethods
     include ListMethods
     include SetMethods

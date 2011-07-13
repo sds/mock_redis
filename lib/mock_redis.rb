@@ -1,7 +1,7 @@
 require 'set'
 
 require 'mock_redis/assertions'
-require 'mock_redis/data_store'
+require 'mock_redis/database'
 require 'mock_redis/expire_wrapper'
 require 'mock_redis/multi_db_wrapper'
 require 'mock_redis/transaction_wrapper'
@@ -14,7 +14,7 @@ class MockRedis
     @ds = TransactionWrapper.new(
       ExpireWrapper.new(
         MultiDbWrapper.new(
-          DataStore.new(*args))))
+          Database.new(*args))))
   end
 
   def respond_to?(method, include_private=false)
