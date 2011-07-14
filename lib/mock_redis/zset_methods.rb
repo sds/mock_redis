@@ -63,6 +63,10 @@ class MockRedis
       with_zset_at(key) {|z| z.sorted_members.index(member) }
     end
 
+    def zrem(key, member)
+      with_zset_at(key) {|z| !!z.delete?(member)}
+    end
+
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member)

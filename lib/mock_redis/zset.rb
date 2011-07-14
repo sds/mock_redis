@@ -31,6 +31,11 @@ class MockRedis
       self
     end
 
+    def delete?(member)
+      scores.delete(member)
+      members.delete?(member) and self
+    end
+
     def each
       members.each {|m| yield score(m), m}
     end
