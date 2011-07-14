@@ -8,7 +8,7 @@ class MockRedis
 
     attr_reader :members, :scores
 
-    def_delegators :members, :empty?, :size
+    def_delegators :members, :empty?, :include?, :size
 
     def initialize
       @members = Set.new

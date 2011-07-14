@@ -30,6 +30,16 @@ class MockRedis
       end
     end
 
+    def zincrby(key, increment, member)
+      assert_scorey(increment)
+      with_zset_at(key) do |z|
+        old_score = z.include?(member) ? z.score(member) : 0
+        new_score = old_score + increment
+        z.add(new_score, member)
+        new_score.to_s
+      end
+    end
+
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
         z.sorted[start..stop].map do |(score,member)|
