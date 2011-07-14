@@ -49,13 +49,24 @@ class MockRedis
 
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
-        z.sorted[start..stop].map do |(score,member)|
-          if options[:with_scores] || options[:withscores]
-            [member, score.to_s]
+        to_response(z.sorted[start..stop], options)
+      end
+    end
+
+    def zrangebyscore(key, min, max, options={})
+      with_zset_at(key) do |zset|
+        in_range = zset.sorted.find_all do |(score, member)|
+          min <= score && score <= max
+        end
+        if options[:limit]
+          if options[:limit].is_a?(Array) && options[:limit].length == 2
+            offset, count = options[:limit]
+            in_range = in_range.drop(offset).take(count)
           else
-            member
+            raise RuntimeError, "ERR syntax error"
           end
-        end.flatten
+        end
+        to_response(in_range, options)
       end
     end
 
@@ -69,13 +80,7 @@ class MockRedis
 
     def zrevrange(key, start, stop, options={})
       with_zset_at(key) do |z|
-        z.sorted.reverse[start..stop].map do |(score,member)|
-          if options[:with_scores] || options[:withscores]
-            [member, score.to_s]
-          else
-            member
-          end
-        end.flatten
+        to_response(z.sorted.reverse[start..stop], options)
       end
     end
 
@@ -98,6 +103,16 @@ class MockRedis
     end
 
     private
+    def to_response(score_member_pairs, options)
+      score_member_pairs.map do |(score,member)|
+        if options[:with_scores] || options[:withscores]
+          [member, score.to_s]
+        else
+          member
+        end
+      end.flatten
+    end
+
     def combine_weighted_zsets(keys, options, how)
       weights = options.fetch(:weights, keys.map { 1 })
       if weights.length != keys.length
