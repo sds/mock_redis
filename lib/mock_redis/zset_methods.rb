@@ -76,6 +76,12 @@ class MockRedis
       end
     end
 
+    def zremrangebyrank(key, start, stop)
+      zrange(key, start, stop).
+        each {|member| zrem(key, member)}.
+        size
+    end
+
     def zremrangebyscore(key, min, max)
       zrangebyscore(key, min, max).
         each {|member| zrem(key, member)}.
