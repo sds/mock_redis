@@ -62,5 +62,14 @@ class MockRedis
       @in_multi = true
       'OK'
     end
+
+    def unwatch
+      'OK'
+    end
+
+    def watch(_)
+      'OK'
+    end
+
   end
 end
