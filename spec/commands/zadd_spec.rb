@@ -24,5 +24,6 @@ describe "#zadd(key, score, member)" do
     @redises.zscore(@key, 'foo').should == "2"
   end
 
+  it_should_behave_like "arg 1 is a score"
   it_should_behave_like "a zset-only command"
 end

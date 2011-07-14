@@ -8,6 +8,8 @@ class MockRedis
     include UtilityMethods
 
     def zadd(key, score, member)
+      assert_scorey(score)
+
       retval = !zscore(key, member)
       with_zset_at(key) {|z| z.add(score, member)}
       retval
@@ -18,6 +20,9 @@ class MockRedis
     end
 
     def zcount(key, min, max)
+      assert_scorey(min, 'min or max')
+      assert_scorey(max, 'min or max')
+
       with_zset_at(key) do |z|
         z.count do |score, _|
           score >= min && score <= max
@@ -57,6 +62,17 @@ class MockRedis
       unless zsety?(key)
         raise RuntimeError,
         "ERR Operation against a key holding the wrong kind of value"
+      end
+    end
+
+    def looks_like_float?(x)
+      # ugh, exceptions for flow control.
+      !!Float(x) rescue false
+    end
+
+    def assert_scorey(value, what='value')
+      unless looks_like_float?(value)
+        raise RuntimeError, "ERR #{what} is not a double"
       end
     end
 
