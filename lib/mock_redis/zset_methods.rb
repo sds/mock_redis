@@ -58,15 +58,7 @@ class MockRedis
         in_range = zset.sorted.find_all do |(score, member)|
           min <= score && score <= max
         end
-        if options[:limit]
-          if options[:limit].is_a?(Array) && options[:limit].length == 2
-            offset, count = options[:limit]
-            in_range = in_range.drop(offset).take(count)
-          else
-            raise RuntimeError, "ERR syntax error"
-          end
-        end
-        to_response(in_range, options)
+        to_response(apply_limit(in_range, options[:limit]), options)
       end
     end
 
@@ -81,6 +73,15 @@ class MockRedis
     def zrevrange(key, start, stop, options={})
       with_zset_at(key) do |z|
         to_response(z.sorted.reverse[start..stop], options)
+      end
+    end
+
+    def zrevrangebyscore(key, max, min, options={})
+      with_zset_at(key) do |zset|
+        in_range = zset.sorted.reverse.find_all do |(score, member)|
+          min <= score && score <= max
+        end
+        to_response(apply_limit(in_range, options[:limit]), options)
       end
     end
 
@@ -103,6 +104,19 @@ class MockRedis
     end
 
     private
+    def apply_limit(collection, limit)
+      if limit
+        if limit.is_a?(Array) && limit.length == 2
+          offset, count = limit
+          collection.drop(offset).take(count)
+        else
+          raise RuntimeError, "ERR syntax error"
+        end
+      else
+        collection
+      end
+    end
+
     def to_response(score_member_pairs, options)
       score_member_pairs.map do |(score,member)|
         if options[:with_scores] || options[:withscores]
