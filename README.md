@@ -86,6 +86,3 @@ please submit a pull request with your (tested!) implementation.
   lives in a different class than the database stuff, so it's not just
   a simple assignment. Still, it shouldn't be too awful.
 
-* `#watch` and `#unwatch` aren't done. Should be straightforward to
-  implement.
-
