@@ -15,6 +15,12 @@ class MockRedis
       @scores  = Hash.new
     end
 
+    def initialize_copy(source)
+      super
+      @members = @members.clone
+      @scores  = @scores.clone
+    end
+
     def add(score, member)
       members.add(member)
       scores[member] = score

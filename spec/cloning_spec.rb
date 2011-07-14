@@ -11,6 +11,7 @@ describe "MockRedis#clone" do
       @mock.hset('foohash', 'bar', 'baz')
       @mock.lpush('foolist', 'bar')
       @mock.sadd('fooset', 'bar')
+      @mock.zadd('foozset', 1, 'bar')
 
       @clone = @mock.clone
     end
@@ -40,7 +41,8 @@ describe "MockRedis#clone" do
     end
 
     it "performs a deep copy (zset values)" do
-      pending "don't have zset operations yet"
+      @mock.zadd('foozset', 2, 'bar')
+      @clone.zscore('foozset', 'bar').should == "1"
     end
   end
 
