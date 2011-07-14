@@ -29,6 +29,7 @@ of supported methods:
 * List methods: `lpush`, `lpop`, `lrange`, `rpoplpush`, etc.
 * Set methods: `sadd`, `sinter`, `sismember`, etc.
 * Hash methods: `hset`, `hget`, `hgetall`, `hmget`, etc.
+* Sorted set methods: `zadd`, `zrank`, `zunionstore`, etc.
 * Expirations: `expire`, `ttl`, etc.
 * Transactions: `multi`, `exec`, `discard`
 
