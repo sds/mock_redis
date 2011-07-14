@@ -76,6 +76,12 @@ class MockRedis
       end
     end
 
+    def zremrangebyscore(key, min, max)
+      zrangebyscore(key, min, max).
+        each {|member| zrem(key, member)}.
+        size
+    end
+
     def zrevrangebyscore(key, max, min, options={})
       with_zset_at(key) do |zset|
         in_range = zset.sorted.reverse.find_all do |(score, member)|
