@@ -56,6 +56,10 @@ class MockRedis
       end.sort_by(&:first)
     end
 
+    def sorted_members
+      sorted.map(&:last)
+    end
+
     def union(other)
       if !block_given?
         union(other, &:+)
