@@ -13,13 +13,6 @@ class MockRedis
       retval
     end
 
-    def zscore(key, member)
-      with_zset_at(key) do |z|
-        score = z.score(member)
-        score.to_s if score
-      end
-    end
-
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
         z.sorted[start..stop].map do |(score,member)|
@@ -29,6 +22,13 @@ class MockRedis
             member
           end
         end.flatten
+      end
+    end
+
+    def zscore(key, member)
+      with_zset_at(key) do |z|
+        score = z.score(member)
+        score.to_s if score
       end
     end
 
