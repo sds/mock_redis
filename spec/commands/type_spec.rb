@@ -30,6 +30,7 @@ describe "#type(key)" do
   end
 
   it "returns 'zset' for a zset" do
-    pending "can't create zsets yet"
+    @redises.zadd(@key, 1, 2)
+    @redises.type(@key).should == 'zset'
   end
 end

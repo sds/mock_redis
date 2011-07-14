@@ -346,6 +346,8 @@ class MockRedis
         'list'
       elsif sety?(key)
         'set'
+      elsif zsety?(key)
+        'zset'
       else
         raise ArgumentError, "Not sure how #{data[key].inspect} got in here"
       end
