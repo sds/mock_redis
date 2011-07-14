@@ -79,6 +79,10 @@ class MockRedis
       end
     end
 
+    def zrevrank(key, member)
+      with_zset_at(key) {|z| z.sorted_members.reverse.index(member) }
+    end
+
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member)
