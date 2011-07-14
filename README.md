@@ -75,8 +75,6 @@ There are some things we want to have in here, but that we just
 haven't gotten to doing yet. If you're interested in helping out,
 please submit a pull request with your (tested!) implementation.
 
-* Zsets!
-
 * `#config(:get|:set|:resetstat)` isn't done. They can just return
   canned values.
 
