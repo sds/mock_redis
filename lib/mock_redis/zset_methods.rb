@@ -59,9 +59,52 @@ class MockRedis
       end
     end
 
+    def zunionstore(destination, keys, options={})
+      assert_has_args(keys, 'zunionstore')
+
+      weights = options.fetch(:weights, keys.map { 1 })
+      if weights.length != keys.length
+        raise RuntimeError, "ERR syntax error"
+      end
+
+      aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
+                   when :sum
+                     proc {|a,b| [a,b].compact.reduce(&:+)}
+                   when :min
+                     proc {|a,b| [a,b].compact.min}
+                   when :max
+                     proc {|a,b| [a,b].compact.max}
+                   else
+                     raise RuntimeError, "ERR syntax error"
+                   end
+
+      data[destination] = with_zsets_at(*keys) do |*zsets|
+        zsets.zip(weights).map do |(zset, weight)|
+          zset.reduce(Zset.new) do |acc, (score, member)|
+            acc.add(score * weight, member)
+          end
+        end.reduce do |za, zb|
+          za.union(zb, &aggregator)
+        end
+      end
+      zcard(destination)
+    end
+
     private
     def with_zset_at(key, &blk)
       with_thing_at(key, :assert_zsety, proc {Zset.new}, &blk)
+    end
+
+    def with_zsets_at(*keys, &blk)
+      if keys.length == 1
+        with_zset_at(keys.first, &blk)
+      else
+        with_zset_at(keys.first) do |set|
+          with_zsets_at(*(keys[1..-1])) do |*sets|
+            blk.call(*([set] + sets))
+          end
+        end
+      end
     end
 
     def zsety?(key)

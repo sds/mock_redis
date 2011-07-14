@@ -23,7 +23,12 @@ class MockRedis
 
     def add(score, member)
       members.add(member)
-      scores[member] = score
+      if score.to_f.to_i == score.to_f
+        scores[member] = score.to_f.to_i
+      else
+        scores[member] = score.to_f
+      end
+      self
     end
 
     def each
@@ -38,6 +43,17 @@ class MockRedis
       members.map do |m|
         [score(m), m]
       end.sort_by(&:first)
+    end
+
+    def union(other)
+      if !block_given?
+        union(other, &:+)
+      else
+        self.members.union(other.members).reduce(self.class.new) do |acc, m|
+          new_score = yield(self.score(m), other.score(m))
+          acc.add(new_score, m)
+        end
+      end
     end
 
   end
