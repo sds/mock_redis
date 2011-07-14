@@ -67,6 +67,18 @@ class MockRedis
       with_zset_at(key) {|z| !!z.delete?(member)}
     end
 
+    def zrevrange(key, start, stop, options={})
+      with_zset_at(key) do |z|
+        z.sorted.reverse[start..stop].map do |(score,member)|
+          if options[:with_scores] || options[:withscores]
+            [member, score.to_s]
+          else
+            member
+          end
+        end.flatten
+      end
+    end
+
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member)
