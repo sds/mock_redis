@@ -13,6 +13,10 @@ class MockRedis
       retval
     end
 
+    def zcard(key)
+      with_zset_at(key, &:size)
+    end
+
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
         z.sorted[start..stop].map do |(score,member)|
