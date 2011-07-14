@@ -20,8 +20,16 @@ class MockRedis
       end
     end
 
-    def zrange(key, start, stop)
-      with_zset_at(key) {|z| z.sorted[start..stop].map{|(_,member)| member}}
+    def zrange(key, start, stop, options={})
+      with_zset_at(key) do |z|
+        z.sorted[start..stop].map do |(score,member)|
+          if options[:with_scores] || options[:withscores]
+            [member, score.to_s]
+          else
+            member
+          end
+        end.flatten
+      end
     end
 
     private
