@@ -4,6 +4,7 @@ require 'mock_redis/hash_methods'
 require 'mock_redis/list_methods'
 require 'mock_redis/set_methods'
 require 'mock_redis/string_methods'
+require 'mock_redis/zset_methods'
 
 class MockRedis
   class Database
@@ -11,6 +12,7 @@ class MockRedis
     include ListMethods
     include SetMethods
     include StringMethods
+    include ZsetMethods
 
     attr_reader :data, :expire_times
 
