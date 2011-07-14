@@ -17,6 +17,14 @@ class MockRedis
       with_zset_at(key, &:size)
     end
 
+    def zcount(key, min, max)
+      with_zset_at(key) do |z|
+        z.count do |score, _|
+          score >= min && score <= max
+        end
+      end
+    end
+
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
         z.sorted[start..stop].map do |(score,member)|

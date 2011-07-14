@@ -3,6 +3,7 @@ require 'set'
 
 class MockRedis
   class Zset
+    include Enumerable
     extend Forwardable
 
     attr_reader :members, :scores
@@ -17,6 +18,10 @@ class MockRedis
     def add(score, member)
       members.add(member)
       scores[member] = score
+    end
+
+    def each
+      members.each {|m| yield score(m), m}
     end
 
     def score(member)
