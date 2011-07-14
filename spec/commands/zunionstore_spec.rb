@@ -93,5 +93,4 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       end.should raise_error(RuntimeError)
     end
   end
-
 end

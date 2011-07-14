@@ -35,6 +35,17 @@ class MockRedis
       members.each {|m| yield score(m), m}
     end
 
+    def intersection(other)
+      if !block_given?
+        intersection(other, &:+)
+      else
+        self.members.intersection(other.members).reduce(self.class.new) do |acc, m|
+          new_score = yield(self.score(m), other.score(m))
+          acc.add(new_score, m)
+        end
+      end
+    end
+
     def score(member)
       scores[member]
     end

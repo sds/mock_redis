@@ -40,6 +40,13 @@ class MockRedis
       end
     end
 
+    def zinterstore(destination, keys, options={})
+      assert_has_args(keys, 'zinterstore')
+
+      data[destination] = combine_weighted_zsets(keys, options, :intersection)
+      zcard(destination)
+    end
+
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
         z.sorted[start..stop].map do |(score,member)|
@@ -62,6 +69,12 @@ class MockRedis
     def zunionstore(destination, keys, options={})
       assert_has_args(keys, 'zunionstore')
 
+      data[destination] = combine_weighted_zsets(keys, options, :union)
+      zcard(destination)
+    end
+
+    private
+    def combine_weighted_zsets(keys, options, how)
       weights = options.fetch(:weights, keys.map { 1 })
       if weights.length != keys.length
         raise RuntimeError, "ERR syntax error"
@@ -78,19 +91,18 @@ class MockRedis
                      raise RuntimeError, "ERR syntax error"
                    end
 
-      data[destination] = with_zsets_at(*keys) do |*zsets|
+      with_zsets_at(*keys) do |*zsets|
         zsets.zip(weights).map do |(zset, weight)|
           zset.reduce(Zset.new) do |acc, (score, member)|
             acc.add(score * weight, member)
           end
         end.reduce do |za, zb|
-          za.union(zb, &aggregator)
+          za.send(how, zb, &aggregator)
         end
       end
-      zcard(destination)
+
     end
 
-    private
     def with_zset_at(key, &blk)
       with_thing_at(key, :assert_zsety, proc {Zset.new}, &blk)
     end
