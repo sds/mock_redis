@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Samuel Merritt"]
   s.email       = ["spam@andcheese.org"]
-  s.homepage    = "https://github.com/smerritt/mock_redis"
+  s.homepage    = "https://github.com/causes/mock_redis"
   s.summary     = %q{Redis mock that just lives in memory; useful for testing.}
 
   s.description = %q{Instantiate one with `redis = MockRedis.new` and treat it like you would a normal Redis object. It supports all the usual Redis operations.}
