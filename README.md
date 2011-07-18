@@ -83,10 +83,6 @@ please submit a pull request with your (tested!) implementation.
   validation will be a pain in the butt, but other than that, it
   shouldn't be too bad.
 
-* `#move` isn't done. It's a little annoying since the multi-db stuff
-  lives in a different class than the database stuff, so it's not just
-  a simple assignment. Still, it shouldn't be too awful.
-
 ## Running the Tests
 
 If you want to work on this, you'll probably want to run the

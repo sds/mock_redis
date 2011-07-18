@@ -35,6 +35,40 @@ class MockRedis
       'OK'
     end
 
+    def move(key, db_index)
+      src = current_db
+      dest = db(db_index)
+
+      if !src.exists(key) || dest.exists(key)
+        false
+      else
+        case current_db.type(key)
+        when 'hash'
+          dest.hmset(key, *(src.hgetall(key).map{|k,v| [k,v]}.flatten))
+        when 'list'
+          while value = src.rpop(key)
+            dest.lpush(key, value)
+          end
+        when 'set'
+          while value = src.spop(key)
+            dest.sadd(key, value)
+          end
+        when 'string'
+          dest.set(key, src.get(key))
+        when 'zset'
+          src.zrange(key, 0, -1, :with_scores => true).each_slice(2) do |(m,s)|
+            dest.zadd(key, s, m)
+          end
+        else
+          raise ArgumentError,
+          "Can't move a key of type #{current_db.type(key).inspect}"
+        end
+
+        src.del(key)
+        true
+      end
+    end
+
     def select(db_index)
       @db_index = db_index.to_i
       'OK'
@@ -43,6 +77,10 @@ class MockRedis
     private
     def current_db
       @databases[@db_index]
+    end
+
+    def db(index)
+      @databases[index]
     end
   end
 end
