@@ -23,6 +23,11 @@ describe "#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [
       should == %w[Madison 4 Jefferson 3]
   end
 
+  it "treats +inf as positive infinity" do
+    @redises.zrevrangebyscore(@key, "+inf", 3).
+      should == %w[Madison Jefferson]
+  end
+
   it "honors the :limit => [offset count] argument" do
     @redises.zrevrangebyscore(@key, 100, -100, :limit => [1, 2]).
       should == ["Jefferson", "Adams"]

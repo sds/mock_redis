@@ -40,6 +40,36 @@ class MockRedis
       members.each {|m| yield score(m), m}
     end
 
+    def in_range(min, max)
+      in_from_the_left = case min
+                         when "-inf":
+                             lambda { true }
+                         when "+inf":
+                             lambda { false }
+                         when /\((.*)$/:
+                             val = $1.to_f
+                           lambda {|x| x.to_f > val }
+                         else
+                           lambda {|x| x.to_f >= min.to_f }
+                         end
+
+      in_from_the_right = case max
+                          when "-inf":
+                              lambda { false }
+                          when "+inf":
+                              lambda { true }
+                          when /\((.*)$/:
+                              val = $1.to_f
+                            lambda {|x| x.to_f < val }
+                          else
+                            lambda {|x| x.to_f <= max.to_f }
+                          end
+
+      sorted.find_all do |(score, member)|
+        in_from_the_left[score] && in_from_the_right[score]
+      end
+    end
+
     def intersection(other)
       if !block_given?
         intersection(other, &:+)

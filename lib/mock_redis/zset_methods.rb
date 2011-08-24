@@ -55,34 +55,8 @@ class MockRedis
 
     def zrangebyscore(key, min, max, options={})
       with_zset_at(key) do |zset|
-        in_from_the_left = case min
-                           when "-inf":
-                               lambda { true }
-                           when "+inf":
-                               lambda { false }
-                           when /\((.*)$/:
-                               val = $1.to_f
-                               lambda {|x| x.to_f > val }
-                           else
-                             lambda {|x| x.to_f >= min.to_f }
-                           end
-
-        in_from_the_right = case max
-                            when "-inf":
-                                lambda { false }
-                            when "+inf":
-                                lambda { true }
-                            when /\((.*)$/:
-                                val = $1.to_f
-                                lambda {|x| x.to_f < val }
-                            else
-                              lambda {|x| x.to_f <= max.to_f }
-                            end
-
-        in_range = zset.sorted.find_all do |(score, member)|
-          in_from_the_left[score] && in_from_the_right[score]
-        end
-        to_response(apply_limit(in_range, options[:limit]), options)
+        all_results = zset.in_range(min, max)
+        to_response(apply_limit(all_results, options[:limit]), options)
       end
     end
 
@@ -114,10 +88,11 @@ class MockRedis
 
     def zrevrangebyscore(key, max, min, options={})
       with_zset_at(key) do |zset|
-        in_range = zset.sorted.reverse.find_all do |(score, member)|
-          min <= score && score <= max
-        end
-        to_response(apply_limit(in_range, options[:limit]), options)
+        to_response(
+          apply_limit(
+            zset.in_range(min, max).reverse,
+            options[:limit]),
+          options)
       end
     end
 
