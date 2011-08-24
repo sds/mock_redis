@@ -38,5 +38,31 @@ describe "#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
     end.should raise_error(RuntimeError)
   end
 
+  it "treats scores like floats, not strings" do
+    @redises.zadd(@key, "10", "Tyler")
+    @redises.zrangebyscore(@key, 1, 2).should == ['Washington', 'Adams']
+  end
+
+  it "treats -inf as negative infinity" do
+    @redises.zrangebyscore(@key, "-inf", 3).should ==
+      ["Washington", "Adams", "Jefferson"]
+  end
+
+  it "treats +inf as positive infinity" do
+    @redises.zrangebyscore(@key, 3, "+inf").should == ["Jefferson", "Madison"]
+  end
+
+  it "treats +inf as positive infinity" do
+    @redises.zrangebyscore(@key, 3, "+inf").should == ["Jefferson", "Madison"]
+  end
+
+  it "honors exclusive ranges on the left" do
+    @redises.zrangebyscore(@key, "(3", 4).should == ["Madison"]
+  end
+
+  it "honors exclusive ranges on the right" do
+    @redises.zrangebyscore(@key, "3", "(4").should == ["Jefferson"]
+  end
+
   it_should_behave_like "a zset-only command"
 end
