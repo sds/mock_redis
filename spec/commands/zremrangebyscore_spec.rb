@@ -17,5 +17,12 @@ describe "#zremrangebyscore(key, min, max)" do
     @redises.zremrangebyscore(@key, 2, 3)
     @redises.zrange(@key, 0, -1).should == %w[Washington Madison]
   end
+
+  # As seen in http://redis.io/commands/zremrangebyscore
+  it "removes the elements for complex statements" do
+    @redises.zremrangebyscore(@key, '-inf', '(4')
+    @redises.zrange(@key, 0, -1).should == %w[Madison]
+  end
+
   it_should_behave_like "a zset-only command"
 end
