@@ -65,7 +65,7 @@ Ruby process.
 * `#monitor` isn't available; there's no place for requests to come
   from, so there's nothing to receive.
 
-* Pubsub commands (`#psubscribe`, `#publish`, `punsubscribe`) aren't
+* Pubsub commands (`#psubscribe`, `#publish`, `#punsubscribe`) aren't
   available.
 
 * `#slowlog` isn't available.
