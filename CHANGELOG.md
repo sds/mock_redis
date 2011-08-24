@@ -1,3 +1,6 @@
+### 0.1.2
+* Fixes for 1.9.2; no functionality changes.
+
 ### 0.1.1
 * Fix handling of -inf, +inf, and exclusive endpoints (e.g. "(3") in
   zrangebyscore, zrevrangebyscore, and zremrangebyscore. ("Fix" here
