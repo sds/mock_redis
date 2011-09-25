@@ -17,6 +17,30 @@ describe 'transactions (multi/exec/discard)' do
       end.should raise_error(RuntimeError)
     end
   end
+  context "#blocks" do
+    before(:each) do
+      @mock = @redises.mock # Mock only since the block syntax seems to confuse the multiplexer
+    end
+
+    it "implicitly runs exec when finished" do
+      @mock.set("counter", 5)
+      @mock.multi do
+        @mock.set("test", 1)
+        @mock.incr("counter")
+      end
+      @mock.get("counter").should == "6"
+      @mock.get("test").should == "1"
+    end
+
+    it "forbids nesting via blocks" do
+      @mock.multi do
+        lambda do
+          @mock.multi do
+          end
+        end.should raise_error(RuntimeError)
+      end
+    end
+  end
 
   context "#discard" do
     it "responds with 'OK' after #multi" do

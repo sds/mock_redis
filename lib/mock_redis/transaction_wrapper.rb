@@ -60,7 +60,12 @@ class MockRedis
         raise RuntimeError, "ERR MULTI calls can not be nested"
       end
       @in_multi = true
-      'OK'
+      if block_given?
+        yield(self)
+        self.exec
+      else
+        'OK'
+      end
     end
 
     def unwatch
