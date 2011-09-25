@@ -21,8 +21,8 @@ class MockRedis
     super || @db.respond_to?(method, include_private)
   end
 
-  def method_missing(method, *args)
-    @db.send(method, *args)
+  def method_missing(method, *args, &block)
+    @db.send(method, *args, &block)
   end
 
   def initialize_copy(source)
