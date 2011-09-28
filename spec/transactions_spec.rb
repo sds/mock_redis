@@ -17,26 +17,25 @@ describe 'transactions (multi/exec/discard)' do
       end.should raise_error(RuntimeError)
     end
   end
-  context "#blocks" do
-    before(:each) do
-      @mock = @redises.mock # Mock only since the block syntax seems to confuse the multiplexer
-    end
 
+  context "#blocks" do
     it "implicitly runs exec when finished" do
-      @mock.set("counter", 5)
-      @mock.multi do
-        @mock.set("test", 1)
-        @mock.incr("counter")
+      @redises.set("counter", 5)
+      @redises.multi do |r|
+        r.set("test", 1)
+        r.incr("counter")
       end
-      @mock.get("counter").should == "6"
-      @mock.get("test").should == "1"
+      @redises.get("counter").should == "6"
+      @redises.get("test").should == "1"
     end
 
     it "forbids nesting via blocks" do
-      @mock.multi do
+      # Have to use only the mock here. redis-rb has a bug in it where
+      # nested #multi calls raise NoMethodError because it gets a nil
+      # where it's not expecting one.
+      @redises.mock.multi do |r|
         lambda do
-          @mock.multi do
-          end
+          r.multi {}
         end.should raise_error(RuntimeError)
       end
     end
