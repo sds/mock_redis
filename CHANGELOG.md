@@ -1,3 +1,6 @@
+### 0.2.0
+* Support passing a block to `#multi`.
+
 ### 0.1.2
 * Fixes for 1.9.2; no functionality changes.
 
