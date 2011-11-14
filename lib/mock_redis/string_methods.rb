@@ -24,6 +24,10 @@ class MockRedis
       data[key]
     end
 
+    def [](key)
+      get(key)
+    end
+
     def getbit(key, offset)
       assert_stringy(key)
 
@@ -106,6 +110,10 @@ class MockRedis
     def set(key, value)
       data[key] = value.to_s
       'OK'
+    end
+
+    def []=(key, value)
+      set(key, value)
     end
 
     def setbit(key, offset, value)
