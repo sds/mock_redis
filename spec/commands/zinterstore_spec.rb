@@ -28,6 +28,14 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       %w[three 6 five 10 seven 14]
   end
 
+  it "removes existing elements in destination" do
+    @redises.zadd(@dest, 10, 'ten')
+
+    @redises.zinterstore(@dest, [@primes])
+    @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+      %w[two 2 three 3 five 5 seven 7]
+  end
+
   it "raises an error if keys is empty" do
     lambda do
       @redises.zinterstore(@dest, [])

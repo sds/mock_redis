@@ -3,7 +3,7 @@ require 'spec_helper'
 describe '#sdiffstore(destination, key [, key, ...])' do
   before do
     @numbers     = 'mock-redis-test:sdiffstore:numbers'
-    @evens       = 'mock-redis-test:sdiffstore:odds'
+    @evens       = 'mock-redis-test:sdiffstore:evens'
     @primes      = 'mock-redis-test:sdiffstore:primes'
     @destination = 'mock-redis-test:sdiffstore:destination'
 
@@ -29,6 +29,13 @@ describe '#sdiffstore(destination, key [, key, ...])' do
   it "treats missing keys as empty sets" do
     @redises.sdiffstore(@destination, @evens, 'mock-redis-test:nonesuch')
     @redises.smembers(@destination).should == %w[10 2 4 6 8]
+  end
+
+  it "removes existing elements in destination" do
+    @redises.sadd(@destination, 42)
+
+    @redises.sdiffstore(@destination, @primes)
+    @redises.smembers(@destination).should == %w[2 3 5 7]
   end
 
   it "raises an error if given 0 sets" do

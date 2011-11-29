@@ -22,7 +22,7 @@ class MockRedis
     def sdiffstore(destination, *keys)
       assert_has_args(keys, 'sdiffstore')
       with_set_at(destination) do |set|
-        set.merge(sdiff(*keys))
+        set.replace(sdiff(*keys))
       end
       scard(destination)
     end
@@ -38,7 +38,7 @@ class MockRedis
     def sinterstore(destination, *keys)
       assert_has_args(keys, 'sinterstore')
       with_set_at(destination) do |set|
-        set.merge(sinter(*keys))
+        set.replace(sinter(*keys))
       end
       scard(destination)
     end
@@ -88,7 +88,7 @@ class MockRedis
     def sunionstore(destination, *keys)
       assert_has_args(keys, 'sunionstore')
       with_set_at(destination) do |dest_set|
-        dest_set.merge(sunion(*keys))
+        dest_set.replace(sunion(*keys))
       end
       scard(destination)
     end
