@@ -26,6 +26,13 @@ describe '#sinterstore(destination, key [, key, ...])' do
     @redises.get(@destination).should be_nil
   end
 
+  it "removes existing elements in destination" do
+    @redises.sadd(@destination, 42)
+
+    @redises.sinterstore(@destination, @primes)
+    @redises.smembers(@destination).should == %w[2 3 5 7]
+  end
+
   it "raises an error if given 0 sets" do
     lambda do
       @redises.sinterstore(@destination)
