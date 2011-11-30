@@ -27,6 +27,14 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       %w[one 3 three 3 two 4]
   end
 
+  it "removes existing elements in destination" do
+    @redises.zadd(@dest, 10, 'ten')
+
+    @redises.zunionstore(@dest, [@set1])
+    @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+      %w[one 1]
+  end
+
   it "raises an error if keys is empty" do
     lambda do
       @redises.zunionstore(@dest, [])
