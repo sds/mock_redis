@@ -6,7 +6,10 @@ class MockRedis
       begin
         send(assertion, key)
         data[key] ||= empty_thing_generator.call
-        yield data[key]
+        data_key_ref = data[key]
+        ret = yield data[key]
+        data[key] = data_key_ref if data[key].nil?
+        ret
       ensure
         clean_up_empties_at(key)
       end

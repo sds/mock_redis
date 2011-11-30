@@ -33,6 +33,12 @@ describe '#sunionstore(destination, key [, key, ...])' do
     @redises.smembers(@destination).should == %w[2 3 5 7]
   end
 
+  it "correctly unions and stores when the destination is empty and is one of the arguments" do
+    @redises.sunionstore(@destination, @destination, @primes)
+
+    @redises.smembers(@destination).should == %w[2 3 5 7]
+  end
+
   it "raises an error if given 0 sets" do
     lambda do
       @redises.sunionstore(@destination)
