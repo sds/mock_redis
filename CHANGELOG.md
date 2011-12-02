@@ -1,3 +1,7 @@
+### 0.3.0
+* Support hash operator (`[]`/`[]=`) as synonym of `get`/`set`
+* Misc bugfixes
+
 ### 0.2.0
 * Support passing a block to `#multi`.
 
