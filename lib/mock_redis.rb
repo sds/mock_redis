@@ -2,6 +2,7 @@ require 'set'
 
 require 'mock_redis/assertions'
 require 'mock_redis/database'
+require 'mock_redis/distributed'
 require 'mock_redis/expire_wrapper'
 require 'mock_redis/multi_db_wrapper'
 require 'mock_redis/transaction_wrapper'
