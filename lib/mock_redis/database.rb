@@ -329,7 +329,7 @@ class MockRedis
 
     def ttl(key)
       if has_expiration?(key)
-        (expiration(key) - Time.now).to_i
+        expiration(key).to_i - Time.now.to_i
       else
         -1
       end

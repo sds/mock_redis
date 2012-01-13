@@ -35,11 +35,11 @@ describe "#select(db)" do
 
       @mock.select(0)
       @mock.set(@key, 1)
-      @mock.expire(@key, 101)
+      @mock.expire(@key, 100)
 
       @mock.select(1)
       @mock.set(@key, 2)
-      @mock.expire(@key, 201)
+      @mock.expire(@key, 200)
     end
 
     it "keeps expire times per-db" do
