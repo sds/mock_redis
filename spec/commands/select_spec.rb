@@ -25,29 +25,27 @@ describe "#select(db)" do
     @redises.get(@key).should == 'foo'
   end
 
-  context "[mock only]" do
+  context "databases' ttl" do
     # Time dependence introduces a bit of nondeterminism here
     before do
       @now = Time.now
       Time.stub!(:now).and_return(@now)
 
-      @mock = @redises.mock
+      @redises.select(0)
+      @redises.set(@key, 1)
+      @redises.expire(@key, 100)
 
-      @mock.select(0)
-      @mock.set(@key, 1)
-      @mock.expire(@key, 101)
-
-      @mock.select(1)
-      @mock.set(@key, 2)
-      @mock.expire(@key, 201)
+      @redises.select(1)
+      @redises.set(@key, 2)
+      @redises.expire(@key, 200)
     end
 
     it "keeps expire times per-db" do
-      @mock.select(0)
-      @mock.ttl(@key).should == 100
+      @redises.select(0)
+      @redises.ttl(@key).should == 100
 
-      @mock.select(1)
-      @mock.ttl(@key).should == 200
+      @redises.select(1)
+      @redises.ttl(@key).should == 200
     end
   end
 end
