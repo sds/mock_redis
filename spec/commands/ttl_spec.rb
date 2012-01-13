@@ -29,7 +29,7 @@ describe "#ttl(key)" do
 
     it "gives you the key's remaining lifespan in seconds" do
       @mock.expire(@key, 5)
-      @mock.ttl(@key).should == 4
+      @mock.ttl(@key).should == 5
     end
 
   end
