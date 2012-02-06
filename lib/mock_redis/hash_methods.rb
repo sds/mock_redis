@@ -52,6 +52,11 @@ class MockRedis
       fields.map{|f| hget(key, f)}
     end
 
+    def mapped_hmget(key, *fields)
+      reply = hmget(key, *fields)
+      Hash[*fields.zip(reply).flatten]
+    end
+
     def hmset(key, *kvpairs)
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
