@@ -52,6 +52,11 @@ class MockRedis
       fields.map{|f| hget(key, f)}
     end
 
+    def mapped_hmget(key, *fields)
+      reply = hmget(key, *fields)
+      Hash[*fields.zip(reply).flatten]
+    end
+
     def hmset(key, *kvpairs)
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
@@ -62,6 +67,12 @@ class MockRedis
         hset(key, k, v)
       end
       'OK'
+    end
+
+    def mapped_hmset(key, hash)
+      kvpairs = hash.to_a.flatten
+      assert_has_args(kvpairs, 'hmset')
+      hmset(key, *kvpairs)
     end
 
     def hset(key, field, value)
