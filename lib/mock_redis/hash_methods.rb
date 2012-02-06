@@ -69,6 +69,16 @@ class MockRedis
       'OK'
     end
 
+    def mapped_hmset(key, hash)
+      kvpairs = hash.to_a.flatten
+      assert_has_args(kvpairs, 'hmset')
+      if kvpairs.length.odd?
+        raise RuntimeError, "ERR wrong number of arguments for 'hmset' command"
+      end
+
+      hmset(key, *kvpairs)
+    end
+
     def hset(key, field, value)
       with_hash_at(key) {|h| h[field] = value.to_s}
       true
