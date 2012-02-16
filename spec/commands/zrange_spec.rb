@@ -17,6 +17,10 @@ describe "#zrange(key, start, stop [, :with_scores => true])" do
     @redises.zrange(@key, -2, -1).should == ['Jefferson', 'Madison']
   end
 
+  it 'returns empty list when start is too large' do
+    @redises.zrange(@key, 5, -1).should == []
+  end
+
   it "returns the scores when :with_scores is specified" do
     @redises.zrange(@key, 0, 1, :with_scores => true).
       should == ["Washington", "1", "Adams", "2"]
