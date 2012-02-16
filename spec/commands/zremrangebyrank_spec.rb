@@ -18,5 +18,10 @@ describe "#zremrangebyrank(key, start, stop)" do
     @redises.zrange(@key, 0, -1).should == %w[Washington Adams]
   end
 
+  it "does nothing if start is greater than cardinality of set" do
+    @redises.zremrangebyrank(@key, 5, -1)
+    @redises.zrange(@key, 0, -1).should == %w[Washington Adams Jefferson Madison]
+  end
+
   it_should_behave_like "a zset-only command"
 end
