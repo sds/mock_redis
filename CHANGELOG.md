@@ -1,3 +1,9 @@
+### 0.4.0
+* Support `mapped_hmset`/`mapped_hmget`
+* Support `pipelined`
+* Correctly handle out-of-range conditions for `zremrangebyrank` and `zrange`
+* Fix off-by-one error in calculation of `ttl`
+
 ### 0.3.0
 * Support hash operator (`[]`/`[]=`) as synonym of `get`/`set`
 * Misc bugfixes
