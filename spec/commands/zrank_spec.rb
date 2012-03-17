@@ -19,5 +19,11 @@ describe "#zrank(key, member)" do
     @redises.zrank(@key, 'three').should == 2
   end
 
+  it "handles integer members correctly" do
+    member = 11
+    @redises.zadd(@key, 4, member)
+    @redises.zrank(@key, member).should == 3
+  end
+
   it_should_behave_like "a zset-only command"
 end
