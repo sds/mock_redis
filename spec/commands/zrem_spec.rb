@@ -21,5 +21,12 @@ describe "#zrem(key, member)" do
     @redises.zrange(@key, 0, -1).should == ['two']
   end
 
+  it "removes integer member from the set" do
+    member = 11
+    @redises.zadd(@key, 3, member)
+    @redises.zrem(@key, member).should be_true
+    @redises.zrange(@key, 0, -1).should == ['one', 'two']
+  end
+
   it_should_behave_like "a zset-only command"
 end

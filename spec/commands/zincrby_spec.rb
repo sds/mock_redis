@@ -15,6 +15,13 @@ describe "#zincrby(key, increment, member)" do
     @redises.zscore(@key, 'bert').should == "11"
   end
 
+  it "handles integer members correctly" do
+    member = 11
+    @redises.zadd(@key, 1, member)
+    @redises.zincrby(@key, 1, member)
+    @redises.zscore(@key, member).should == "2"
+  end
+
   it "adds missing members with score increment" do
     @redises.zincrby(@key, 5.5, 'bigbird').should == "5.5"
   end

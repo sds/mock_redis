@@ -17,6 +17,12 @@ describe "#zadd(key, score, member)" do
     @redises.zrange(@key, 0, -1).should == ['foo']
   end
 
+  it "treats integer members as strings" do
+    member = 11
+    @redises.zadd(@key, 1, member)
+    @redises.zrange(@key, 0, -1).should == [member.to_s]
+  end
+
   it "updates the score" do
     @redises.zadd(@key, 1, 'foo')
     @redises.zadd(@key, 2, 'foo')

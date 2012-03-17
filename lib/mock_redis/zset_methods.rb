@@ -11,7 +11,7 @@ class MockRedis
       assert_scorey(score)
 
       retval = !zscore(key, member)
-      with_zset_at(key) {|z| z.add(score, member)}
+      with_zset_at(key) {|z| z.add(score, member.to_s)}
       retval
     end
 
@@ -32,6 +32,7 @@ class MockRedis
 
     def zincrby(key, increment, member)
       assert_scorey(increment)
+      member = member.to_s
       with_zset_at(key) do |z|
         old_score = z.include?(member) ? z.score(member) : 0
         new_score = old_score + increment
@@ -61,11 +62,11 @@ class MockRedis
     end
 
     def zrank(key, member)
-      with_zset_at(key) {|z| z.sorted_members.index(member) }
+      with_zset_at(key) {|z| z.sorted_members.index(member.to_s) }
     end
 
     def zrem(key, member)
-      with_zset_at(key) {|z| !!z.delete?(member)}
+      with_zset_at(key) {|z| !!z.delete?(member.to_s)}
     end
 
     def zrevrange(key, start, stop, options={})
@@ -97,12 +98,12 @@ class MockRedis
     end
 
     def zrevrank(key, member)
-      with_zset_at(key) {|z| z.sorted_members.reverse.index(member) }
+      with_zset_at(key) {|z| z.sorted_members.reverse.index(member.to_s) }
     end
 
     def zscore(key, member)
       with_zset_at(key) do |z|
-        score = z.score(member)
+        score = z.score(member.to_s)
         score.to_s if score
       end
     end
