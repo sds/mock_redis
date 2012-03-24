@@ -19,5 +19,10 @@ describe "#hset(key, field)" do
     @redises.hget(@key, 'num').should == "1"
   end
 
+  it "stores fields as strings" do
+    @redises.hset(@key, 1, "one")
+    @redises.hget(@key, "1").should == "one"
+  end
+
   it_should_behave_like "a hash-only command"
 end
