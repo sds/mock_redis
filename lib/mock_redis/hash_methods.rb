@@ -8,16 +8,16 @@ class MockRedis
 
     def hdel(key, field)
       with_hash_at(key) do |hash|
-        hash.delete(field) ? 1 : 0
+        hash.delete(field.to_s) ? 1 : 0
       end
     end
 
     def hexists(key, field)
-      with_hash_at(key) {|h| h.has_key?(field)}
+      with_hash_at(key) {|h| h.has_key?(field.to_s)}
     end
 
     def hget(key, field)
-      with_hash_at(key) {|h| h[field]}
+      with_hash_at(key) {|h| h[field.to_s]}
     end
 
     def hgetall(key)
@@ -26,6 +26,7 @@ class MockRedis
 
     def hincrby(key, field, increment)
       with_hash_at(key) do |hash|
+        field = field.to_s
         unless can_incr?(data[key][field])
           raise RuntimeError, "ERR hash value is not an integer"
         end
@@ -80,7 +81,7 @@ class MockRedis
     end
 
     def hset(key, field, value)
-      with_hash_at(key) {|h| h[field] = value.to_s}
+      with_hash_at(key) {|h| h[field.to_s] = value.to_s}
       true
     end
 

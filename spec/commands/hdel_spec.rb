@@ -20,6 +20,13 @@ describe "#hdel(key, field)" do
     @redises.hget(@key, 'k1').should be_nil
   end
 
+  it "treats the field as a string" do
+    field = 2
+    @redises.hset(@key, field, 'two')
+    @redises.hdel(@key, field)
+    @redises.hget(@key, field).should be_nil
+  end
+
   it "removes only the field specified" do
     @redises.hdel(@key, 'k1')
     @redises.hget(@key, 'k2').should == 'v2'

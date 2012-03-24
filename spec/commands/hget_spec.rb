@@ -11,6 +11,11 @@ describe "#hget(key, field)" do
     @redises.hget(@key, 'k1').should == 'v1'
   end
 
+  it "treats the field as a string" do
+    @redises.hset(@key, '3', 'v3')
+    @redises.hget(@key, 3).should == 'v3'
+  end
+
   it "returns nil when there is no such field" do
     @redises.hget(@key, 'nonesuch').should be_nil
   end

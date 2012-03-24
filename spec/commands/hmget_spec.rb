@@ -11,6 +11,12 @@ describe "#hmget(key, field [, field, ...])" do
     @redises.hmget(@key, 'k1', 'k2').sort.should == %w[v1 v2]
   end
 
+  it "treats the fielsd as strings" do
+    @redises.hset(@key, 1, 'one')
+    @redises.hset(@key, 2, 'two')
+    @redises.hmget(@key, 1, 2).sort.should == %w[one two]
+  end
+
   it "returns nils when there are no such fields" do
     @redises.hmget(@key, 'k1', 'mock-redis-test:nonesuch').
       should == ['v1', nil]
