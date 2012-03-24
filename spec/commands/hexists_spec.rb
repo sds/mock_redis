@@ -14,6 +14,11 @@ describe "#hexists(key, field)" do
     @redises.hexists(@key, 'nonesuch').should be_false
   end
 
+  it "treats the field as a string" do
+    @redises.hset(@key, 1, 'one')
+    @redises.hexists(@key, 1).should be_true
+  end
+
   it "returns nil when there is no such key" do
     @redises.hexists('mock-redis-test:nonesuch', 'key').should be_false
   end

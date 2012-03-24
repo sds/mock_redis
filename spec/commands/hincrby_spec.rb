@@ -35,6 +35,12 @@ describe '#hincrby(key, field, increment)' do
     @redises.hincrby(@key, @field, "2").should == 2
   end
 
+  it "treats the field as a string" do
+    field = 11
+    @redises.hset(@key, field, 2)
+    @redises.hincrby(@key, field, 2).should == 4
+  end
+
   it "raises an error if the value does not look like an integer" do
     @redises.hset(@key, @field, "one")
     lambda do
