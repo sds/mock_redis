@@ -1,3 +1,6 @@
+### 0.4.1
+* bugfixes: teach various methods to correctly handle non-string values
+
 ### 0.4.0
 * Support `mapped_hmset`/`mapped_hmget`
 * Support `pipelined`
