@@ -73,7 +73,8 @@ class MockRedis
     end
 
     def srandmember(key)
-      with_set_at(key, &:first)
+      members = with_set_at(key, &:to_a)
+      members[rand(members.length)]
     end
 
     def srem(key, member)
