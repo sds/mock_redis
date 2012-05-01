@@ -304,7 +304,9 @@ class MockRedis
     end
 
     def rename(key, newkey)
-      if key == newkey
+      if !data.include?(key)
+        raise RuntimeError, "ERR no such key"
+      elsif key == newkey
         raise RuntimeError, "ERR source and destination objects are the same"
       end
       data[newkey] = data.delete(key)

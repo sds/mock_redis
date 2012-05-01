@@ -17,6 +17,12 @@ describe '#rename(key, newkey)' do
     @redises.get(@newkey).should == "oof"
   end
 
+  it "raises an error when the source key does not exist" do
+    lambda do
+      @redises.rename("foo", @key)
+    end.should raise_error(RuntimeError)
+  end
+
   it "raises an error when key == newkey" do
     lambda do
       @redises.rename(@key, @key)
