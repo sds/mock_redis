@@ -16,6 +16,23 @@ describe 'transactions (multi/exec/discard)' do
         @redises.multi
       end.should raise_error(RuntimeError)
     end
+
+    it "cleanup the state of tansaction wrapper if an exception occurs while a transaction is being processed" do
+      lambda do
+        @redises.mock.multi do |r|
+          raise "i'm a command that fails"
+        end
+      end.should raise_error(RuntimeError)
+
+      # before the fix this used to raised a #<RuntimeError: ERR MULTI calls can not be nested>
+      lambda do
+        @redises.mock.multi do |r|
+          # do stuff that succeed
+          s.set(nil, 'string')
+        end
+      end.should_not raise_error(RuntimeError)
+
+    end
   end
 
   context "#blocks" do
