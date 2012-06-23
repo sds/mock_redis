@@ -25,7 +25,7 @@ class MockRedis
 
   def initialize(*args)
     @options = _parse_options(args.first)    
-    
+
     args << self
 
     @db = TransactionWrapper.new(
@@ -67,6 +67,8 @@ class MockRedis
   protected
 
   def _parse_options(options)
+    return {} if options.nil?
+    
     defaults = DEFAULTS.dup
 
     url = options[:url] || ENV["REDIS_URL"]
