@@ -14,12 +14,11 @@ class MockRedis
     include StringMethods
     include ZsetMethods
 
-    attr_reader :data, :expire_times, :client
+    attr_reader :data, :expire_times
 
     def initialize(*args)
       @data = {}
       @expire_times = []
-      @client = args.last
     end
 
     def initialize_copy(source)

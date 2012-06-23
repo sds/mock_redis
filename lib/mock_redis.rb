@@ -26,8 +26,6 @@ class MockRedis
   def initialize(*args)
     @options = _parse_options(args.first)    
 
-    args << self
-
     @db = TransactionWrapper.new(
       ExpireWrapper.new(
         MultiDbWrapper.new(
@@ -52,6 +50,10 @@ class MockRedis
 
   def db
     self.options[:db]
+  end
+
+  def client
+    self
   end
 
   def respond_to?(method, include_private=false)
