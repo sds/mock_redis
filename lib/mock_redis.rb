@@ -35,7 +35,7 @@ class MockRedis
   end
 
   def id
-    "redis://#{self.host}:#{self.port}/0"
+    "redis://#{self.host}:#{self.port}/#{self.db}"
   end
 
   def call(command, &block)
@@ -48,6 +48,10 @@ class MockRedis
 
   def port
     self.options[:port]
+  end
+
+  def db
+    self.options[:db]
   end
 
   def respond_to?(method, include_private=false)
@@ -68,7 +72,7 @@ class MockRedis
 
   def _parse_options(options)
     return {} if options.nil?
-    
+
     defaults = DEFAULTS.dup
 
     url = options[:url] || ENV["REDIS_URL"]
