@@ -28,5 +28,10 @@ describe "#zrem(key, member)" do
     @redises.zrange(@key, 0, -1).should == ['one', 'two']
   end
 
+  it "supports a variable number of arguments" do
+    @redises.zrem(@key, ['one', 'two'])
+    @redises.zrange(@key, 0, -1).should be_empty
+  end
+
   it_should_behave_like "a zset-only command"
 end

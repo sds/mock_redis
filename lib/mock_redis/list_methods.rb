@@ -50,7 +50,7 @@ class MockRedis
 
     def linsert(key, position, pivot, value)
       unless %w[before after].include?(position.to_s)
-        raise RuntimeError, "ERR syntax error"
+        raise Redis::CommandError, "ERR syntax error"
       end
 
       assert_listy(key)
@@ -80,8 +80,9 @@ class MockRedis
       with_list_at(key, &:shift)
     end
 
-    def lpush(key, value)
-      with_list_at(key) {|l| l.unshift(value.to_s)}
+    def lpush(key, values)
+      values = [values] unless values.is_a?(Array)
+      with_list_at(key) {|l| values.each {|v| l.unshift(v.to_s)}}
       llen(key)
     end
 
@@ -120,11 +121,11 @@ class MockRedis
       assert_listy(key)
 
       unless list_at?(key)
-        raise RuntimeError, "ERR no such key"
+        raise Redis::CommandError, "ERR no such key"
       end
 
       unless (0...llen(key)).include?(index)
-        raise RuntimeError, "ERR index out of range"
+        raise Redis::CommandError, "ERR index out of range"
       end
 
       data[key][index] = value.to_s
@@ -148,8 +149,9 @@ class MockRedis
       value
     end
 
-    def rpush(key, value)
-      with_list_at(key) {|l| l.push(value.to_s)}
+    def rpush(key, values)
+      values = [values] unless values.is_a?(Array)
+      with_list_at(key) {|l| values.each {|v| l.push(v.to_s)}}
       llen(key)
     end
 
@@ -175,7 +177,7 @@ class MockRedis
     def assert_listy(key)
       unless listy?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+        raise Redis::CommandError, "ERR Operation against a key holding the wrong kind of value"
       end
     end
 

@@ -5,13 +5,13 @@ describe "#zscore(key, member)" do
 
   it "returns the score as a string" do
     @redises.zadd(@key, 0.25, 'foo').should be_true
-    @redises.zscore(@key, 'foo').should == "0.25"
+    @redises.zscore(@key, 'foo').should == 0.25
   end
 
   it "handles integer members correctly" do
     member = 11
     @redises.zadd(@key, 0.25, member).should be_true
-    @redises.zscore(@key, member).should == "0.25"
+    @redises.zscore(@key, member).should == 0.25
   end
 
   it "returns nil if member is not present in the set" do

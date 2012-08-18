@@ -22,6 +22,13 @@ describe '#renamenx(key, newkey)' do
     @redises.get(@newkey).should == "oof"
   end
 
+  it "raises an error when the source key is nonexistant" do
+    @redises.del(@key)
+    lambda do
+      @redises.rename(@key, @newkey)
+    end.should raise_error(Redis::CommandError)
+  end
+
   it "raises an error when key == newkey" do
     lambda do
       @redises.renamenx(@key, @key)
