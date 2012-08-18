@@ -25,7 +25,7 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
   it "sums the members' scores by default" do
     @redises.zinterstore(@dest, [@odds, @primes])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      %w[three 6 five 10 seven 14]
+      [["three", 6.0], ["five", 10.0], ["seven", 14.0]]
   end
 
   it "removes existing elements in destination" do
@@ -33,7 +33,7 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
 
     @redises.zinterstore(@dest, [@primes])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      %w[two 2 three 3 five 5 seven 7]
+      [["two", 2.0], ["three", 3.0], ["five", 5.0], ["seven", 7.0]]
   end
 
   it "raises an error if keys is empty" do
@@ -46,7 +46,7 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it "multiplies the scores by the weights while aggregating" do
       @redises.zinterstore(@dest, [@odds, @primes], :weights => [2, 3])
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        %w[three 15 five 25 seven 35]
+        [["three", 15.0], ["five", 25.0], ["seven", 35.0]]
     end
 
     it "raises an error if the number of weights != the number of keys" do
@@ -70,21 +70,21 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it "aggregates scores with min when :aggregate => :min is specified" do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :min)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        %w[bert 1 ernie 2]
+        [["bert", 1.0], ["ernie", 2.0]]
     end
 
     it "aggregates scores with max when :aggregate => :max is specified" do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :max)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        %w[bert 100 ernie 200]
+        [["bert", 100.0], ["ernie", 200.0]]
     end
 
     it "allows 'min', 'MIN', etc. as aliases for :min" do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => 'min')
-      @redises.zscore(@dest, 'bert').should == '1'
+      @redises.zscore(@dest, 'bert').should == 1.0
 
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => 'MIN')
-      @redises.zscore(@dest, 'bert').should == '1'
+      @redises.zscore(@dest, 'bert').should == 1.0
     end
 
     it "raises an error for unknown aggregation function" do

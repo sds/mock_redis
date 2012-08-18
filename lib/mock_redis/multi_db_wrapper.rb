@@ -56,7 +56,7 @@ class MockRedis
         when 'string'
           dest.set(key, src.get(key))
         when 'zset'
-          src.zrange(key, 0, -1, :with_scores => true).each_slice(2) do |(m,s)|
+          src.zrange(key, 0, -1, :with_scores => true).each do |(m,s)|
             dest.zadd(key, s, m)
           end
         else

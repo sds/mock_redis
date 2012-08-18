@@ -27,7 +27,7 @@ describe "#zadd(key, score, member)" do
     @redises.zadd(@key, 1, 'foo')
     @redises.zadd(@key, 2, 'foo')
 
-    @redises.zscore(@key, 'foo').should == "2"
+    @redises.zscore(@key, 'foo').should == 2.0
   end
 
   it_should_behave_like "arg 1 is a score"
