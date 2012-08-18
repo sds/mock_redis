@@ -356,8 +356,8 @@ class MockRedis
     private
 
     def assert_valid_timeout(timeout)
-      if !looks_like_integer?(timeout.to_s)
-        raise Redis::CommandError, "ERR timeout is not an integer or out of range"
+      if !looks_like_float?(timeout.to_s)
+        raise Redis::CommandError, "ERR timeout is not a float or out of range"
       elsif timeout < 0
         raise Redis::CommandError, "ERR timeout is negative"
       end
@@ -383,6 +383,10 @@ class MockRedis
 
     def looks_like_integer?(str)
       str =~ /^-?\d+$/
+    end
+
+    def looks_like_float?(str)
+      !!Float(str) rescue false
     end
 
     def redis_pattern_to_ruby_regex(pattern)
