@@ -64,7 +64,7 @@ class MockRedis
         begin
           yield(self)
           self.exec
-        rescue => e
+        rescue StandardError => e
           self.discard
           raise e
         end
