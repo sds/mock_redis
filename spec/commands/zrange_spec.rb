@@ -23,12 +23,12 @@ describe "#zrange(key, start, stop [, :with_scores => true])" do
 
   it "returns the scores when :with_scores is specified" do
     @redises.zrange(@key, 0, 1, :with_scores => true).
-      should == ["Washington", "1", "Adams", "2"]
+      should == [["Washington", 1.0], ["Adams", 2.0]]
   end
 
   it "returns the scores when :withscores is specified" do
     @redises.zrange(@key, 0, 1, :withscores => true).
-      should == ["Washington", "1", "Adams", "2"]
+      should == [["Washington", 1.0], ["Adams", 2.0]]
   end
 
   it_should_behave_like "a zset-only command"

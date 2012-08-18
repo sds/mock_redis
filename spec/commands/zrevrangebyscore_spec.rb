@@ -15,12 +15,12 @@ describe "#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [
 
   it "returns the scores when :with_scores is specified" do
     @redises.zrevrangebyscore(@key, 4, 3, :with_scores => true).
-      should == %w[Madison 4 Jefferson 3]
+      should == [["Madison", 4.0], ["Jefferson", 3.0]]
   end
 
   it "returns the scores when :withscores is specified" do
     @redises.zrevrangebyscore(@key, 4, 3, :withscores => true).
-      should == %w[Madison 4 Jefferson 3]
+      should == [["Madison", 4.0], ["Jefferson", 3.0]]
   end
 
   it "treats +inf as positive infinity" do

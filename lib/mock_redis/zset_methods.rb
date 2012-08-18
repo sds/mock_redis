@@ -37,7 +37,7 @@ class MockRedis
         old_score = z.include?(member) ? z.score(member) : 0
         new_score = old_score + increment
         z.add(new_score, member)
-        new_score.to_s
+        new_score.to_f
       end
     end
 
@@ -104,7 +104,7 @@ class MockRedis
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member.to_s)
-        score.to_s if score
+        score.to_f if score
       end
     end
 
@@ -132,11 +132,11 @@ class MockRedis
     def to_response(score_member_pairs, options)
       score_member_pairs.map do |(score,member)|
         if options[:with_scores] || options[:withscores]
-          [member, score.to_s]
+          [member, score.to_f]
         else
           member
         end
-      end.flatten
+      end
     end
 
     def combine_weighted_zsets(keys, options, how)

@@ -19,12 +19,12 @@ describe "#zrevrange(key, start, stop [, :with_scores => true])" do
 
   it "returns the scores when :with_scores is specified" do
     @redises.zrevrange(@key, 2, 3, :with_scores => true).
-      should == ["Adams", "2", "Washington", "1"]
+      should == [["Adams", 2.0], ["Washington", 1.0]]
   end
 
   it "returns the scores when :withscores is specified" do
     @redises.zrevrange(@key, 2, 3, :withscores => true).
-      should == ["Adams", "2", "Washington", "1"]
+      should == [["Adams", 2.0], ["Washington", 1.0]]
   end
 
   it_should_behave_like "a zset-only command"
