@@ -78,7 +78,7 @@ class MockRedis
     end
 
     def watch(_)
-      'OK'
+      nil
     end
 
   end
