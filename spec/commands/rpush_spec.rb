@@ -26,5 +26,12 @@ describe "#rpush(key)" do
     @redises.lindex(@key, 0).should == "1"
   end
 
+  it "supports a variable number of arguments" do
+    @redises.rpush(@key, [1, 2, 3]).should == 3
+    @redises.lindex(@key, 0).should == "1"
+    @redises.lindex(@key, 1).should == "2"
+    @redises.lindex(@key, 2).should == "3"
+  end
+
   it_should_behave_like "a list-only command"
 end

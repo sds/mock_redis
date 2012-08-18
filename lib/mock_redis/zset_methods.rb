@@ -7,11 +7,33 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
-    def zadd(key, score, member)
-      assert_scorey(score)
+    def zadd(key, *args)
+      if !args.first.is_a?(Array)
+        if args.size < 2
+          raise Redis::CommandError, "ERR wrong number of arguments for 'zadd' command"
+        elsif args.size.odd?
+          raise Redis::CommandError, "ERR syntax error"
+        end
+      else
+        unless args.all? {|pair| pair.size == 2 }
+          raise(Redis::CommandError, "ERR syntax error")
+        end
+      end
 
-      retval = !zscore(key, member)
-      with_zset_at(key) {|z| z.add(score, member.to_s)}
+      if args.size == 2
+        score, member = args
+        assert_scorey(score)
+        retval = !zscore(key, member)
+        with_zset_at(key) {|z| z.add(score, member.to_s)}
+      else
+        args = args.first
+        args = args.each_slice(2).to_a unless args.first.is_a?(Array)
+        retval = args.map(&:last).map { |member| !!zscore(key, member.to_s) }.count(false)
+        with_zset_at(key) do |z|
+          args.each { |score, member| z.add(score, member.to_s) }
+        end
+      end
+
       retval
     end
 
@@ -65,8 +87,18 @@ class MockRedis
       with_zset_at(key) {|z| z.sorted_members.index(member.to_s) }
     end
 
-    def zrem(key, member)
-      with_zset_at(key) {|z| !!z.delete?(member.to_s)}
+    def zrem(key, *args)
+      if !args.first.is_a?(Array)
+        retval = with_zset_at(key) {|z| !!z.delete?(args.first.to_s)}
+      else
+        args = args.first
+        retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
+        with_zset_at(key) do |z|
+          args.each { |member| z.delete?(member) }
+        end
+      end
+
+      retval
     end
 
     def zrevrange(key, start, stop, options={})

@@ -31,5 +31,10 @@ describe '#srem(key, member)' do
     @redises.get(@key).should be_nil
   end
 
+  it "supports a variable number of arguments" do
+    @redises.srem(@key, ['bert', 'ernie']).should == 2
+    @redises.get(@key).should be_nil
+  end
+
   it_should_behave_like "a set-only command"
 end

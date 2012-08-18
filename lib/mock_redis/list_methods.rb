@@ -80,8 +80,9 @@ class MockRedis
       with_list_at(key, &:shift)
     end
 
-    def lpush(key, value)
-      with_list_at(key) {|l| l.unshift(value.to_s)}
+    def lpush(key, values)
+      values = [values] unless values.is_a?(Array)
+      with_list_at(key) {|l| values.each {|v| l.unshift(v.to_s)}}
       llen(key)
     end
 
@@ -148,8 +149,9 @@ class MockRedis
       value
     end
 
-    def rpush(key, value)
-      with_list_at(key) {|l| l.push(value.to_s)}
+    def rpush(key, values)
+      values = [values] unless values.is_a?(Array)
+      with_list_at(key) {|l| values.each {|v| l.push(v.to_s)}}
       llen(key)
     end
 
