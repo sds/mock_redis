@@ -9,6 +9,10 @@ describe "#zrange(key, start, stop [, :with_scores => true])" do
     @redises.zadd(@key, 4, 'Madison')
   end
 
+  it "returns the elements when the range is given as strings" do
+    @redises.zrange(@key, "0", "1").should == ['Washington', 'Adams']
+  end
+
   it "returns the elements in order by score" do
     @redises.zrange(@key, 0, 1).should == ['Washington', 'Adams']
   end
