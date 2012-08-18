@@ -10,7 +10,7 @@ describe '#sunion(key [, key, ...])' do
   end
 
   it "returns the elements in the resulting set" do
-    @redises.sunion(@evens, @primes).should == %w[10 2 3 4 5 6 7 8]
+    @redises.sunion(@evens, @primes).should == %w[2 4 6 8 10 3 5 7]
   end
 
   it "treats missing keys as empty sets" do
@@ -37,4 +37,4 @@ describe '#sunion(key [, key, ...])' do
   end
 end
 
-    
+

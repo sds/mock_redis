@@ -14,9 +14,6 @@ class RedisMultiplexer < BlankSlate
     mock_retval, mock_error = catch_errors { @mock_redis.send(method, *args, &blk) }
     real_retval, real_error = catch_errors { @real_redis.send(method, *args, &blk) }
 
-    mock_retval = handle_special_cases(method, mock_retval)
-    real_retval = handle_special_cases(method, real_retval)
-
     if (!equalish?(mock_retval, real_retval) && !mock_error && !real_error)
       # no exceptions, just different behavior
       raise MismatchedResponse,
@@ -49,7 +46,7 @@ class RedisMultiplexer < BlankSlate
     if a == b
       true
     elsif a.is_a?(Array) && b.is_a?(Array)
-      a.zip(b).all? {|(x,y)| equalish?(x,y)}
+      a.collect(&:to_s).sort == b.collect(&:to_s).sort
     elsif a.is_a?(Exception) && b.is_a?(Exception)
       a.class == b.class && a.message == b.message
     else
@@ -59,19 +56,6 @@ class RedisMultiplexer < BlankSlate
 
   def mock() @mock_redis end
   def real() @real_redis end
-
-  # Some commands require special handling due to nondeterminism in
-  # the returned values.
-  def handle_special_cases(method, value)
-    case method.to_s
-    when 'keys', 'hkeys', 'sdiff', 'sinter', 'smembers', 'sunion'
-      # The order is irrelevant, but [a,b] != [b,a] in Ruby, so we
-      # sort the returned values so we can ignore the order.
-      value.sort if value
-    else
-      value
-    end
-  end
 
   # Used in cleanup before() blocks.
   def send_without_checking(method, *args)

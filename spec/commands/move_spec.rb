@@ -122,7 +122,7 @@ describe '#move(key, db)' do
 
     it "copies key to destdb" do
       @redises.select(@destdb)
-      @redises.smembers(@key).should == %w[beer wine]
+      @redises.smembers(@key).should == %w[wine beer]
     end
   end
 

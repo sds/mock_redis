@@ -18,7 +18,7 @@ describe '#sdiffstore(destination, key [, key, ...])' do
 
   it "stores the resulting set" do
     @redises.sdiffstore(@destination, @numbers, @evens)
-    @redises.smembers(@destination).should == %w[1 3 5 7 9]
+    @redises.smembers(@destination).should == %w[9 7 5 3 1]
   end
 
   it "does not store empty sets" do
@@ -28,14 +28,14 @@ describe '#sdiffstore(destination, key [, key, ...])' do
 
   it "treats missing keys as empty sets" do
     @redises.sdiffstore(@destination, @evens, 'mock-redis-test:nonesuch')
-    @redises.smembers(@destination).should == %w[10 2 4 6 8]
+    @redises.smembers(@destination).should == %w[10 8 6 4 2]
   end
 
   it "removes existing elements in destination" do
     @redises.sadd(@destination, 42)
 
     @redises.sdiffstore(@destination, @primes)
-    @redises.smembers(@destination).should == %w[2 3 5 7]
+    @redises.smembers(@destination).should == %w[7 5 3 2]
   end
 
   it "raises an error if given 0 sets" do
