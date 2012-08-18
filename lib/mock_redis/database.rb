@@ -57,7 +57,7 @@ class MockRedis
 
     def expireat(key, timestamp)
       unless looks_like_integer?(timestamp.to_s)
-        raise RuntimeError, "ERR value is not an integer or out of range"
+        raise Redis::CommandError, "ERR value is not an integer or out of range"
       end
 
       if exists(key)
@@ -304,10 +304,8 @@ class MockRedis
     end
 
     def rename(key, newkey)
-      if !data.include?(key)
-        raise RuntimeError, "ERR no such key"
-      elsif key == newkey
-        raise RuntimeError, "ERR source and destination objects are the same"
+      if key == newkey
+        raise Redis::CommandError, "ERR source and destination objects are the same"
       end
       data[newkey] = data.delete(key)
       'OK'
@@ -315,7 +313,7 @@ class MockRedis
 
     def renamenx(key, newkey)
       if key == newkey
-        raise RuntimeError, "ERR source and destination objects are the same"
+        raise Redis::CommandError, "ERR source and destination objects are the same"
       end
       if exists(newkey)
         false
@@ -359,9 +357,9 @@ class MockRedis
 
     def assert_valid_timeout(timeout)
       if !looks_like_integer?(timeout.to_s)
-        raise RuntimeError, "ERR timeout is not an integer or out of range"
+        raise Redis::CommandError, "ERR timeout is not an integer or out of range"
       elsif timeout < 0
-        raise RuntimeError, "ERR timeout is negative"
+        raise Redis::CommandError, "ERR timeout is negative"
       end
       timeout
     end

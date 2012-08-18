@@ -62,11 +62,11 @@ class MockRedis
     def incrby(key, n)
       assert_stringy(key)
       unless can_incr?(data[key])
-        raise RuntimeError, "ERR value is not an integer or out of range"
+        raise Redis::CommandError, "ERR value is not an integer or out of range"
       end
 
       unless looks_like_integer?(n.to_s)
-        raise RuntimeError, "ERR value is not an integer or out of range"
+        raise Redis::CommandError, "ERR value is not an integer or out of range"
       end
 
       new_value = data[key].to_i + n.to_i
@@ -86,7 +86,7 @@ class MockRedis
     def mset(*kvpairs)
       assert_has_args(kvpairs, 'mset')
       if kvpairs.length.odd?
-        raise RuntimeError, "ERR wrong number of arguments for MSET"
+        raise Redis::CommandError, "ERR wrong number of arguments for MSET"
       end
 
       kvpairs.each_slice(2) do |(k,v)|
@@ -195,7 +195,7 @@ class MockRedis
     def assert_stringy(key,
         message="ERR Operation against a key holding the wrong kind of value")
       unless stringy?(key)
-        raise RuntimeError, message
+        raise Redis::CommandError, message
       end
     end
 
