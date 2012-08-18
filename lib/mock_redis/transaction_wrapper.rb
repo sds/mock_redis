@@ -61,8 +61,13 @@ class MockRedis
       end
       @in_multi = true
       if block_given?
-        yield(self)
-        self.exec
+        begin
+          yield(self)
+          self.exec
+        rescue StandardError => e
+          self.discard
+          raise e
+        end
       else
         'OK'
       end
