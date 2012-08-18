@@ -18,7 +18,7 @@ describe '#sinterstore(destination, key [, key, ...])' do
 
   it "stores the resulting set" do
     @redises.sinterstore(@destination, @numbers, @evens)
-    @redises.smembers(@destination).should == %w[10 2 4 6 8]
+    @redises.smembers(@destination).should == %w[10 8 6 4 2]
   end
 
   it "does not store empty sets" do
@@ -30,7 +30,7 @@ describe '#sinterstore(destination, key [, key, ...])' do
     @redises.sadd(@destination, 42)
 
     @redises.sinterstore(@destination, @primes)
-    @redises.smembers(@destination).should == %w[2 3 5 7]
+    @redises.smembers(@destination).should == %w[7 5 3 2]
   end
 
   it "raises an error if given 0 sets" do

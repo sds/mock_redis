@@ -48,7 +48,7 @@ class MockRedis
     end
 
     def smembers(key)
-      with_set_at(key, &:to_a)
+      with_set_at(key, &:to_a).reverse
     end
 
     def smove(src, dest, member)
@@ -77,8 +77,16 @@ class MockRedis
       members[rand(members.length)]
     end
 
-    def srem(key, member)
-      with_set_at(key) {|s| !!s.delete?(member.to_s)}
+    def srem(key, members)
+      with_set_at(key) do |s|
+        if members.is_a?(Array)
+          orig_size = s.size
+          s.delete_if { |m| members.include?(m) }
+          orig_size - s.size
+        else
+          !!s.delete?(members.to_s)
+        end
+      end
     end
 
     def sunion(*keys)
@@ -118,7 +126,7 @@ class MockRedis
     def assert_sety(key)
       unless sety?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+        raise Redis::CommandError, "ERR Operation against a key holding the wrong kind of value"
       end
     end
 

@@ -122,7 +122,7 @@ describe '#move(key, db)' do
 
     it "copies key to destdb" do
       @redises.select(@destdb)
-      @redises.smembers(@key).should == %w[beer wine]
+      @redises.smembers(@key).should == %w[wine beer]
     end
   end
 
@@ -141,7 +141,7 @@ describe '#move(key, db)' do
     it "copies key to destdb" do
       @redises.select(@destdb)
       @redises.zrange(@key, 0, -1, :with_scores => true).should ==
-        %w[beer 1 wine 2]
+        [["beer", 1.0], ["wine", 2.0]]
     end
   end
 end

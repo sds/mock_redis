@@ -15,7 +15,7 @@ describe '#sadd(key, member)' do
   it "adds member to the set" do
     @redises.sadd(@key, 1)
     @redises.sadd(@key, 2)
-    @redises.smembers(@key).should == %w[1 2]
+    @redises.smembers(@key).should == %w[2 1]
   end
 
   it_should_behave_like "a set-only command"

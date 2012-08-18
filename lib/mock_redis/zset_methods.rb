@@ -7,11 +7,33 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
-    def zadd(key, score, member)
-      assert_scorey(score)
+    def zadd(key, *args)
+      if !args.first.is_a?(Array)
+        if args.size < 2
+          raise Redis::CommandError, "ERR wrong number of arguments for 'zadd' command"
+        elsif args.size.odd?
+          raise Redis::CommandError, "ERR syntax error"
+        end
+      else
+        unless args.all? {|pair| pair.size == 2 }
+          raise(Redis::CommandError, "ERR syntax error")
+        end
+      end
 
-      retval = !zscore(key, member)
-      with_zset_at(key) {|z| z.add(score, member.to_s)}
+      if args.size == 2
+        score, member = args
+        assert_scorey(score)
+        retval = !zscore(key, member)
+        with_zset_at(key) {|z| z.add(score, member.to_s)}
+      else
+        args = args.first
+        args = args.each_slice(2).to_a unless args.first.is_a?(Array)
+        retval = args.map(&:last).map { |member| !!zscore(key, member.to_s) }.count(false)
+        with_zset_at(key) do |z|
+          args.each { |score, member| z.add(score, member.to_s) }
+        end
+      end
+
       retval
     end
 
@@ -37,7 +59,7 @@ class MockRedis
         old_score = z.include?(member) ? z.score(member) : 0
         new_score = old_score + increment
         z.add(new_score, member)
-        new_score.to_s
+        new_score.to_f
       end
     end
 
@@ -50,7 +72,7 @@ class MockRedis
 
     def zrange(key, start, stop, options={})
       with_zset_at(key) do |z|
-        to_response(z.sorted[start..stop] || [], options)
+        to_response(z.sorted[start.to_i..stop.to_i] || [], options)
       end
     end
 
@@ -65,8 +87,18 @@ class MockRedis
       with_zset_at(key) {|z| z.sorted_members.index(member.to_s) }
     end
 
-    def zrem(key, member)
-      with_zset_at(key) {|z| !!z.delete?(member.to_s)}
+    def zrem(key, *args)
+      if !args.first.is_a?(Array)
+        retval = with_zset_at(key) {|z| !!z.delete?(args.first.to_s)}
+      else
+        args = args.first
+        retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
+        with_zset_at(key) do |z|
+          args.each { |member| z.delete?(member) }
+        end
+      end
+
+      retval
     end
 
     def zrevrange(key, start, stop, options={})
@@ -104,7 +136,7 @@ class MockRedis
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member.to_s)
-        score.to_s if score
+        score.to_f if score
       end
     end
 
@@ -122,7 +154,7 @@ class MockRedis
           offset, count = limit
           collection.drop(offset).take(count)
         else
-          raise RuntimeError, "ERR syntax error"
+          raise Redis::CommandError, "ERR syntax error"
         end
       else
         collection
@@ -132,17 +164,17 @@ class MockRedis
     def to_response(score_member_pairs, options)
       score_member_pairs.map do |(score,member)|
         if options[:with_scores] || options[:withscores]
-          [member, score.to_s]
+          [member, score.to_f]
         else
           member
         end
-      end.flatten
+      end
     end
 
     def combine_weighted_zsets(keys, options, how)
       weights = options.fetch(:weights, keys.map { 1 })
       if weights.length != keys.length
-        raise RuntimeError, "ERR syntax error"
+        raise Redis::CommandError, "ERR syntax error"
       end
 
       aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
@@ -153,7 +185,7 @@ class MockRedis
                    when :max
                      proc {|a,b| [a,b].compact.max}
                    else
-                     raise RuntimeError, "ERR syntax error"
+                     raise Redis::CommandError, "ERR syntax error"
                    end
 
       with_zsets_at(*keys) do |*zsets|
@@ -190,7 +222,7 @@ class MockRedis
 
     def assert_zsety(key)
       unless zsety?(key)
-        raise RuntimeError,
+        raise Redis::CommandError,
         "ERR Operation against a key holding the wrong kind of value"
       end
     end
@@ -202,7 +234,7 @@ class MockRedis
 
     def assert_scorey(value, what='value')
       unless looks_like_float?(value)
-        raise RuntimeError, "ERR #{what} is not a double"
+        raise Redis::CommandError, "ERR #{what} is not a double"
       end
     end
 

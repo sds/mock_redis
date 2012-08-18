@@ -26,16 +26,16 @@ describe '#brpop(key [, key, ...,], timeout)' do
       [@list1, 'two']
   end
 
-  it "raises an error on non-integer timeout" do
+  it "allows subsecond timeouts" do
     lambda do
       @redises.brpop(@list1, @list2, 0.5)
-    end.should raise_error(RuntimeError)
+    end.should_not raise_error(Redis::CommandError)
   end
 
   it "raises an error on negative timeout" do
     lambda do
       @redises.brpop(@list1, @list2, -1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like "a list-only command"

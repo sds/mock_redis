@@ -24,7 +24,7 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
   it "sums the members' scores by default" do
     @redises.zunionstore(@dest, [@set1, @set2, @set3])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      %w[one 3 three 3 two 4]
+      [["one", 3.0], ["three", 3.0], ["two", 4.0]]
   end
 
   it "removes existing elements in destination" do
@@ -32,7 +32,7 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
 
     @redises.zunionstore(@dest, [@set1])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      %w[one 1]
+      [["one", 1.0]]
   end
 
   it "raises an error if keys is empty" do
@@ -45,7 +45,7 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it "multiplies the scores by the weights while aggregating" do
       @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [2, 3, 5])
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        %w[one 10 three 15 two 16]
+        [["one", 10.0], ["three", 15.0], ["two", 16.0]]
     end
 
     it "raises an error if the number of weights != the number of keys" do
@@ -69,30 +69,30 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it "aggregates scores with min when :aggregate => :min is specified" do
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :min)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        %w[bert 1 ernie 2]
+        [["bert", 1.0], ["ernie", 2.0]]
     end
 
     it "aggregates scores with max when :aggregate => :max is specified" do
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :max)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        %w[bert 100 ernie 200]
+        [["bert", 100.0], ["ernie", 200.0]]
     end
 
     it "ignores scores for missing members" do
       @redises.zadd(@smalls, 3, 'grover')
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :min)
-      @redises.zscore(@dest, 'grover').should == '3'
+      @redises.zscore(@dest, 'grover').should == 3.0
 
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :max)
-      @redises.zscore(@dest, 'grover').should == '3'
+      @redises.zscore(@dest, 'grover').should == 3.0
     end
 
     it "allows 'min', 'MIN', etc. as aliases for :min" do
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => 'min')
-      @redises.zscore(@dest, 'bert').should == '1'
+      @redises.zscore(@dest, 'bert').should == 1.0
 
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => 'MIN')
-      @redises.zscore(@dest, 'bert').should == '1'
+      @redises.zscore(@dest, 'bert').should == 1.0
     end
 
     it "raises an error for unknown aggregation function" do

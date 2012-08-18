@@ -32,7 +32,7 @@ class MockRedis
 
     def discard
       unless @in_multi
-        raise RuntimeError, "ERR DISCARD without MULTI"
+        raise Redis::CommandError, "ERR DISCARD without MULTI"
       end
       @in_multi = false
       @queued_commands = []
@@ -41,7 +41,7 @@ class MockRedis
 
     def exec
       unless @in_multi
-        raise RuntimeError, "ERR EXEC without MULTI"
+        raise Redis::CommandError, "ERR EXEC without MULTI"
       end
       @in_multi = false
       responses = @queued_commands.map do |cmd|
@@ -57,12 +57,17 @@ class MockRedis
 
     def multi
       if @in_multi
-        raise RuntimeError, "ERR MULTI calls can not be nested"
+        raise Redis::CommandError, "ERR MULTI calls can not be nested"
       end
       @in_multi = true
       if block_given?
-        yield(self)
-        self.exec
+        begin
+          yield(self)
+          self.exec
+        rescue StandardError => e
+          self.discard
+          raise e
+        end
       else
         'OK'
       end
@@ -73,7 +78,7 @@ class MockRedis
     end
 
     def watch(_)
-      'OK'
+      nil
     end
 
   end

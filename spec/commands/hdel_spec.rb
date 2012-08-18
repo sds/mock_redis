@@ -38,5 +38,10 @@ describe "#hdel(key, field)" do
     @redises.get(@key).should be_nil
   end
 
+  it "supports a variable number of arguments" do
+    @redises.hdel(@key, ['k1', 'k2'])
+    @redises.get(@key).should be_nil
+  end
+
   it_should_behave_like "a hash-only command"
 end

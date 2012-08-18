@@ -15,12 +15,12 @@ describe "#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
 
   it "returns the scores when :with_scores is specified" do
     @redises.zrangebyscore(@key, 1, 2, :with_scores => true).
-      should == ["Washington", "1", "Adams", "2"]
+      should == [["Washington", 1.0], ["Adams", 2.0]]
   end
 
   it "returns the scores when :withscores is specified" do
     @redises.zrangebyscore(@key, 1, 2, :withscores => true).
-      should == ["Washington", "1", "Adams", "2"]
+      should == [["Washington", 1.0], ["Adams", 2.0]]
   end
 
   it "honors the :limit => [offset count] argument" do

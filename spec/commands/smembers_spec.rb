@@ -8,10 +8,10 @@ describe '#smembers(key)' do
   end
 
   it "returns the set's members" do
-    @redises.sadd(@key, 1)
-    @redises.sadd(@key, 2)
-    @redises.sadd(@key, 3)
-    @redises.smembers(@key).should == %w[1 2 3]
+    @redises.sadd(@key, "Hello")
+    @redises.sadd(@key, "World")
+    @redises.sadd(@key, "Test")
+    @redises.smembers(@key).should == %w[Test World Hello]
   end
 
   it_should_behave_like "a set-only command"

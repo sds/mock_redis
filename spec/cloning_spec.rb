@@ -42,7 +42,7 @@ describe "MockRedis#clone" do
 
     it "performs a deep copy (zset values)" do
       @mock.zadd('foozset', 2, 'bar')
-      @clone.zscore('foozset', 'bar').should == "1"
+      @clone.zscore('foozset', 'bar').should == 1.0
     end
   end
 
