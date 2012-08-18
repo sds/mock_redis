@@ -20,7 +20,7 @@ describe '#sdiff(key [, key, ...])' do
   end
 
   it "treats missing keys as empty sets" do
-    @redises.sdiff(@evens, 'mock-redis-test:nonesuch').should == %w[10 2 4 6 8]
+    @redises.sdiff(@evens, 'mock-redis-test:nonesuch').should == %w[2 4 6 8 10]
   end
 
   it "returns the first set when called with a single argument" do
