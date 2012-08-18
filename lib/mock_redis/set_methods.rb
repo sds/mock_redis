@@ -77,8 +77,16 @@ class MockRedis
       members[rand(members.length)]
     end
 
-    def srem(key, member)
-      with_set_at(key) {|s| !!s.delete?(member.to_s)}
+    def srem(key, members)
+      with_set_at(key) do |s|
+        if members.is_a?(Array)
+          orig_size = s.size
+          s.delete_if { |m| members.include?(m) }
+          orig_size - s.size
+        else
+          !!s.delete?(members.to_s)
+        end
+      end
     end
 
     def sunion(*keys)

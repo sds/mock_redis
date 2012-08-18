@@ -8,7 +8,13 @@ class MockRedis
 
     def hdel(key, field)
       with_hash_at(key) do |hash|
-        hash.delete(field.to_s) ? 1 : 0
+        if field.is_a?(Array)
+          orig_size = hash.size
+          hash.delete_if { |k,v| field.include?(k) }
+          orig_size - hash.size
+        else
+          hash.delete(field.to_s) ? 1 : 0
+        end
       end
     end
 

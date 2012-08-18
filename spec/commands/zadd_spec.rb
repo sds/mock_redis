@@ -30,6 +30,11 @@ describe "#zadd(key, score, member)" do
     @redises.zscore(@key, 'foo').should == 2.0
   end
 
+  it "supports a variable number of arguments" do
+    @redises.zadd(@key, [[1, 'one'], [2, 'two']])
+    @redises.zrange(@key, 0, -1).should == ['one', 'two']
+  end
+
   it_should_behave_like "arg 1 is a score"
   it_should_behave_like "a zset-only command"
 end
