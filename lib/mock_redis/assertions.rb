@@ -4,10 +4,10 @@ class MockRedis
 
     def assert_has_args(args, command)
       unless args.any?
-        raise RuntimeError,
+        raise Redis::CommandError,
         "ERR wrong number of arguments for '#{command}' command"
       end
     end
-      
+
   end
 end

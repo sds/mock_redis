@@ -28,10 +28,10 @@ class MockRedis
       with_hash_at(key) do |hash|
         field = field.to_s
         unless can_incr?(data[key][field])
-          raise RuntimeError, "ERR hash value is not an integer"
+          raise Redis::CommandError, "ERR hash value is not an integer"
         end
         unless looks_like_integer?(increment.to_s)
-          raise RuntimeError, "ERR value is not an integer or out of range"
+          raise Redis::CommandError, "ERR value is not an integer or out of range"
         end
 
         new_value = (hash[field] || "0").to_i + increment.to_i
@@ -61,7 +61,7 @@ class MockRedis
     def hmset(key, *kvpairs)
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
-        raise RuntimeError, "ERR wrong number of arguments for HMSET"
+        raise Redis::CommandError, "ERR wrong number of arguments for HMSET"
       end
 
       kvpairs.each_slice(2) do |(k,v)|
@@ -74,7 +74,7 @@ class MockRedis
       kvpairs = hash.to_a.flatten
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
-        raise RuntimeError, "ERR wrong number of arguments for 'hmset' command"
+        raise Redis::CommandError, "ERR wrong number of arguments for 'hmset' command"
       end
 
       hmset(key, *kvpairs)
@@ -110,7 +110,7 @@ class MockRedis
 
     def assert_hashy(key)
       unless hashy?(key)
-        raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+        raise Redis::CommandError, "ERR Operation against a key holding the wrong kind of value"
       end
     end
 

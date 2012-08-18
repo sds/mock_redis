@@ -122,7 +122,7 @@ class MockRedis
           offset, count = limit
           collection.drop(offset).take(count)
         else
-          raise RuntimeError, "ERR syntax error"
+          raise Redis::CommandError, "ERR syntax error"
         end
       else
         collection
@@ -142,7 +142,7 @@ class MockRedis
     def combine_weighted_zsets(keys, options, how)
       weights = options.fetch(:weights, keys.map { 1 })
       if weights.length != keys.length
-        raise RuntimeError, "ERR syntax error"
+        raise Redis::CommandError, "ERR syntax error"
       end
 
       aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
@@ -153,7 +153,7 @@ class MockRedis
                    when :max
                      proc {|a,b| [a,b].compact.max}
                    else
-                     raise RuntimeError, "ERR syntax error"
+                     raise Redis::CommandError, "ERR syntax error"
                    end
 
       with_zsets_at(*keys) do |*zsets|
@@ -190,7 +190,7 @@ class MockRedis
 
     def assert_zsety(key)
       unless zsety?(key)
-        raise RuntimeError,
+        raise Redis::CommandError,
         "ERR Operation against a key holding the wrong kind of value"
       end
     end
@@ -202,7 +202,7 @@ class MockRedis
 
     def assert_scorey(value, what='value')
       unless looks_like_float?(value)
-        raise RuntimeError, "ERR #{what} is not a double"
+        raise Redis::CommandError, "ERR #{what} is not a double"
       end
     end
 

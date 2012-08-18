@@ -35,7 +35,7 @@ describe '#brpop(key [, key, ...,], timeout)' do
   it "raises an error on negative timeout" do
     lambda do
       @redises.brpop(@list1, @list2, -1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like "a list-only command"

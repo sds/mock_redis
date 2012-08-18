@@ -118,7 +118,7 @@ class MockRedis
     def assert_sety(key)
       unless sety?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise RuntimeError, "ERR Operation against a key holding the wrong kind of value"
+        raise Redis::CommandError, "ERR Operation against a key holding the wrong kind of value"
       end
     end
 
