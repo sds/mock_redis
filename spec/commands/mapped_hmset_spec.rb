@@ -33,6 +33,12 @@ describe "#mapped_hmset(key, hash={})" do
     end.should raise_error(ArgumentError)
   end
 
+  it "raises an error if given a an odd length array" do
+    lambda do
+      @redises.mapped_hmset(@key, [1])
+    end.should raise_error(Redis::CommandError)
+  end
+
   it "raises an error if given a non-hash value" do
     lambda do
       @redises.mapped_hmset(@key, 1)
