@@ -304,7 +304,9 @@ class MockRedis
     end
 
     def rename(key, newkey)
-      if key == newkey
+      if !data.include?(key)
+        raise Redis::CommandError, "ERR no such key"
+      elsif key == newkey
         raise Redis::CommandError, "ERR source and destination objects are the same"
       end
       data[newkey] = data.delete(key)
@@ -312,7 +314,9 @@ class MockRedis
     end
 
     def renamenx(key, newkey)
-      if key == newkey
+      if !data.include?(key)
+        raise Redis::CommandError, "ERR no such key"
+      elsif key == newkey
         raise Redis::CommandError, "ERR source and destination objects are the same"
       end
       if exists(newkey)

@@ -17,10 +17,11 @@ describe '#rename(key, newkey)' do
     @redises.get(@newkey).should == "oof"
   end
 
-  it "raises an error when the source key does not exist" do
+  it "raises an error when the source key is nonexistant" do
+    @redises.del(@key)
     lambda do
-      @redises.rename("#{@key}-nonexistent", @key)
-    end.should raise_error(RuntimeError)
+      @redises.rename(@key, @newkey)
+    end.should raise_error(Redis::CommandError)
   end
 
   it "raises an error when key == newkey" do
