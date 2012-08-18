@@ -100,10 +100,10 @@ class MockRedis
       assert_has_args(kvpairs, 'msetnx')
 
       if kvpairs.each_slice(2).any? {|(k,v)| exists(k)}
-        0
+        false
       else
         mset(*kvpairs)
-        1
+        true
       end
     end
 
