@@ -14,13 +14,13 @@ class MockRedis
       @in_multi = false
     end
 
-    def method_missing(method, *args)
+    def method_missing(method, *args, &block)
       if @in_multi
         @queued_commands << [method, *args]
         'QUEUED'
       else
         @db.expire_keys
-        @db.send(method, *args)
+        @db.send(method, *args, &block)
       end
     end
 

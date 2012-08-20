@@ -12,9 +12,9 @@ class MockRedis
       @db = db
     end
 
-    def method_missing(method, *args)
+    def method_missing(method, *args, &block)
       @db.expire_keys
-      @db.send(method, *args)
+      @db.send(method, *args, &block)
     end
 
     def initialize_copy(source)
