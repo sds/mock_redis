@@ -34,12 +34,12 @@ class MockRedis
       responses = @pipelined_commands.map do |cmd|
         begin
           send(*cmd)
-        rescue =>
+        rescue => e
           e
         end
       end
       @pipelined_commands = []
-      responses.empty? ? nil : responses # Redis returns nil if no operations carried out. Otherwise array of results
+      responses
     end
   end
 end
