@@ -1,6 +1,8 @@
 class MockRedis
-  def pipelined(options = {})
-    yield
-    nil
+  module PipelineMethods
+    def pipelined(options = {})
+      yield
+      nil
+    end
   end
 end
