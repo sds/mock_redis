@@ -2,7 +2,6 @@ require 'mock_redis/assertions'
 require 'mock_redis/exceptions'
 require 'mock_redis/hash_methods'
 require 'mock_redis/list_methods'
-require 'mock_redis/pipeline_methods'
 require 'mock_redis/set_methods'
 require 'mock_redis/string_methods'
 require 'mock_redis/zset_methods'
@@ -14,7 +13,6 @@ class MockRedis
     include SetMethods
     include StringMethods
     include ZsetMethods
-    include PipelineMethods
 
     attr_reader :data, :expire_times
 
