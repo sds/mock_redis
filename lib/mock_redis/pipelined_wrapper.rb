@@ -34,7 +34,7 @@ class MockRedis
       responses = @pipelined_commands.map do |cmd|
         begin
           send(*cmd)
-        rescue => 
+        rescue => e
           e
         end
       end
