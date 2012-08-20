@@ -36,6 +36,6 @@ describe "#mapped_hmset(key, hash={})" do
   it "raises an error if given a non-hash value" do
     lambda do
       @redises.mapped_hmset(@key, 1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(StandardError)
   end
 end
