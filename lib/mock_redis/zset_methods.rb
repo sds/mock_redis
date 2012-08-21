@@ -20,13 +20,11 @@ class MockRedis
     end
 
     def zcount(key, min, max)
-      assert_scorey(min, 'min or max')
-      assert_scorey(max, 'min or max')
+      assert_scorey(min, 'min or max') unless min == '-inf'
+      assert_scorey(max, 'min or max') unless max == '+inf'
 
-      with_zset_at(key) do |z|
-        z.count do |score, _|
-          score >= min && score <= max
-        end
+      with_zset_at(key) do |zset|
+        zset.in_range(min, max).size
       end
     end
 

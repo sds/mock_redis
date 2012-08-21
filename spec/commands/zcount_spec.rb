@@ -17,6 +17,14 @@ describe "#zcount(key, min, max)" do
     @redises.zcount(@key, 100, 200).should == 0
   end
 
+  it "returns count of all elements when -inf to +inf" do
+    @redises.zcount(@key, "-inf", '+inf').should == 4
+  end
+
+  it "returns a proper count of elements using +inf upper bound" do
+    @redises.zcount(@key, 3, "+inf").should == 2
+  end
+
   it_should_behave_like "arg 1 is a score"
   it_should_behave_like "arg 2 is a score"
   it_should_behave_like "a zset-only command"
