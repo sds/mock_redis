@@ -19,7 +19,7 @@ describe '#rename(key, newkey)' do
 
   it "raises an error when the source key does not exist" do
     lambda do
-      @redises.rename("foo", @key)
+      @redises.rename("#{@key}-nonexistent", @key)
     end.should raise_error(RuntimeError)
   end
 
