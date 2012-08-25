@@ -1,3 +1,14 @@
+### 0.5.0
+* Support `redis-rb` >= 3.0
+* Support Redis::Distributed
+* Support ruby 1.9.3 in spec suite
+* Support subsecond timeouts
+* Support `-inf`, `+inf` in #zcount
+* Return array of results from pipelined calls
+* Use `debugger` instead of the deprecated `ruby-debug19`
+* Fix exception handling in transaction wrappers
+* Fix rename error behaviour for nonexistant keys
+
 ### 0.4.1
 * bugfixes: teach various methods to correctly handle non-string values
 
