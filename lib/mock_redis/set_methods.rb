@@ -6,8 +6,13 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
-    def sadd(key, member)
-      with_set_at(key) {|s| !!s.add?(member.to_s)}
+    def sadd(key, *members)
+      raise ArgumentError, "wrong number of arguments (1 for 2..)" if members.empty?
+      with_set_at(key) do |s|
+        members.map do |member|
+          s.add?(member.to_s)
+        end.compact.count
+      end
     end
 
     def scard(key)
