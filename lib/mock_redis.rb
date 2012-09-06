@@ -23,6 +23,10 @@ class MockRedis
      :db => 0,
   }
 
+  def self.connect(*args)
+    new(*args)
+  end
+
   def initialize(*args)
     @options = _parse_options(args.first)
 
