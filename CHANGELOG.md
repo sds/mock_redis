@@ -1,3 +1,6 @@
+### 0.5.1
+* Support `MockRedis.connect`
+
 ### 0.5.0
 * Support `redis-rb` >= 3.0
 * Support Redis::Distributed
