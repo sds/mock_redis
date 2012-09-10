@@ -6,8 +6,18 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
-    def sadd(key, member)
-      with_set_at(key) {|s| !!s.add?(member.to_s)}
+    def sadd(key, members)
+      members = [members].flatten.map(&:to_s)
+
+      with_set_at(key) do |s|
+        if members.size > 1
+          size_before = s.size
+          members.reverse.each {|m| s << m}
+          s.size - size_before
+        else
+          !!s.add?(members.first)
+        end
+      end
     end
 
     def scard(key)
