@@ -13,8 +13,9 @@ describe MockRedis do
       @mock.db.should == 1
     end
 
-    it "should have an id equal to redis url" do
+    it "should have an id and location equal to redis url" do
       @mock.id.should == "redis://127.0.0.1:6379/1"
+      @mock.location.should == "redis://127.0.0.1:6379/1"
     end
 
     context "when connecting to redis" do
@@ -30,6 +31,7 @@ describe MockRedis do
 
       it "should have an id equal to redis url" do
         @mock.id.should == "redis://127.0.0.1:6379/0"
+        @mock.location.should == "redis://127.0.0.1:6379/0"
       end
     end
   end
