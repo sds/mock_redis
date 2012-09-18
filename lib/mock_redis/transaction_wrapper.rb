@@ -78,7 +78,7 @@ class MockRedis
     end
 
     def watch(_)
-      nil
+      yield self if block_given?
     end
 
   end
