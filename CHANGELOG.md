@@ -1,3 +1,7 @@
+### 0.5.2
+* Support `watch`
+* `sadd` is now Redis 2.4-compliant
+
 ### 0.5.1
 * Support `MockRedis.connect`
 
