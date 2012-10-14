@@ -40,7 +40,7 @@ describe "#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [
 
     lambda do
       @redises.zrevrangebyscore(@key, 100, -100, :limit => "1, 2")
-    end.should raise_error(RuntimeError)
+    end.should raise_error
   end
 
   it_should_behave_like "a zset-only command"
