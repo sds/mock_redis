@@ -40,6 +40,7 @@ class MockRedis
   def id
     "redis://#{self.host}:#{self.port}/#{self.db}"
   end
+  alias :location :id
 
   def call(command, &block)
      self.send(*command)
