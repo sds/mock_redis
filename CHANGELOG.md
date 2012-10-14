@@ -1,3 +1,6 @@
+### 0.5.3
+* Support `location` as an alias to `id` for `Sidekiq`'s benefit
+
 ### 0.5.2
 * Support `watch`
 * `sadd` is now Redis 2.4-compliant
