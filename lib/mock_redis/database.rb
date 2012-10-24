@@ -372,6 +372,10 @@ class MockRedis
       value.nil? || looks_like_integer?(value)
     end
 
+    def can_incr_float?(value)
+      value.nil? || looks_like_float?(value)
+    end
+
     def extract_timeout(arglist)
       timeout = assert_valid_timeout(arglist.last)
       [arglist[0..-2], arglist.last]
