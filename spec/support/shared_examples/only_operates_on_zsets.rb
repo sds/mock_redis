@@ -46,7 +46,7 @@ shared_examples_for "arg N is a score" do
   end
 
   it "is okay with negative floats" do
-    @args[@_arg_index] = 1.5
+    @args[@_arg_index] = -1.5
     lambda { @redises.send(@method, *@args) }.should_not raise_error
   end
 
