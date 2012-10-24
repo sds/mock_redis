@@ -1,3 +1,8 @@
+### 0.5.4
+* Support `incrbyfloat` (new in Redis 2.6)
+* Fix specs to pass in Redis 2.6
+* Deprecated spec suite on 2.4
+
 ### 0.5.3
 * Support `location` as an alias to `id` for `Sidekiq`'s benefit
 
