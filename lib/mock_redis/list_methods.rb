@@ -97,6 +97,9 @@ class MockRedis
     end
 
     def lrem(key, count, value)
+      unless looks_like_integer?(count.to_s)
+        raise Redis::CommandError, "ERR value is not an integer or out of range"
+      end
       count = count.to_i
       value = value.to_s
 

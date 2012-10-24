@@ -61,9 +61,10 @@ describe "#lrem(key, count, value)" do
     @redises.lrem(@key, 0, "beer").should == 0
   end
 
-  it "treats non-integer count as 0" do
-    @redises.lrem(@key, 'foo', 'bottles').should == 3
-    @redises.lrange(@key, 0, -1).grep(/bottles/).should be_empty
+  it "raises an error if the value does not look like an integer" do
+    lambda do
+      @redises.lrem(@key, 'foo', 'bottles')
+    end.should raise_error(RuntimeError)
   end
 
   it "removes empty lists" do
