@@ -75,6 +75,22 @@ class MockRedis
       new_value
     end
 
+    def incrbyfloat(key, n)
+      assert_stringy(key)
+      unless can_incr_float?(data[key])
+        raise Redis::CommandError, "ERR value is not a valid float"
+      end
+
+      unless looks_like_float?(n.to_s)
+        raise Redis::CommandError, "ERR value is not a valid float"
+      end
+
+      new_value = data[key].to_f + n.to_f
+      data[key] = new_value.to_s
+      # for some reason, redis-rb doesn't return this as a string.
+      new_value
+    end
+
     def mget(*keys)
       assert_has_args(keys, 'mget')
 
