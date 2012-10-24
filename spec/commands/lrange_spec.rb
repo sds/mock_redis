@@ -27,6 +27,10 @@ describe "#lrange(key, start, stop)" do
     @redises.lrange("mock-redis-test:bogus-key", 0, 1).should == []
   end
 
+  it "returns [] when start is too large" do
+    @redises.lrange(@key, 100, 100).should == []
+  end
+
   it "finds the end of the list correctly when end is too large" do
     @redises.lrange(@key, 4, 10).should == %w[v4]
   end
