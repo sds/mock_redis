@@ -69,6 +69,9 @@ class RedisMultiplexer < BlankSlate
       a.collect(&:to_s).sort == b.collect(&:to_s).sort
     elsif a.is_a?(Exception) && b.is_a?(Exception)
       a.class == b.class && a.message == b.message
+    elsif a.is_a?(Float) && b.is_a?(Float)
+      delta = [a.abs, b.abs].min / 1_000_000.0
+      (a - b).abs < delta
     else
       false
     end
