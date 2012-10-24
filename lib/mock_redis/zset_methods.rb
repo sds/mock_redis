@@ -42,8 +42,8 @@ class MockRedis
     end
 
     def zcount(key, min, max)
-      assert_scorey(min, 'min or max') unless min == '-inf'
-      assert_scorey(max, 'min or max') unless max == '+inf'
+      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
+      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
 
       with_zset_at(key) do |zset|
         zset.in_range(min, max).size
@@ -230,9 +230,9 @@ class MockRedis
       !!Float(x) rescue false
     end
 
-    def assert_scorey(value, what='value')
+    def assert_scorey(value, message = "ERR value is not a valid float")
       unless looks_like_float?(value)
-        raise Redis::CommandError, "ERR #{what} is not a double"
+        raise Redis::CommandError, message
       end
     end
 
