@@ -93,7 +93,7 @@ class MockRedis
     end
 
     def lrange(key, start, stop)
-      with_list_at(key) {|l| l[start..stop]}
+      with_list_at(key) {|l| start < l.size ? l[start..stop] : []}
     end
 
     def lrem(key, count, value)
