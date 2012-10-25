@@ -45,7 +45,7 @@ class MockRedis
     end
 
     def lindex(key, index)
-      with_list_at(key) {|l| l[index]}
+      with_list_at(key) {|l| l[index.to_i]}
     end
 
     def linsert(key, position, pivot, value)
@@ -93,7 +93,8 @@ class MockRedis
     end
 
     def lrange(key, start, stop)
-      with_list_at(key) {|l| start < l.size ? l[start..stop] : []}
+      start = start.to_i
+      with_list_at(key) {|l| start < l.size ? l[start..stop.to_i] : []}
     end
 
     def lrem(key, count, value)
@@ -124,6 +125,7 @@ class MockRedis
         raise Redis::CommandError, "ERR no such key"
       end
 
+      index = index.to_i
       unless (0...llen(key)).include?(index)
         raise Redis::CommandError, "ERR index out of range"
       end
@@ -134,7 +136,7 @@ class MockRedis
 
     def ltrim(key, start, stop)
       with_list_at(key) do |list|
-        list.replace(list[start..stop] || []) if list
+        list.replace(list[start.to_i..stop.to_i] || []) if list
         'OK'
       end
     end

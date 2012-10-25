@@ -19,6 +19,17 @@ describe '#lindex(key, index)' do
     @redises.lindex(@key, -2).should == "10"
   end
 
+  it "gets an element from the list by its index when index is a string" do
+    @redises.lpush(@key, 20)
+    @redises.lpush(@key, 10)
+
+    @redises.lindex(@key, '0').should == "10"
+    @redises.lindex(@key, '1').should == "20"
+    @redises.lindex(@key, '-1').should == "20"
+    @redises.lindex(@key, '-2').should == "10"
+  end
+
+
   it "returns nil if the index is too large (and positive)" do
     @redises.lpush(@key, 20)
 

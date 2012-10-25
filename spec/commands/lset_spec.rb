@@ -17,6 +17,11 @@ describe "#lset(key, index, value)" do
     @redises.lindex(@key, 0).should == "newthing"
   end
 
+  it "sets the list's value at index to value when the index is a string" do
+    @redises.lset(@key, '0', "newthing")
+    @redises.lindex(@key, 0).should == "newthing"
+  end
+
   it "stringifies value" do
     @redises.lset(@key, 0, 12345)
     @redises.lindex(@key, 0).should == "12345"

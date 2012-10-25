@@ -15,6 +15,10 @@ describe "#lrange(key, start, stop)" do
     @redises.lrange(@key, 0, 2).should == %w[v0 v1 v2]
   end
 
+  it "returns a subset of the list when start and end are strings" do
+    @redises.lrange(@key, '0', '2').should == %w[v0 v1 v2]
+  end
+
   it "returns an empty list when start > end" do
     @redises.lrange(@key, 3, 2).should == []
   end
