@@ -16,6 +16,11 @@ describe "#ltrim(key, start, stop)" do
     @redises.lrange(@key, 0, -1).should == %w[v1 v2 v3]
   end
 
+  it "trims the list when start and stop are strings" do
+    @redises.ltrim(@key, '1', '3')
+    @redises.lrange(@key, 0, -1).should == %w[v1 v2 v3]
+  end
+
   it "trims the list to include only the specified elements (negative indices)" do
     @redises.ltrim(@key, -2, -1)
     @redises.lrange(@key, 0, -1).should == %w[v3 v4]
