@@ -25,6 +25,14 @@ describe "#zcount(key, min, max)" do
     @redises.zcount(@key, 3, "+inf").should == 2
   end
 
+  it "returns a proper count of elements using exclusive lower bound" do
+    @redises.zcount(@key, '(3', "+inf").should == 1
+  end
+
+  it "returns a proper count of elements using exclusive upper bound" do
+    @redises.zcount(@key, '-inf', "(3").should == 2
+  end
+
   it_should_behave_like "arg 1 is a score"
   it_should_behave_like "arg 2 is a score"
   it_should_behave_like "a zset-only command"

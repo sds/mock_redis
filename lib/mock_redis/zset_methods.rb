@@ -231,6 +231,7 @@ class MockRedis
     end
 
     def assert_scorey(value, message = "ERR value is not a valid float")
+      value = $1 if value.to_s.match(/\((.*)/)
       unless looks_like_float?(value)
         raise Redis::CommandError, message
       end
