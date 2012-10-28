@@ -1,3 +1,10 @@
+### 0.5.5
+* Support exclusive ranges in `zcount`
+* List methods (`lindex`, `lrange`, `lset`, and `ltrim`) can take string indexes
+* Fix typo in shared example `zset` spec
+* Fix `lrange` to return `[]` when start is too large
+* Update readme about spec suite compatibility
+
 ### 0.5.4
 * Support `incrbyfloat` (new in Redis 2.6)
 * Fix specs to pass in Redis 2.6
