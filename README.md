@@ -51,6 +51,9 @@ necessary exceptions.
 
 * `#info` just returns canned values; they don't update over time.
 
+* `#sort` supports ascending and descending sort. `ALPHA` sort is not yet
+  supported.
+
 ## Unsupported Commands
 
 Some stuff, we just can't do with a single Ruby object in a single
@@ -78,10 +81,6 @@ please submit a pull request with your (tested!) implementation.
 
 * `#config(:get|:set|:resetstat)` isn't done. They can just return
   canned values.
-
-* `#sort` isn't done. We just haven't gotten to it yet. The input
-  validation will be a pain in the butt, but other than that, it
-  shouldn't be too bad.
 
 ## Running the Tests
 
