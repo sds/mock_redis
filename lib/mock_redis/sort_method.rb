@@ -11,27 +11,30 @@ class MockRedis
 
       return [] if enumerable.nil?
 
-      by = options[:by]
-      limit = options[:limit] || []
-      store = options[:store]
+      by           = options[:by]
+      limit        = options[:limit] || []
+      store        = options[:store]
       get_patterns = Array(options[:get])
-      order = options[:order] || "ASC"
-      direction = order.split.first
+      order        = options[:order] || "ASC"
+      direction    = order.split.first
 
       projected = project(enumerable, by, get_patterns)
-      sorted = sort_by(projected, direction)
-      sliced = slice(sorted, limit)
+      sorted    = sort_by(projected, direction)
+      sliced    = slice(sorted, limit)
 
       store ? rpush(store, sliced) : sliced
     end
 
     private
 
+    ASCENDING_SORT  = Proc.new { |a, b| a.first <=> b.first }
+    DESCENDING_SORT = Proc.new { |a, b| b.first <=> a.first }
+
     def project(enumerable, by, get_patterns)
       enumerable.map do |*elements|
         element = elements.last
-        weight = by ? lookup_from_pattern(by, element) : element
-        value = element
+        weight  = by ? lookup_from_pattern(by, element) : element
+        value   = element
 
         if get_patterns.length > 0
           value = get_patterns.map do |pattern|
@@ -45,17 +48,12 @@ class MockRedis
     end
 
     def sort_by(projected, direction)
-      asc_sorter = lambda { |a, b| a.first <=> b.first }.to_proc
-      desc_sorter = lambda { |a, b| b.first <=> a.first }.to_proc
-
       sorter =
         case direction.upcase
           when "DESC"
-            desc_sorter
-          when "ASC"
-            asc_sorter
-          when "ALPHA"
-            asc_sorter
+            DESCENDING_SORT
+          when "ASC", "ALPHA"
+            ASCENDING_SORT
           else
             raise "Invalid direction '#{direction}'"
         end
