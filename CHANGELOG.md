@@ -1,3 +1,6 @@
+### 0.6.0
+* Support for `#sort` (ascending and descending only)
+
 ### 0.5.5
 * Support exclusive ranges in `zcount`
 * List methods (`lindex`, `lrange`, `lset`, and `ltrim`) can take string indexes
