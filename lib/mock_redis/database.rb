@@ -18,7 +18,8 @@ class MockRedis
 
     attr_reader :data, :expire_times
 
-    def initialize(*args)
+    def initialize(base, *args)
+      @base = base
       @data = {}
       @expire_times = []
     end
@@ -54,7 +55,7 @@ class MockRedis
     end
 
     def expire(key, seconds)
-      expireat(key, Time.now.to_i + seconds.to_i)
+      expireat(key, @base.now.to_i + seconds.to_i)
     end
 
     def expireat(key, timestamp)
@@ -63,7 +64,7 @@ class MockRedis
       end
 
       if exists(key)
-        set_expiration(key, Time.at(timestamp.to_i))
+        set_expiration(key, @base.time_at(timestamp.to_i))
         true
       else
         false
@@ -281,7 +282,7 @@ class MockRedis
     end
 
     def lastsave
-      Time.now.to_i
+      @base.now.to_i
     end
 
     def persist(key)
@@ -335,7 +336,7 @@ class MockRedis
 
     def ttl(key)
       if has_expiration?(key)
-        expiration(key).to_i - Time.now.to_i
+        expiration(key).to_i - @base.now.to_i
       else
         -1
       end
@@ -430,7 +431,7 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now = Time.now
+      now = @base.now
 
       to_delete = expire_times.take_while do |(time, key)|
         time <= now
