@@ -21,6 +21,7 @@ class MockRedis
      :timeout => 5.0,
      :password => nil,
      :db => 0,
+     :time_class => Time,
   }
 
   def self.connect(*args)
@@ -34,7 +35,7 @@ class MockRedis
       TransactionWrapper.new(
         ExpireWrapper.new(
           MultiDbWrapper.new(
-              Database.new(*args)))))
+              Database.new(self, *args)))))
   end
 
   def id
@@ -58,6 +59,14 @@ class MockRedis
     self.options[:db]
   end
 
+  def now
+    self.options[:time_class].now
+  end
+
+  def time_at(timestamp)
+    self.options[:time_class].at(timestamp)
+  end
+
   def client
     self
   end
@@ -79,7 +88,7 @@ class MockRedis
   protected
 
   def _parse_options(options)
-    return {} if options.nil?
+    return DEFAULTS.dup if options.nil?
 
     defaults = DEFAULTS.dup
 
