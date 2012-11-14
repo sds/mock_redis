@@ -1,3 +1,7 @@
+### 0.6.1
+* Support default argument of `*` for keys
+* Allow `MockRedis` to take a TimeClass
+
 ### 0.6.0
 * Support for `#sort` (ascending and descending only)
 
