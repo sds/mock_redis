@@ -42,6 +42,10 @@ class MockRedis
       nil
     end
 
+    def connected?
+      true
+    end
+
     def dbsize
       data.keys.length
     end
