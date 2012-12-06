@@ -38,6 +38,10 @@ class MockRedis
 
     def bgsave() "Background saving started" end
 
+    def disconnect
+      nil
+    end
+
     def dbsize
       data.keys.length
     end
