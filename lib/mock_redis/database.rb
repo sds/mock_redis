@@ -37,6 +37,10 @@ class MockRedis
     def bgrewriteaof() "Background append only file rewriting started" end
 
     def bgsave() "Background saving started" end
+      
+    def disconnect
+      nil
+    end
 
     def dbsize
       data.keys.length
