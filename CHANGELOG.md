@@ -1,3 +1,7 @@
+### 0.6.2
+* Support for `connected?`, `disconnect` (no-op)
+* Fix `*` in `keys` to support 0 or more
+
 ### 0.6.1
 * Support default argument of `*` for keys
 * Allow `MockRedis` to take a TimeClass
