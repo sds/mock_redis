@@ -12,6 +12,7 @@ describe '#keys()' do
 
   describe "with pattern matching" do
     before do
+      @redises.set("mock-redis-test:key",   0)
       @redises.set("mock-redis-test:key1",  1)
       @redises.set("mock-redis-test:key2",  2)
       @redises.set("mock-redis-test:key3",  3)
@@ -48,8 +49,9 @@ describe '#keys()' do
     end
 
     describe "the * character" do
-      it "is treated as 1 or more characters" do
+      it "is treated as 0 or more characters" do
         @redises.keys("mock-redis-test:key*").sort.should == [
+          'mock-redis-test:key',
           'mock-redis-test:key1',
           'mock-redis-test:key10',
           'mock-redis-test:key2',
