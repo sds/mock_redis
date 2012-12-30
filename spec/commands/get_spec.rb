@@ -19,5 +19,12 @@ describe "#get(key)" do
     @redises.get(@key).should == "100"
   end
 
+  it "stringifies key" do
+    key = :a_symbol
+
+    @redises.set(key, 'hello')
+    @redises.get(key.to_s).should == 'hello'
+  end
+
   it_should_behave_like "a string-only command"
 end

@@ -6,6 +6,7 @@ require 'mock_redis/set_methods'
 require 'mock_redis/string_methods'
 require 'mock_redis/zset_methods'
 require 'mock_redis/sort_method'
+require 'mock_redis/indifferent_hash'
 
 class MockRedis
   class Database
@@ -20,7 +21,7 @@ class MockRedis
 
     def initialize(base, *args)
       @base = base
-      @data = {}
+      @data = MockRedis::IndifferentHash.new
       @expire_times = []
     end
 
