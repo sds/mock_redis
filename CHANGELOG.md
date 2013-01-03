@@ -1,3 +1,7 @@
+### 0.6.3
+* Treat symbols as strings for keys
+* Add #reconnect method (no-op)
+
 ### 0.6.2
 * Support for `connected?`, `disconnect` (no-op)
 * Fix `*` in `keys` to support 0 or more
