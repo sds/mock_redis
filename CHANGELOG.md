@@ -1,3 +1,6 @@
+### 0.6.4
+* Update INFO command for latest Redis 2.6 compatibility
+
 ### 0.6.3
 * Treat symbols as strings for keys
 * Add #reconnect method (no-op)
