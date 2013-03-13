@@ -1,4 +1,4 @@
-### 0.6.5 (unreleased)
+### 0.6.5
 * Fix `zrevrange` to return an empty array on invalid range
 * Fix `srandmember` spec on redis-rb 3.0.3
 * Stringify keys in expiration-related commands
