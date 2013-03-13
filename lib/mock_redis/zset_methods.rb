@@ -101,7 +101,7 @@ class MockRedis
 
     def zrevrange(key, start, stop, options={})
       with_zset_at(key) do |z|
-        to_response(z.sorted.reverse[start..stop], options)
+        to_response(z.sorted.reverse[start..stop] || [], options)
       end
     end
 

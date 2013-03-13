@@ -1,4 +1,5 @@
 ### 0.6.5 (unreleased)
+* Fix `zrevrange` to return an empty array on invalid range
 * Fix `srandmember` spec on redis-rb 3.0.3
 
 ### 0.6.4
