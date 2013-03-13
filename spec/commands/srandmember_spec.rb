@@ -20,6 +20,4 @@ describe '#srandmember(key)' do
     @redises.spop(@key)
     @redises.srandmember(@key).should be_nil
   end
-
-  it_should_behave_like "a set-only command"
 end

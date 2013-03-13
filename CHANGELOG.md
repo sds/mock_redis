@@ -1,3 +1,6 @@
+### 0.6.5 (unreleased)
+* Fix `srandmember` spec on redis-rb 3.0.3
+
 ### 0.6.4
 * Update INFO command for latest Redis 2.6 compatibility
 
