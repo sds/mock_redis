@@ -199,11 +199,11 @@ class MockRedis
     end
 
     def expiration(key)
-      expire_times.find {|(_,k)| k == key}.first
+      expire_times.find {|(_,k)| k == key.to_s}.first
     end
 
     def has_expiration?(key)
-      expire_times.any? {|(_,k)| k == key}
+      expire_times.any? {|(_,k)| k == key.to_s}
     end
 
     def looks_like_integer?(str)
@@ -223,14 +223,14 @@ class MockRedis
 
     def remove_expiration(key)
       expire_times.delete_if do |(t, k)|
-        key == k
+        key.to_s == k
       end
     end
 
     def set_expiration(key, time)
       remove_expiration(key)
 
-      expire_times << [time, key]
+      expire_times << [time, key.to_s]
       expire_times.sort! do |a, b|
         a.first <=> b.first
       end

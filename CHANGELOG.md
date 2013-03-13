@@ -1,6 +1,7 @@
 ### 0.6.5 (unreleased)
 * Fix `zrevrange` to return an empty array on invalid range
 * Fix `srandmember` spec on redis-rb 3.0.3
+* Stringify keys in expiration-related commands
 
 ### 0.6.4
 * Update INFO command for latest Redis 2.6 compatibility

@@ -25,6 +25,10 @@ describe "#expire(key, seconds)" do
     end.should raise_error(RuntimeError)
   end
 
+  it "stringifies key" do
+    @redises.expire(@key.to_sym, 9).should == true
+  end
+
   context "[mock only]" do
     # These are mock-only since we can't actually manipulate time in
     # the real Redis.
