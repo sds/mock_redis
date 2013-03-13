@@ -17,6 +17,10 @@ describe "#zrevrange(key, start, stop [, :with_scores => true])" do
     @redises.zrevrange(@key, -2, -1).should == ['Adams', 'Washington']
   end
 
+  it 'returns empty list when start is too large' do
+    @redises.zrevrange(@key, 5, -1).should == []
+  end
+
   it "returns the scores when :with_scores is specified" do
     @redises.zrevrange(@key, 2, 3, :with_scores => true).
       should == [["Adams", 2.0], ["Washington", 1.0]]
