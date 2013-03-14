@@ -9,7 +9,7 @@ class MockRedis
         data_key_ref = data[key]
         ret = yield data[key]
         data[key] = data_key_ref if data[key].nil?
-        ret
+        ret ? ret.dup : ret
       ensure
         clean_up_empties_at(key)
       end

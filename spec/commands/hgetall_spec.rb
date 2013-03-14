@@ -19,4 +19,14 @@ describe "#hgetall(key)" do
   end
 
   it_should_behave_like "a hash-only command"
+
+  it "should not return a mutatble reference to the returned data" do
+    mr = MockRedis.new
+    mr.hset(@key, 'k1', 'v1')
+    mr.hset(@key, 'k2', 'v2')
+    hash =  mr.hgetall(@key)
+    hash['dont'] = 'mutate'
+    new_hash = mr.hgetall(@key)
+    new_hash.keys.sort.should == ['k1', 'k2']
+  end
 end
