@@ -18,5 +18,15 @@ describe "#hgetall(key)" do
     @redises.hgetall('mock-redis-test:nonesuch').should == {}
   end
 
+  it "doesn't return a mutable reference to the returned data" do
+    mr = MockRedis.new
+    mr.hset(@key, 'k1', 'v1')
+    mr.hset(@key, 'k2', 'v2')
+    hash =  mr.hgetall(@key)
+    hash['dont'] = 'mutate'
+    new_hash = mr.hgetall(@key)
+    new_hash.keys.sort.should == ['k1', 'k2']
+  end
+
   it_should_behave_like "a hash-only command"
 end

@@ -1,3 +1,6 @@
+### 0.6.6 (unreleased)
+* Avoid mutation of @data from external reference
+
 ### 0.6.5
 * Fix `zrevrange` to return an empty array on invalid range
 * Fix `srandmember` spec on redis-rb 3.0.3

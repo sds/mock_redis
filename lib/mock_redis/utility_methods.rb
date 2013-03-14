@@ -9,10 +9,14 @@ class MockRedis
         data_key_ref = data[key]
         ret = yield data[key]
         data[key] = data_key_ref if data[key].nil?
-        ret
+        primitive?(ret) ? ret.dup : ret
       ensure
         clean_up_empties_at(key)
       end
+    end
+
+    def primitive?(value)
+      value.kind_of?(::Array) || value.kind_of?(::Hash) || value.kind_of?(::String)
     end
 
     def clean_up_empties_at(key)
