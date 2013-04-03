@@ -8,30 +8,22 @@ class MockRedis
     include UtilityMethods
 
     def zadd(key, *args)
-      if !args.first.is_a?(Array)
-        if args.size < 2
-          raise Redis::CommandError, "ERR wrong number of arguments for 'zadd' command"
-        elsif args.size.odd?
-          raise Redis::CommandError, "ERR syntax error"
-        end
-      else
-        unless args.all? {|pair| pair.size == 2 }
-          raise(Redis::CommandError, "ERR syntax error")
-        end
-      end
-
-      if args.size == 2
-        score, member = args
-        assert_scorey(score)
-        retval = !zscore(key, member)
-        with_zset_at(key) {|z| z.add(score, member.to_s)}
-      else
+      if args.size == 1 && args[0].is_a?(Array)
         args = args.first
         args = args.each_slice(2).to_a unless args.first.is_a?(Array)
         retval = args.map(&:last).map { |member| !!zscore(key, member.to_s) }.count(false)
         with_zset_at(key) do |z|
           args.each { |score, member| z.add(score, member.to_s) }
         end
+
+      elsif args.size == 2
+        score, member = args
+        assert_scorey(score)
+        retval = !zscore(key, member)
+        with_zset_at(key) {|z| z.add(score, member.to_s)}
+
+      else
+        raise Redis::CommandError, "ERR wrong number of arguments"
       end
 
       retval
