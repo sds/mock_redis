@@ -1,5 +1,6 @@
-### 0.6.6 (unreleased)
+### 0.6.6
 * Avoid mutation of @data from external reference
+* Fix sorted set (e.g. `zadd`) with multiple score/member pairs
 
 ### 0.6.5
 * Fix `zrevrange` to return an empty array on invalid range
