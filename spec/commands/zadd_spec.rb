@@ -32,7 +32,8 @@ describe "#zadd(key, score, member)" do
 
   it "supports a variable number of arguments" do
     @redises.zadd(@key, [[1, 'one'], [2, 'two']])
-    @redises.zrange(@key, 0, -1).should == ['one', 'two']
+    @redises.zadd(@key, [[3, 'three']])
+    @redises.zrange(@key, 0, -1).should == ['one', 'two', 'three']
   end
 
   it_should_behave_like "arg 1 is a score"
