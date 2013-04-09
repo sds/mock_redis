@@ -16,6 +16,11 @@ describe '#rpoplpush(source, destination)' do
     @redises.rpoplpush(@list1, @list2).should == "b"
   end
 
+  it "returns false and doesn't append if source empty" do
+    @redises.rpoplpush('empty', @list1).should be_nil
+    @redises.lrange(@list1, 0, -1).should == %w[a b]
+  end
+
   it "takes the last element of destination and prepends it to source" do
     @redises.rpoplpush(@list1, @list2)
 
