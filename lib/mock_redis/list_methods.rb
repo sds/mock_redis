@@ -150,7 +150,7 @@ class MockRedis
 
     def rpoplpush(source, destination)
       value = rpop(source)
-      lpush(destination, value)
+      lpush(destination, value) unless value.nil?
       value
     end
 
