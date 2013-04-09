@@ -116,6 +116,10 @@ class MockRedis
       "OK"
     end
 
+    def mapped_mset(hash)
+      mset(*hash.to_a.flatten)
+    end
+
     def msetnx(*kvpairs)
       assert_has_args(kvpairs, 'msetnx')
 
