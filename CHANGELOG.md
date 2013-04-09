@@ -1,3 +1,7 @@
+### 0.7.0
+* Implemented `mapped_mget`, `mapped_mset`, `mapped_msetnx`
+* Fixed `rpoplpush` when the `rpop` is nil
+
 ### 0.6.6
 * Avoid mutation of @data from external reference
 * Fix sorted set (e.g. `zadd`) with multiple score/member pairs
