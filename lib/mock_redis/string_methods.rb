@@ -131,6 +131,10 @@ class MockRedis
       end
     end
 
+    def mapped_msetnx(hash)
+      msetnx(*hash.to_a.flatten)
+    end
+
     def set(key, value)
       data[key] = value.to_s
       'OK'
