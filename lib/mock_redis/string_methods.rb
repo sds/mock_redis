@@ -99,6 +99,10 @@ class MockRedis
       end
     end
 
+    def mapped_mget(*keys)
+      Hash[keys.zip(mget(*keys))]
+    end
+
     def mset(*kvpairs)
       assert_has_args(kvpairs, 'mset')
       if kvpairs.length.odd?
