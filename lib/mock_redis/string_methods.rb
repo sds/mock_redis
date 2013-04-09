@@ -99,6 +99,10 @@ class MockRedis
       end
     end
 
+    def mapped_mget(*keys)
+      Hash[keys.zip(mget(*keys))]
+    end
+
     def mset(*kvpairs)
       assert_has_args(kvpairs, 'mset')
       if kvpairs.length.odd?
@@ -112,6 +116,10 @@ class MockRedis
       "OK"
     end
 
+    def mapped_mset(hash)
+      mset(*hash.to_a.flatten)
+    end
+
     def msetnx(*kvpairs)
       assert_has_args(kvpairs, 'msetnx')
 
@@ -121,6 +129,10 @@ class MockRedis
         mset(*kvpairs)
         true
       end
+    end
+
+    def mapped_msetnx(hash)
+      msetnx(*hash.to_a.flatten)
     end
 
     def set(key, value)
