@@ -66,7 +66,12 @@ class MockRedis
     end
 
     def expire(key, seconds)
-      expireat(key, @base.now.to_i + seconds.to_i)
+      pexpire(key, seconds.to_i * 1000)
+    end
+
+    def pexpire(key, ms)
+      now_ms = (@base.now.to_f * 1000).to_i
+      pexpireat(key, now_ms + ms.to_i)
     end
 
     def expireat(key, timestamp)
@@ -74,8 +79,17 @@ class MockRedis
         raise Redis::CommandError, "ERR value is not an integer or out of range"
       end
 
+      pexpireat(key, timestamp.to_i * 1000)
+    end
+
+    def pexpireat(key, timestamp_ms)
+      unless looks_like_integer?(timestamp_ms.to_s)
+        raise Redis::CommandError, "ERR value is not an integer or out of range"
+      end
+
       if exists(key)
-        set_expiration(key, @base.time_at(timestamp.to_i))
+        timestamp = timestamp_ms.to_i / 1000.0
+        set_expiration(key, @base.time_at(timestamp))
         true
       else
         false

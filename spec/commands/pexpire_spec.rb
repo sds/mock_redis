@@ -1,32 +1,32 @@
 require 'spec_helper'
 
-describe "#expire(key, seconds)" do
+describe "#pexpire(key, ms)" do
   before do
-    @key = 'mock-redis-test:expire'
+    @key = 'mock-redis-test:pexpire'
     @redises.set(@key, 'spork')
   end
 
   it "returns true for a key that exists" do
-    @redises.expire(@key, 1).should be_true
+    @redises.pexpire(@key, 1).should be_true
   end
 
   it "returns false for a key that does not exist" do
-    @redises.expire('mock-redis-test:nonesuch', 1).should be_false
+    @redises.pexpire('mock-redis-test:nonesuch', 1).should be_false
   end
 
-  it "removes a key immediately when seconds==0" do
-    @redises.expire(@key, 0)
+  it "removes a key immediately when ms==0" do
+    @redises.pexpire(@key, 0)
     @redises.get(@key).should be_nil
   end
 
-  it "raises an error if seconds is bogus" do
+  it "raises an error if ms is bogus" do
     lambda do
-      @redises.expireat(@key, 'a couple minutes or so')
+      @redises.pexpireat(@key, 'a couple minutes or so')
     end.should raise_error(RuntimeError)
   end
 
   it "stringifies key" do
-    @redises.expire(@key.to_sym, 9).should == true
+    @redises.pexpire(@key.to_sym, 9).should == true
   end
 
   context "[mock only]" do
@@ -43,24 +43,16 @@ describe "#expire(key, seconds)" do
     end
 
     it "removes keys after enough time has passed" do
-      @mock.expire(@key, 5)
-      Time.stub!(:now).and_return(@now + 5)
+      @mock.pexpire(@key, 5)
+      Time.stub!(:now).and_return(@now + 0.006)
       @mock.get(@key).should be_nil
     end
 
-    it "updates an existing expire time" do
-      @mock.expire(@key, 5)
-      @mock.expire(@key, 6)
+    it "updates an existing pexpire time" do
+      @mock.pexpire(@key, 5)
+      @mock.pexpire(@key, 6)
 
-      Time.stub!(:now).and_return(@now + 5)
-      @mock.get(@key).should_not be_nil
-    end
-
-    it "has millisecond precision" do
-      @now = Time.at(@now.to_i + 0.5)
-      Time.stub!(:now).and_return(@now)
-      @mock.expire(@key, 5)
-      Time.stub!(:now).and_return(@now + 4.9)
+      Time.stub!(:now).and_return(@now + 0.005)
       @mock.get(@key).should_not be_nil
     end
 
@@ -69,23 +61,23 @@ describe "#expire(key, seconds)" do
 
       it "cleans up the expiration once the key is gone (string)" do
         @mock.set(@key, 'string')
-        @mock.expire(@key, 2)
+        @mock.pexpire(@key, 2)
         @mock.del(@key)
         @mock.set(@key, 'string')
 
-        Time.stub!(:now).and_return(@now + 2)
+        Time.stub!(:now).and_return(@now + 0.003)
 
         @mock.get(@key).should_not be_nil
       end
 
       it "cleans up the expiration once the key is gone (list)" do
         @mock.rpush(@key, 'coconuts')
-        @mock.expire(@key, 2)
+        @mock.pexpire(@key, 2)
         @mock.rpop(@key)
 
         @mock.rpush(@key, 'coconuts')
 
-        Time.stub!(:now).and_return(@now + 2)
+        Time.stub!(:now).and_return(@now + 0.003)
 
         @mock.lindex(@key, 0).should_not be_nil
       end
