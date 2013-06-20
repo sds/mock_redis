@@ -1,3 +1,8 @@
+### 0.8.0
+* Fixed `watch` to return OK when passed no block
+* Implemented `pexpire`, `pexpireat`
+* Fixed `expire` to use millisecond precision
+
 ### 0.7.0
 * Implemented `mapped_mget`, `mapped_mset`, `mapped_msetnx`
 * Fixed `rpoplpush` when the `rpop` is nil
