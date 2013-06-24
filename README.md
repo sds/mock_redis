@@ -84,6 +84,11 @@ please submit a pull request with your (tested!) implementation.
 * `#config(:get|:set|:resetstat)` isn't done. They can just return
   canned values.
 
+## Compatibility
+
+As of version 0.8.2, Ruby 1.9.3 and above are supported. For
+older versions of Ruby, use 0.8.1 or older.
+
 ## Running the Tests
 
 If you want to work on this, you'll probably want to run the

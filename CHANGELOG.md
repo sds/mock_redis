@@ -1,3 +1,6 @@
+### 0.8.2 (not yet released)
+* Added support for Ruby 2.0.0, dropped support for Ruby 1.8.7
+
 ### 0.8.1
 * Fix `#pipelined` to yield self
 
