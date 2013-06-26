@@ -29,7 +29,7 @@ class MockRedis
 
     def pipelined(options = {})
       @in_pipeline = true
-      yield
+      yield self
       @in_pipeline = false
       responses = @pipelined_commands.map do |cmd|
         begin
