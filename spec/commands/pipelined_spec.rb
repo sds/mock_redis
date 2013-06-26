@@ -13,9 +13,9 @@ describe '#pipelined' do
     @redises.set "hello", "world"
     @redises.set "foo", "bar"
 
-    results = @redises.pipelined do
-      @redises.get "hello"
-      @redises.get "foo"
+    results = @redises.pipelined do |yieldedredis|
+      yieldedredis.get "hello"
+      yieldedredis.get "foo"
     end
 
     results.should == ["world", "bar"]
