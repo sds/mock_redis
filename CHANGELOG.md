@@ -1,3 +1,6 @@
+### 0.8.1
+* Fix `#pipelined` to yield self
+
 ### 0.8.0
 * Fixed `watch` to return OK when passed no block
 * Implemented `pexpire`, `pexpireat`
