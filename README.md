@@ -1,5 +1,7 @@
 # MockRedis
 
+[![Build Status](https://travis-ci.org/causes/mock_redis.png)](https://travis-ci.org/causes/mock_redis)
+
 A mock redis gem.
 
 MockRedis provides the same interface as redis-rb, but it stores its
