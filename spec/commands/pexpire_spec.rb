@@ -44,7 +44,7 @@ describe "#pexpire(key, ms)" do
 
     it "removes keys after enough time has passed" do
       @mock.pexpire(@key, 5)
-      Time.stub!(:now).and_return(@now + 0.006)
+      Time.stub!(:now).and_return(@now + Rational(6,1000))
       @mock.get(@key).should be_nil
     end
 
