@@ -4,5 +4,6 @@ source "http://rubygems.org"
 gemspec
 
 group :test do
-  gem 'debugger'
+  gem 'debugger', platforms: [:mri, :mswin]
+  gem 'ruby-debug', platforms: [:jruby]
 end
