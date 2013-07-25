@@ -70,7 +70,7 @@ class MockRedis
     end
 
     def pexpire(key, ms)
-      now_ms = (@base.now.to_f * 1000).to_i
+      now_ms = (@base.now.to_r * 1000).to_i
       pexpireat(key, now_ms + ms.to_i)
     end
 
@@ -88,7 +88,7 @@ class MockRedis
       end
 
       if exists(key)
-        timestamp = timestamp_ms.to_i / 1000.0
+        timestamp = Rational(timestamp_ms.to_i, 1000)
         set_expiration(key, @base.time_at(timestamp))
         true
       else
@@ -262,7 +262,7 @@ class MockRedis
       now = @base.now
 
       to_delete = expire_times.take_while do |(time, key)|
-        time <= now
+        (time.to_r * 1_000).to_i <= (now.to_r * 1_000).to_i
       end
 
       to_delete.each do |(time, key)|
@@ -271,5 +271,6 @@ class MockRedis
 
       expire_times.slice!(0, to_delete.length)
     end
+
   end
 end
