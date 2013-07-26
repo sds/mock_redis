@@ -271,5 +271,6 @@ class MockRedis
 
       expire_times.slice!(0, to_delete.length)
     end
+
   end
 end
