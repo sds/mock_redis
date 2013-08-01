@@ -1,4 +1,25 @@
 class MockRedis
+  class FutureNotReady < RuntimeError; end
+
+  class Future
+    attr_reader :command
+
+    def initialize(command)
+      @command = command
+      @result_set = false
+    end
+
+    def value
+      raise FutureNotReady unless @result_set
+      @result
+    end
+
+    def set_result(result)
+      @result_set = true
+      @result = result
+    end
+  end
+
   class PipelinedWrapper
     include UndefRedisMethods
 
@@ -8,20 +29,21 @@ class MockRedis
 
     def initialize(db)
       @db = db
-      @pipelined_commands = []
+      @pipelined_futures = []
       @in_pipeline = false
     end
 
     def initialize_copy(source)
       super
       @db = @db.clone
-      @pipelined_commands = @pipelined_commands.clone
+      @pipelined_futures = @pipelined_futures.clone
     end
 
     def method_missing(method, *args, &block)
       if @in_pipeline
-        @pipelined_commands << [method, *args]
-        nil
+        future = MockRedis::Future.new([method, *args])
+        @pipelined_futures << future
+        future
       else
         @db.send(method, *args, &block)
       end
@@ -31,14 +53,16 @@ class MockRedis
       @in_pipeline = true
       yield self
       @in_pipeline = false
-      responses = @pipelined_commands.map do |cmd|
+      responses = @pipelined_futures.map do |future|
         begin
-          send(*cmd)
+          result = send(*future.command)
+          future.set_result(result)
+          result
         rescue => e
           e
         end
       end
-      @pipelined_commands = []
+      @pipelined_futures = []
       responses
     end
   end
