@@ -5,8 +5,9 @@
   `mock_redis` no *longer supports Redis 2.6 or lower*. All testing in
   TravisCI is now done against 2.8
 * Update return value of TTL to return -2 if key doesn't exist
-* Add support for HINCRBYFLOAT
+* Add support for the HINCRBYFLOAT command
 * Add support for `count` parameter on SRANDMEMBER
+* Add support for the PTTL command
 
 ### 0.10.0
 * Add support for :nx, :xx, :ex, :px options for SET command

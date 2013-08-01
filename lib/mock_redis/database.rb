@@ -172,6 +172,14 @@ class MockRedis
       end
     end
 
+    def pttl(key)
+      if has_expiration?(key)
+        ((expiration(key).to_f - @base.now.to_f) * 1000).to_i
+      else
+        -1
+      end
+    end
+
     def type(key)
       if !exists(key)
         'none'
