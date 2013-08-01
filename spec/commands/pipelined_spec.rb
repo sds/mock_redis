@@ -9,15 +9,37 @@ describe '#pipelined' do
     res.should == true
   end
 
-  it "returns results of pipelined operations" do
-    @redises.set "hello", "world"
-    @redises.set "foo", "bar"
+  context 'with a few added data' do
 
-    results = @redises.pipelined do |redis|
-      redis.get "hello"
-      redis.get "foo"
+    let(:key1) { "hello" }
+    let(:key2) { "world" }
+    let(:value1) { "foo" }
+    let(:value2) { "bar" }
+
+    before(:each) do
+      @redises.set key1, value1
+      @redises.set key2, value2
     end
 
-    results.should == ["world", "bar"]
+    it "returns results of pipelined operations" do
+
+      results = @redises.pipelined do |redis|
+        redis.get key1
+        redis.get key2
+      end
+
+      results.should == [ value1, value2 ]
+    end
+
+    it "returns futures" do
+
+      future = nil
+
+      @redises.mock.pipelined do |redis|
+        future = redis.get key1
+      end
+
+      future.class.should be MockRedis::Future
+    end
   end
 end

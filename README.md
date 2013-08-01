@@ -34,6 +34,7 @@ of supported methods:
 * Sorted set methods: `zadd`, `zrank`, `zunionstore`, etc.
 * Expirations: `expire`, `ttl`, etc.
 * Transactions: `multi`, `exec`, `discard`
+* Futures
 
 ## Mostly-Supported Commands
 

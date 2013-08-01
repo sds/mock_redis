@@ -32,6 +32,9 @@ class RedisMultiplexer < BlankSlate
       @in_redis_block = false
     end
 
+    puts "mock: #{mock_retval.class}"
+    puts "real: #{real_retval.class}"
+
     if (mock_retval == :no_op || real_retval == :no_op)
         # ignore, we were inside a block (like pipelined)
     elsif (!equalish?(mock_retval, real_retval) && !mock_error && !real_error)
