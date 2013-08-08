@@ -1,3 +1,6 @@
+### 0.9.0
+* Added futures support
+
 ### 0.8.2
 * Added support for Ruby 2.0.0, dropped support for Ruby 1.8.7
 * Changes for compatibility with JRuby
