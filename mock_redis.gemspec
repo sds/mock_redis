@@ -5,6 +5,7 @@ require "mock_redis/version"
 Gem::Specification.new do |s|
   s.name        = "mock_redis"
   s.version     = MockRedis::VERSION
+  s.license     = 'MIT'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Causes Engineering', 'Samuel Merritt']
   s.email       = ['eng@causes.com']
