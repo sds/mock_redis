@@ -26,6 +26,11 @@ describe "#ltrim(key, start, stop)" do
     @redises.lrange(@key, 0, -1).should == %w[v3 v4]
   end
 
+  it "trims the list to include only the specified elements (out of range negative indices)" do
+    @redises.ltrim(@key, -10, -2)
+    @redises.lrange(@key, 0, -1).should == %w[v0 v1 v2 v3]
+  end
+
   it "does not crash on overly-large indices" do
     @redises.ltrim(@key, 100, 200)
     @redises.lrange(@key, 0, -1).should == %w[]

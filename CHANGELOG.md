@@ -9,6 +9,7 @@
 * Add support for `count` parameter on SRANDMEMBER
 * Add support for the PTTL command
 * Improve support for negative start indices in LRANGE
+* Improve support for negative start indices in LTRIM
 
 ### 0.10.0
 * Add support for :nx, :xx, :ex, :px options for SET command
