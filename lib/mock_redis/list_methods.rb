@@ -139,7 +139,7 @@ class MockRedis
 
     def ltrim(key, start, stop)
       with_list_at(key) do |list|
-        list.replace(list[start.to_i..stop.to_i] || []) if list
+        list.replace(list[[start.to_i, -list.length].max..stop.to_i] || []) if list
         'OK'
       end
     end
