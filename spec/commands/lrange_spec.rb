@@ -23,8 +23,16 @@ describe "#lrange(key, start, stop)" do
     @redises.lrange(@key, 3, 2).should == []
   end
 
-  it "works with negative indices" do
+  it "works with a negative stop index" do
     @redises.lrange(@key, 2, -1).should == %w[v2 v3 v4]
+  end
+
+  it "works with negative start and stop indices" do
+    @redises.lrange(@key, -2, -1).should == %w[v3 v4]
+  end
+
+  it "works with negative start indices less than list length" do
+    @redises.lrange(@key, -10, -2).should == %w[v0 v1 v2 v3]
   end
 
   it "returns [] when run against a nonexistent value" do
