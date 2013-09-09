@@ -31,6 +31,11 @@ class MockRedis
   def initialize(*args)
     @options = _parse_options(args.first)
 
+    [PipelinedWrapper, TransactionWrapper, ExpireWrapper, MultiDbWrapper].each do |wrapper|
+      wrapper.send(:undef_method, :set)
+      wrapper.send(:undef_method, :get)
+    end
+    
     @db = PipelinedWrapper.new(
       TransactionWrapper.new(
         ExpireWrapper.new(
