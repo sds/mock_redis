@@ -9,6 +9,17 @@ describe "#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
     @redises.zadd(@key, 4, 'Madison')
   end
 
+  context 'when the zset is empty' do
+    before do
+      @redises.del(@key)
+    end
+
+    it 'should return an empty array' do
+      @redises.exists(@key).should be_false
+      @redises.zrangebyscore(@key, 0, 4).should == []
+    end
+  end
+
   it "returns the elements in order by score" do
     @redises.zrangebyscore(@key, 1, 2).should == ['Washington', 'Adams']
   end
