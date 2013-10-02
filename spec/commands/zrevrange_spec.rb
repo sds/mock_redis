@@ -9,6 +9,16 @@ describe "#zrevrange(key, start, stop [, :with_scores => true])" do
     @redises.zadd(@key, 4, 'Madison')
   end
 
+  context 'when the zset is empty' do
+    before do
+      @redises.del(@key)
+    end
+    it 'should return an empty array' do
+      @redises.exists(@key).should be_false
+      @redises.zrevrange(@key, 0, 4).should == []
+    end
+  end
+
   it "returns the elements in order by score" do
     @redises.zrevrange(@key, 0, 1).should == ['Madison', 'Jefferson']
   end
