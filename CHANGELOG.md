@@ -6,6 +6,7 @@
   TravisCI is now done against 2.8
 * Update return value of TTL to return -2 if key doesn't exist
 * Add support for HINCRBYFLOAT
+* Add support for `count` parameter on SRANDMEMBER
 
 ### 0.10.0
 * Add support for :nx, :xx, :ex, :px options for SET command
