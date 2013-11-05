@@ -135,13 +135,39 @@ class MockRedis
       msetnx(*hash.to_a.flatten)
     end
 
-    def set(key, value)
+    def set(key, value, options = {})
+      return_true = false
+      options = options.dup
+      if options.delete(:nx)
+        if exists(key)
+          return false
+        else
+          return_true = true
+        end
+      end
+      if options.delete(:xx)
+        if exists(key)
+          return_true = true
+        else
+          return false
+        end
+      end
       data[key] = value.to_s
-      'OK'
+
+      # take latter
+      expire_option = options.to_a.last
+      if expire_option
+        type, duration = expire_option
+        if duration == 0
+          raise Redis::CommandError, 'ERR invalid expire time in SETEX'
+        end
+        expire(key, type.to_sym == :ex ? duration : duration / 1000.0)
+      end
+      return_true ? true : 'OK'
     end
 
-    def []=(key, value)
-      set(key, value)
+    def []=(key, value, options = {})
+      set(key, value, options)
     end
 
     def setbit(key, offset, value)
