@@ -1,3 +1,6 @@
+### 0.10.0
+* Add support for :nx, :xx, :ex, :px options for SET command
+
 ### 0.9.0
 * Added futures support
 
