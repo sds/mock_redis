@@ -46,6 +46,24 @@ class MockRedis
       end
     end
 
+    def hincrbyfloat(key, field, increment)
+      with_hash_at(key) do |hash|
+        field = field.to_s
+        unless can_incr_float?(data[key][field])
+          raise Redis::CommandError, "ERR hash value is not a valid float"
+        end
+
+        unless looks_like_float?(increment.to_s)
+          raise Redis::CommandError, "ERR value is not a valid float"
+        end
+
+        new_value = (hash[field] || "0").to_f + increment.to_f
+        new_value = new_value.to_i if new_value % 1 == 0
+        hash[field] = new_value.to_s
+        new_value
+      end
+    end
+
     def hkeys(key)
       with_hash_at(key, &:keys)
     end
