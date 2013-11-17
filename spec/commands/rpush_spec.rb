@@ -33,5 +33,11 @@ describe "#rpush(key)" do
     @redises.lindex(@key, 2).should == "3"
   end
 
+  it "raises an error if an empty array is given" do
+    lambda do
+      @redises.rpush(@key, [])
+    end.should raise_error(Redis::CommandError)
+  end
+
   it_should_behave_like "a list-only command"
 end

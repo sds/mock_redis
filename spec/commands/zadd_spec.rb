@@ -36,6 +36,12 @@ describe "#zadd(key, score, member)" do
     @redises.zrange(@key, 0, -1).should == ['one', 'two', 'three']
   end
 
+  it "raises an error if an empty array is given" do
+    lambda do
+      @redises.zadd(@key, [])
+    end.should raise_error(Redis::CommandError)
+  end
+
   it_should_behave_like "arg 1 is a score"
   it_should_behave_like "a zset-only command"
 end

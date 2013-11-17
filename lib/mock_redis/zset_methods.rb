@@ -10,6 +10,8 @@ class MockRedis
     def zadd(key, *args)
       if args.size == 1 && args[0].is_a?(Array)
         args = args.first
+        assert_has_args(args, 'zadd')
+
         args = args.each_slice(2).to_a unless args.first.is_a?(Array)
         retval = args.map(&:last).map { |member| !!zscore(key, member.to_s) }.count(false)
         with_zset_at(key) do |z|

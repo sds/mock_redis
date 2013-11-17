@@ -8,6 +8,7 @@ class MockRedis
 
     def sadd(key, members)
       members = [members].flatten.map(&:to_s)
+      assert_has_args(members, 'sadd')
 
       with_set_at(key) do |s|
         if members.size > 1
