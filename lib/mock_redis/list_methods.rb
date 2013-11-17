@@ -82,11 +82,16 @@ class MockRedis
 
     def lpush(key, values)
       values = [values] unless values.is_a?(Array)
+      assert_has_args(values, 'lpush')
       with_list_at(key) {|l| values.each {|v| l.unshift(v.to_s)}}
       llen(key)
     end
 
     def lpushx(key, value)
+      value = [value] unless value.is_a?(Array)
+      if value.length != 1
+        raise Redis::CommandError, "ERR wrong number of arguments for 'lpushx' command"
+      end
       assert_listy(key)
       return 0 unless list_at?(key)
       lpush(key, value)
@@ -156,11 +161,16 @@ class MockRedis
 
     def rpush(key, values)
       values = [values] unless values.is_a?(Array)
+      assert_has_args(values, 'rpush')
       with_list_at(key) {|l| values.each {|v| l.push(v.to_s)}}
       llen(key)
     end
 
     def rpushx(key, value)
+      value = [value] unless value.is_a?(Array)
+      if value.length != 1
+        raise Redis::CommandError, "ERR wrong number of arguments for 'rpushx' command"
+      end
       assert_listy(key)
       return 0 unless list_at?(key)
       rpush(key, value)

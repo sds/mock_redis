@@ -29,5 +29,17 @@ describe "#lpushx(key, value)" do
     @redises.lindex(@key, 0).should == "2"
   end
 
+  it "raises an error if an empty array is given" do
+    lambda do
+      @redises.lpushx(@key, [])
+    end.should raise_error(Redis::CommandError)
+  end
+
+  it "raises an error if an array of more than one item is given" do
+    lambda do
+      @redises.lpushx(@key, [1, 2])
+    end.should raise_error(Redis::CommandError)
+  end
+
   it_should_behave_like "a list-only command"
 end

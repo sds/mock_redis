@@ -35,6 +35,11 @@ describe '#sadd(key, member)' do
       @redises.smembers(@key).should == %w[1 2 3]
     end
 
+    it "raises an error if an empty array is given" do
+      lambda do
+        @redises.sadd(@key, [])
+      end.should raise_error(Redis::CommandError)
+    end
   end
 
   it_should_behave_like "a set-only command"
