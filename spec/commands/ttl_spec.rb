@@ -10,8 +10,8 @@ describe "#ttl(key)" do
     @redises.ttl(@key).should == -1
   end
 
-  it "returns -1 for a key that does not exist" do
-    @redises.ttl('mock-redis-test:nonesuch').should == -1
+  it "returns -2 for a key that does not exist" do
+    @redises.ttl('mock-redis-test:nonesuch').should == -2
   end
 
   it "stringifies key" do
