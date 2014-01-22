@@ -54,8 +54,10 @@ class MockRedis
     end
 
     def del(*keys)
+      keys = keys.flatten.map(&:to_s)
+      assert_has_args(keys, 'del')
+
       keys.
-        flatten.
         find_all{|key| data[key]}.
         each {|k| persist(k)}.
         each {|k| data.delete(k)}.

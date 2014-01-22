@@ -27,4 +27,8 @@ describe '#del(key [, key, ...])' do
     @redises.get('mock-redis-test:1').should be_nil
     @redises.get('mock-redis-test:2').should be_nil
   end
+
+  it "raises an error if an empty array is given" do
+    expect { @redises.del [] }.to raise_error Redis::CommandError
+  end
 end

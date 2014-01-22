@@ -1,3 +1,9 @@
+# MockRedis Changelog
+
+### master (unreleased)
+
+* Fix bug where `del` would not raise error when given empty array
+
 ### 0.11.0
 
 * Raise errors for empty arrays as arguments
