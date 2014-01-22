@@ -8,6 +8,9 @@ MockRedis provides the same interface as redis-rb, but it stores its
 data in memory instead of talking to a Redis server. It is intended
 for use in tests.
 
+The current implementation is tested against *Redis 2.8.4*. Older versions
+of Redis may return different results or not support some commands.
+
 ## Getting Started
 
 It's as easy as `require 'mock_redis'; mr = MockRedis.new`. Then you can
@@ -94,7 +97,7 @@ older versions of Ruby, use 0.8.1 or older.
 
 If you want to work on this, you'll probably want to run the
 tests. (Just kidding! There's no probably about it.) These tests were
-written with Redis 2.6.0 running on localhost without any passwords
+written with Redis 2.8.4 running on localhost without any passwords
 required. If you're using a different version of Redis, you may see
 failures due to error message text being different. If you're running
 a really old version of Redis, you'll definitely see failures due to

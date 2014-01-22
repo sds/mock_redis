@@ -1,3 +1,12 @@
+### master (unreleased)
+
+* Raise errors for empty arrays as arguments
+* Update error messages to conform to Redis 2.8. This officially means
+  `mock_redis` no *longer supports Redis 2.6 or lower*. All testing in
+  TravisCI is now done against 2.8
+* Update return value of TTL to return -2 if key doesn't exist
+* Add support for HINCRBYFLOAT
+
 ### 0.10.0
 * Add support for :nx, :xx, :ex, :px options for SET command
 
