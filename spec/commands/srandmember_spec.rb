@@ -21,16 +21,16 @@ describe '#srandmember(key)' do
     @redises.srandmember(@key).should be_nil
   end
 
- context "using count argument" do
+  context "when count argument is specified" do
     before do
       @redises.sadd(@key, 'value2')
       @redises.sadd(@key, 'value3')
     end
 
-    # NOTE: disabling result checking because we use methods that gives random members here,
-    # so most likely not the same result between MockRedis and Redis
+    # NOTE: We disable result checking since MockRedis and Redis will likely
+    # return a different random set (since the selection is, well, random)
     it "returns the whole set if count is greater than the set size" do
-      @redises.send_without_checking(:srandmember, @key, 5).should == ['value', 'value2', 'value3']
+      @redises.send_without_checking(:srandmember, @key, 5).should =~ %w[value value2 value3]
     end
 
     it "returns random members up to count from the set when count is smaller than the set size" do
@@ -42,7 +42,7 @@ describe '#srandmember(key)' do
     end
 
     it "returns nil if the set is empty" do
-      @redises.srem(@key, ['value', 'value2', 'value3'])
+      @redises.srem(@key, %w[value value2 value3])
       @redises.srandmember(@key, 2).should be_empty
     end
   end

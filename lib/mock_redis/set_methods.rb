@@ -86,19 +86,11 @@ class MockRedis
     def srandmember(key, count = nil)
       members = with_set_at(key, &:to_a)
       if count
-        result = []
         if count > 0
-          return members if count >= members.size
-          count.times do
-            index = rand(members.length)
-            result += [ members[index] ] if !result.include?(members[index])
-          end
+          members.sample(count)
         else
-          count.abs.times do
-            result += [ members[rand(members.length)] ]
-          end
+          count.abs.times.map { members[rand(members.length)] }
         end
-        result
       else
         members[rand(members.length)]
       end
