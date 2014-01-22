@@ -173,8 +173,10 @@ class MockRedis
     end
 
     def pttl(key)
-      if has_expiration?(key)
-        ((expiration(key).to_f - @base.now.to_f) * 1000).to_i
+      if !exists(key)
+        -2
+      elsif has_expiration?(key)
+        (expiration(key).to_r * 1000).to_i - (@base.now.to_r * 1000).to_i
       else
         -1
       end
