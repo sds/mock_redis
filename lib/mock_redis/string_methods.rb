@@ -247,7 +247,7 @@ class MockRedis
     end
 
     def assert_stringy(key,
-        message="ERR Operation against a key holding the wrong kind of value")
+        message="WRONGTYPE Operation against a key holding the wrong kind of value")
       unless stringy?(key)
         raise Redis::CommandError, message
       end

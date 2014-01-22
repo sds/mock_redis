@@ -213,7 +213,7 @@ class MockRedis
     def assert_zsety(key)
       unless zsety?(key)
         raise Redis::CommandError,
-        "ERR Operation against a key holding the wrong kind of value"
+        "WRONGTYPE Operation against a key holding the wrong kind of value"
       end
     end
 
