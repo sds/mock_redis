@@ -5,7 +5,7 @@
 
 A mock redis gem.
 
-MockRedis provides the same interface as redis-rb, but it stores its
+MockRedis provides the same interface as `redis-rb`, but it stores its
 data in memory instead of talking to a Redis server. It is intended
 for use in tests.
 
@@ -33,10 +33,10 @@ of supported methods:
 
 * String methods: `get`, `set`, `append`, `incr`, etc.
 * List methods: `lpush`, `lpop`, `lrange`, `rpoplpush`, etc.
-* Set methods: `sadd`, `sinter`, `sismember`, etc.
-* Hash methods: `hset`, `hget`, `hgetall`, `hmget`, etc.
+* Set methods: `sadd`, `sinter`, `sismember`, `srandmember`, etc.
+* Hash methods: `hset`, `hget`, `hgetall`, `hmget`, `hincrby`, `hincrbyfloat` etc.
 * Sorted set methods: `zadd`, `zrank`, `zunionstore`, etc.
-* Expirations: `expire`, `ttl`, etc.
+* Expirations: `expire`, `pexpire`, `ttl`, `pttl`, etc.
 * Transactions: `multi`, `exec`, `discard`
 * Futures
 
@@ -91,14 +91,15 @@ please submit a pull request with your (tested!) implementation.
 
 ## Compatibility
 
-As of version 0.8.2, Ruby 1.9.3 and above are supported. For
-older versions of Ruby, use 0.8.1 or older.
+As of version `0.8.2`, Ruby 1.9.3 and above are supported. For
+older versions of Ruby, use `0.8.1` or older. JRuby 1.7.9 is also
+supported.
 
 ## Running the Tests
 
 If you want to work on this, you'll probably want to run the
 tests. (Just kidding! There's no probably about it.) These tests were
-written with Redis 2.8.4 running on localhost without any passwords
+written with Redis `2.8.4` running on localhost without any passwords
 required. If you're using a different version of Redis, you may see
 failures due to error message text being different. If you're running
 a really old version of Redis, you'll definitely see failures due to
