@@ -9,6 +9,16 @@ describe "#zrange(key, start, stop [, :with_scores => true])" do
     @redises.zadd(@key, 4, 'Madison')
   end
 
+  context 'when the zset is empty' do
+    before do
+      @redises.del(@key)
+    end
+    it 'should return an empty array' do
+      @redises.exists(@key).should be_false
+      @redises.zrange(@key, 0, 4).should == []
+    end
+  end
+
   it "returns the elements when the range is given as strings" do
     @redises.zrange(@key, "0", "1").should == ['Washington', 'Adams']
   end
