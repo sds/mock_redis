@@ -32,3 +32,4 @@ describe '#del(key [, key, ...])' do
     expect { @redises.del [] }.to raise_error Redis::CommandError
   end
 end
+
