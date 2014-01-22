@@ -152,7 +152,7 @@ class MockRedis
     end
 
     def to_response(score_member_pairs, options)
-      score_member_pairs.map do |(score,member)|
+      (score_member_pairs || []).map do |(score,member)|
         if options[:with_scores] || options[:withscores]
           [member, score.to_f]
         else
