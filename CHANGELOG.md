@@ -10,6 +10,7 @@
 * Add support for the PTTL command
 * Improve support for negative start indices in LRANGE
 * Improve support for negative start indices in LTRIM
+* Allow `del` to accept arrays of keys
 
 ### 0.10.0
 * Add support for :nx, :xx, :ex, :px options for SET command

@@ -55,6 +55,7 @@ class MockRedis
 
     def del(*keys)
       keys.
+        flatten.
         find_all{|key| data[key]}.
         each {|k| persist(k)}.
         each {|k| data.delete(k)}.

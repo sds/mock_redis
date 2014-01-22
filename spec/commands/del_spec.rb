@@ -17,4 +17,14 @@ describe '#del(key [, key, ...])' do
 
     @redises.get('mock-redis-test:1').should be_nil
   end
+
+  it "accepts an array of keys" do
+    @redises.set('mock-redis-test:1', 1)
+    @redises.set('mock-redis-test:2', 2)
+
+    @redises.del(%w[mock-redis-test:1 mock-redis-test:2])
+
+    @redises.get('mock-redis-test:1').should be_nil
+    @redises.get('mock-redis-test:2').should be_nil
+  end
 end
