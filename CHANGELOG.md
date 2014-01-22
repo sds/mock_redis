@@ -1,4 +1,4 @@
-### master (unreleased)
+### 0.11.0
 
 * Raise errors for empty arrays as arguments
 * Update error messages to conform to Redis 2.8. This officially means
