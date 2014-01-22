@@ -1,5 +1,6 @@
 # MockRedis
 
+[![Gem Version](https://badge.fury.io/rb/mock_redis.png)](http://badge.fury.io/rb/mock_redis)
 [![Build Status](https://travis-ci.org/causes/mock_redis.png)](https://travis-ci.org/causes/mock_redis)
 
 A mock redis gem.
