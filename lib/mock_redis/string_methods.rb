@@ -220,7 +220,7 @@ class MockRedis
       m16   = 0x0000ffff0000ffff
       m32   = 0x00000000ffffffff
 
-      str.bytes[start..stop].each do |byte|
+      str.bytes.to_a[start..stop].each do |byte|
         # Naive Hamming weight
         c = byte
         c = (c & m1)  + ((c >> 1) & m1)
