@@ -208,6 +208,33 @@ class MockRedis
       retval
     end
 
+    def bitcount(key, start = 0, stop = -1)
+      assert_stringy(key)
+
+      str   = data[key] || ""
+      count = 0
+      m1    = 0x5555555555555555
+      m2    = 0x3333333333333333
+      m4    = 0x0f0f0f0f0f0f0f0f
+      m8    = 0x00ff00ff00ff00ff
+      m16   = 0x0000ffff0000ffff
+      m32   = 0x00000000ffffffff
+
+      str.bytes.to_a[start..stop].each do |byte|
+        # Naive Hamming weight
+        c = byte
+        c = (c & m1)  + ((c >> 1) & m1)
+        c = (c & m2)  + ((c >> 2) & m2)
+        c = (c & m4)  + ((c >> 4) & m4)
+        c = (c & m8)  + ((c >> 8) & m8)
+        c = (c & m16) + ((c >> 16) & m16)
+        c = (c & m32) + ((c >> 32) & m32)
+        count += c
+      end
+
+      count
+    end
+
     def setex(key, seconds, value)
       set(key, value)
       expire(key, seconds)
