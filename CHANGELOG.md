@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.12.0
 
 * Fix bug where `del` would not raise error when given empty array
 * Add support for the BITCOUNT command
