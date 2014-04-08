@@ -2,8 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/mock_redis.png)](http://badge.fury.io/rb/mock_redis)
 [![Build Status](https://travis-ci.org/causes/mock_redis.png)](https://travis-ci.org/causes/mock_redis)
-
-A mock redis gem.
+[![Dependency Status](https://gemnasium.com/causes/mock_redis.svg)](https://gemnasium.com/causes/mock_redis)
 
 MockRedis provides the same interface as `redis-rb`, but it stores its
 data in memory instead of talking to a Redis server. It is intended
