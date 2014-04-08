@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path('../lib', __FILE__)
+$LOAD_PATH << File.expand_path('../lib', __FILE__)
 require 'mock_redis/version'
 
 Gem::Specification.new do |s|
