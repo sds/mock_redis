@@ -3,6 +3,7 @@
 ### master (unreleased)
 
 * Fix bug where `del` would not raise error when given empty array
+* Add support for the BITCOUNT command
 
 ### 0.11.0
 
