@@ -28,10 +28,9 @@ describe 'transactions (multi/exec/discard)' do
       lambda do
         @redises.mock.multi do |r|
           # do stuff that succeed
-          s.set(nil, 'string')
+          r.set(nil, 'string')
         end
-      end.should_not raise_error(RuntimeError)
-
+      end.should_not raise_error
     end
   end
 

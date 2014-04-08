@@ -29,7 +29,7 @@ describe '#brpop(key [, key, ...,], timeout)' do
   it "allows subsecond timeouts" do
     lambda do
       @redises.brpop(@list1, @list2, 0.5)
-    end.should_not raise_error(Redis::CommandError)
+    end.should_not raise_error
   end
 
   it "raises an error on negative timeout" do

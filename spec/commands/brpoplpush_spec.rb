@@ -24,12 +24,6 @@ describe '#brpoplpush(source, destination, timeout)' do
     @redises.brpoplpush(@list1, @list2, 0).should == "B"
   end
 
-  it "allows subsecond timeout" do
-    lambda do
-      @redises.brpoplpush(@list1, @list2, 0.5)
-    end.should_not raise_error(Redis::CommandError)
-  end
-
   it "raises an error on negative timeout" do
     lambda do
       @redises.brpoplpush(@list1, @list2, -1)
