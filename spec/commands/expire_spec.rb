@@ -39,12 +39,12 @@ describe "#expire(key, seconds)" do
 
     before do
       @now = Time.now
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "removes keys after enough time has passed" do
       @mock.expire(@key, 5)
-      Time.stub!(:now).and_return(@now + 5)
+      Time.stub(:now).and_return(@now + 5)
       @mock.get(@key).should be_nil
     end
 
@@ -52,15 +52,15 @@ describe "#expire(key, seconds)" do
       @mock.expire(@key, 5)
       @mock.expire(@key, 6)
 
-      Time.stub!(:now).and_return(@now + 5)
+      Time.stub(:now).and_return(@now + 5)
       @mock.get(@key).should_not be_nil
     end
 
     it "has millisecond precision" do
       @now = Time.at(@now.to_i + 0.5)
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
       @mock.expire(@key, 5)
-      Time.stub!(:now).and_return(@now + 4.9)
+      Time.stub(:now).and_return(@now + 4.9)
       @mock.get(@key).should_not be_nil
     end
 
@@ -73,7 +73,7 @@ describe "#expire(key, seconds)" do
         @mock.del(@key)
         @mock.set(@key, 'string')
 
-        Time.stub!(:now).and_return(@now + 2)
+        Time.stub(:now).and_return(@now + 2)
 
         @mock.get(@key).should_not be_nil
       end
@@ -85,7 +85,7 @@ describe "#expire(key, seconds)" do
 
         @mock.rpush(@key, 'coconuts')
 
-        Time.stub!(:now).and_return(@now + 2)
+        Time.stub(:now).and_return(@now + 2)
 
         @mock.lindex(@key, 0).should_not be_nil
       end

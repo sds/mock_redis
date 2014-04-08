@@ -35,13 +35,13 @@ describe "#persist(key)" do
 
     before do
       @now = Time.now
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "makes keys stay around" do
       @mock.expire(@key, 5)
       @mock.persist(@key)
-      Time.stub!(:now).and_return(@now + 5)
+      Time.stub(:now).and_return(@now + 5)
       @mock.get(@key).should_not be_nil
     end
 

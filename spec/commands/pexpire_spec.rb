@@ -39,12 +39,12 @@ describe "#pexpire(key, ms)" do
 
     before do
       @now = Time.now.round
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "removes keys after enough time has passed" do
       @mock.pexpire(@key, 5)
-      Time.stub!(:now).and_return(@now + Rational(6, 1000))
+      Time.stub(:now).and_return(@now + Rational(6, 1000))
       @mock.get(@key).should be_nil
     end
 
@@ -52,7 +52,7 @@ describe "#pexpire(key, ms)" do
       @mock.pexpire(@key, 5)
       @mock.pexpire(@key, 6)
 
-      Time.stub!(:now).and_return(@now + Rational(5, 1000))
+      Time.stub(:now).and_return(@now + Rational(5, 1000))
       @mock.get(@key).should_not be_nil
     end
 
@@ -65,7 +65,7 @@ describe "#pexpire(key, ms)" do
         @mock.del(@key)
         @mock.set(@key, 'string')
 
-        Time.stub!(:now).and_return(@now + 0.003)
+        Time.stub(:now).and_return(@now + 0.003)
 
         @mock.get(@key).should_not be_nil
       end
@@ -77,7 +77,7 @@ describe "#pexpire(key, ms)" do
 
         @mock.rpush(@key, 'coconuts')
 
-        Time.stub!(:now).and_return(@now + 0.003)
+        Time.stub(:now).and_return(@now + 0.003)
 
         @mock.lindex(@key, 0).should_not be_nil
       end

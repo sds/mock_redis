@@ -29,7 +29,7 @@ describe "#ttl(key)" do
 
     before do
       @now = Time.now
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "gives you the key's remaining lifespan in seconds" do

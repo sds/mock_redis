@@ -29,7 +29,7 @@ describe "#select(db)" do
     # Time dependence introduces a bit of nondeterminism here
     before do
       @now = Time.now
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
 
       @mock = @redises.mock
 

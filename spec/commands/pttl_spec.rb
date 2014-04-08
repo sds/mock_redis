@@ -30,7 +30,7 @@ describe "#pttl(key)" do
 
     before do
       @now = Time.now.round
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "gives you the key's remaining lifespan in milliseconds" do

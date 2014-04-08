@@ -35,12 +35,12 @@ describe "#expireat(key, timestamp)" do
 
     before do
       @now = Time.now
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "removes keys after enough time has passed" do
       @mock.expireat(@key, @now.to_i + 5)
-      Time.stub!(:now).and_return(@now + 5)
+      Time.stub(:now).and_return(@now + 5)
       @mock.get(@key).should be_nil
     end
 

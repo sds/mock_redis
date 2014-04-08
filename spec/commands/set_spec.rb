@@ -40,14 +40,14 @@ describe '#set(key, value)' do
 
       before do
         @now = Time.now
-        Time.stub!(:now).and_return(@now)
+        Time.stub(:now).and_return(@now)
       end
 
       it 'accepts EX seconds' do
         key = 'mock-redis-test'
         @mock.set(key, 1, ex: 1).should == 'OK'
         @mock.get(key).should_not be_nil
-        Time.stub!(:now).and_return(@now + 2)
+        Time.stub(:now).and_return(@now + 2)
         @mock.get(key).should be_nil
       end
 
@@ -55,7 +55,7 @@ describe '#set(key, value)' do
         key = 'mock-redis-test'
         @mock.set(key, 1, px: 1000).should == 'OK'
         @mock.get(key).should_not be_nil
-        Time.stub!(:now).and_return(@now + 2)
+        Time.stub(:now).and_return(@now + 2)
         @mock.get(key).should be_nil
       end
     end

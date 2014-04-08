@@ -36,12 +36,12 @@ describe "#pexpireat(key, timestamp_ms)" do
 
     before do
       @now = Time.now
-      Time.stub!(:now).and_return(@now)
+      Time.stub(:now).and_return(@now)
     end
 
     it "removes keys after enough time has passed" do
       @mock.pexpireat(@key, (@now.to_f * 1000).to_i + 5)
-      Time.stub!(:now).and_return(@now + 0.006)
+      Time.stub(:now).and_return(@now + 0.006)
       @mock.get(@key).should be_nil
     end
   end
