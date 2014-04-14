@@ -35,4 +35,10 @@ describe '#rename(key, newkey)' do
     @redises.rename(@key, @newkey)
     @redises.get(@newkey).should == "oof"
   end
+
+  it "keeps expiration" do
+    @redises.expire(@key, 1000)
+    @redises.rename(@key, @newkey)
+    @redises.ttl(@newkey).should be > 0
+  end
 end
