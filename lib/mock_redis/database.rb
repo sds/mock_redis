@@ -144,6 +144,10 @@ class MockRedis
         raise Redis::CommandError, "ERR source and destination objects are the same"
       end
       data[newkey] = data.delete(key)
+      if has_expiration?(key)
+        set_expiration(newkey, expiration(key))
+        remove_expiration(key)
+      end
       'OK'
     end
 
