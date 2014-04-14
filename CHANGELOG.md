@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.12.1
 
 * RENAME command now keeps key expiration
 
