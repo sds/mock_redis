@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* RENAME command now keeps key expiration
+
 ### 0.12.0
 
 * Fix bug where `del` would not raise error when given empty array
