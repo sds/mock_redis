@@ -13,9 +13,7 @@ describe "#setbit(key, offset)" do
   end
 
   it "sets the bit within the string" do
-    $debug = true
     @redises.setbit(@key, 7, 1)
-    $debug = false
     @redises.get(@key).should == 'i'  # ASCII 0x69
   end
 
