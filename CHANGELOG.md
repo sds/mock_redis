@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix bug where SETBIT command would not correctly unset a bit
+
 ### 0.12.1
 
 * RENAME command now keeps key expiration
