@@ -19,6 +19,11 @@ describe "#setbit(key, offset)" do
     @redises.get(@key).should == 'i'  # ASCII 0x69
   end
 
+  it "unsets the bit within the string" do
+    @redises.setbit(@key, 1, 0)
+    @redises.get(@key).should == '('  # ASCII 0x28
+  end
+
   it "does the right thing with multibyte characters" do
     @redises.set(@key, "€99.94")   # the euro sign is 3 bytes wide in UTF-8
     @redises.setbit(@key, 63, 1).should == 0
@@ -43,4 +48,3 @@ describe "#setbit(key, offset)" do
 
   it_should_behave_like "a string-only command"
 end
- 
