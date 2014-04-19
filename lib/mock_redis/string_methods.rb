@@ -199,7 +199,7 @@ class MockRedis
       char_as_number = char.each_byte.reduce(0) do |a, byte|
         (a << 8) + byte
       end
-      char_as_number |=
+      char_as_number ^=
         (2**((char.bytesize * 8)-1) >>
         (offset_within_char * 8 + offset_within_byte))
       str[char_index] = char_as_number.chr
