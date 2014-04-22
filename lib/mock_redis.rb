@@ -71,6 +71,10 @@ class MockRedis
     self
   end
 
+  def connect
+    self
+  end
+
   def reconnect
     self
   end
