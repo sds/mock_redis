@@ -13,16 +13,12 @@ describe "#setbit(key, offset)" do
   end
 
   it "sets the bit within the string" do
-    $debug = true
     @redises.setbit(@key, 7, 1)
-    $debug = false
     @redises.get(@key).should == 'i'  # ASCII 0x69
   end
 
   it "unsets the bit within the string" do
-    $debug = true
     @redises.setbit(@key, 1, 0)
-    $debug = false
     @redises.get(@key).should == '('  # ASCII 0x28
   end
 
@@ -50,4 +46,3 @@ describe "#setbit(key, offset)" do
 
   it_should_behave_like "a string-only command"
 end
- 
