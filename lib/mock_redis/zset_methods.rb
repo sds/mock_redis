@@ -67,6 +67,9 @@ class MockRedis
     end
 
     def zrangebyscore(key, min, max, options={})
+      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
+      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+
       with_zset_at(key) do |zset|
         all_results = zset.in_range(min, max)
         to_response(apply_limit(all_results, options[:limit]), options)
@@ -104,12 +107,18 @@ class MockRedis
     end
 
     def zremrangebyscore(key, min, max)
+      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
+      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+
       zrangebyscore(key, min, max).
         each {|member| zrem(key, member)}.
         size
     end
 
     def zrevrangebyscore(key, max, min, options={})
+      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
+      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+
       with_zset_at(key) do |zset|
         to_response(
           apply_limit(
