@@ -12,29 +12,29 @@ describe '#brpop(key [, key, ...,], timeout)' do
   end
 
   it "returns [first-nonempty-list, popped-value]" do
-    @redises.brpop(@list1, @list2, 1).should == [@list1, 'two']
+    @redises.brpop(@list1, @list2).should == [@list1, 'two']
   end
 
   it "pops that value off the list" do
-    @redises.brpop(@list1, @list2, 1)
-    @redises.brpop(@list1, @list2, 1)
-    @redises.brpop(@list1, @list2, 1).should == [@list2, 'ten']
+    @redises.brpop(@list1, @list2)
+    @redises.brpop(@list1, @list2)
+    @redises.brpop(@list1, @list2).should == [@list2, 'ten']
   end
 
   it "ignores empty keys" do
-    @redises.brpop('mock-redis-test:not-here', @list1, 1).should ==
+    @redises.brpop('mock-redis-test:not-here', @list1).should ==
       [@list1, 'two']
   end
 
-  it "allows subsecond timeouts" do
+  it "raises an error on subsecond timeouts" do
     lambda do
-      @redises.brpop(@list1, @list2, 0.5)
-    end.should_not raise_error
+      @redises.brpop(@list1, @list2, :timeout => 0.5)
+    end.should raise_error(Redis::CommandError)
   end
 
   it "raises an error on negative timeout" do
     lambda do
-      @redises.brpop(@list1, @list2, -1)
+      @redises.brpop(@list1, @list2, :timeout => -1)
     end.should raise_error(Redis::CommandError)
   end
 
@@ -42,12 +42,12 @@ describe '#brpop(key [, key, ...,], timeout)' do
 
   context "[mock only]" do
     it "ignores positive timeouts and returns nil" do
-      @redises.mock.brpop('mock-redis-test:not-here', 1).should be_nil
+      @redises.mock.brpop('mock-redis-test:not-here', :timeout => 1).should be_nil
     end
 
     it "raises WouldBlock on zero timeout (no blocking in the mock)" do
       lambda do
-        @redises.mock.brpop('mock-redis-test:not-here', 0)
+        @redises.mock.brpop('mock-redis-test:not-here', :timeout => 0)
       end.should raise_error(MockRedis::WouldBlock)
     end
   end
