@@ -210,8 +210,8 @@ class MockRedis
     private
 
     def assert_valid_timeout(timeout)
-      if !looks_like_float?(timeout.to_s)
-        raise Redis::CommandError, "ERR timeout is not a float or out of range"
+      if !looks_like_integer?(timeout.to_s)
+        raise Redis::CommandError, "ERR timeout is not an integer or out of range"
       elsif timeout < 0
         raise Redis::CommandError, "ERR timeout is negative"
       end
@@ -227,8 +227,13 @@ class MockRedis
     end
 
     def extract_timeout(arglist)
-      timeout = assert_valid_timeout(arglist.last)
-      [arglist[0..-2], arglist.last]
+      options = arglist.last
+      if options.is_a?(Hash) && options[:timeout]
+        timeout = assert_valid_timeout(options[:timeout])
+        [arglist[0..-2], timeout]
+      else
+        [arglist, 0]
+      end
     end
 
     def expiration(key)

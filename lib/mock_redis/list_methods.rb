@@ -32,7 +32,8 @@ class MockRedis
       end
     end
 
-    def brpoplpush(source, destination, timeout)
+    def brpoplpush(source, destination, options = {})
+      timeout = options.is_a?(Hash) && options[:timeout] || 0
       assert_valid_timeout(timeout)
 
       if llen(source) > 0
