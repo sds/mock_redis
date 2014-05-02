@@ -6,6 +6,8 @@
 * Add support for the `connect` method
 * Check that `min`/`max` parameters are floats in `zrangebyscore`,
   `zremrangebyscore`, and `zrevrangebyscore`
+* Update blocking list commands to take `timeout` in an options hash
+  for compatibility with `redis-rb` >= 3.0.0
 
 ### 0.12.1
 
