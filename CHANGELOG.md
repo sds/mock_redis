@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.13.0
 
 * Fix bug where SETBIT command would not correctly unset a bit
 * Add support for the `connect` method
