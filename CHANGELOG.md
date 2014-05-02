@@ -4,6 +4,8 @@
 
 * Fix bug where SETBIT command would not correctly unset a bit
 * Add support for the `connect` method
+* Check that `min`/`max` parameters are floats in `zrangebyscore`,
+  `zremrangebyscore`, and `zrevrangebyscore`
 
 ### 0.12.1
 
