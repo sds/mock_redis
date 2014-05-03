@@ -255,6 +255,7 @@ class MockRedis
     def redis_pattern_to_ruby_regex(pattern)
       Regexp.new(
         "^#{pattern}$".
+        gsub(/([+|()])/, '\\\\\1').
         gsub(/([^\\])\?/, "\\1.").
         gsub(/([^\\])\*/, "\\1.*"))
     end
