@@ -20,6 +20,14 @@ describe '#keys()' do
       @redises.set("mock-redis-test:key20", 20)
       @redises.set("mock-redis-test:key30", 30)
 
+      @redises.set("mock-redis-test:regexp-key(1|22)", 40)
+      @redises.set("mock-redis-test:regexp-key3+", 40)
+      @redises.set("mock-redis-test:regexp-key33", 40)
+      @redises.set("mock-redis-test:regexp-key4a", 40)
+      @redises.set("mock-redis-test:regexp-key4-", 40)
+      @redises.set("mock-redis-test:regexp-key4b", 40)
+      @redises.set("mock-redis-test:regexp-key4c", 40)
+
       @redises.set("mock-redis-test:special-key?", 'true')
       @redises.set("mock-redis-test:special-key*", 'true')
     end
@@ -73,6 +81,32 @@ describe '#keys()' do
         @redises.keys('mock-redis-test:key[12]').sort.should == [
           'mock-redis-test:key1',
           'mock-redis-test:key2',
+        ]
+      end
+    end
+
+    describe "the | character" do
+      it "is treated as literal (not 'or')" do
+        @redises.keys('mock-redis-test:regexp-key(1|22)').sort.should == [
+          'mock-redis-test:regexp-key(1|22)'
+        ]
+      end
+    end
+
+    describe "the + character" do
+      it "is treated as literal (not 'one or more' quantifier)" do
+        @redises.keys('mock-redis-test:regexp-key3+').sort.should == [
+          'mock-redis-test:regexp-key3+'
+        ]
+      end
+    end
+
+    describe "character classes ([a-c])" do
+      it "specifies a range which matches any lowercase letter from \"a\" to \"c\"" do
+        @redises.keys('mock-redis-test:regexp-key4[a-c]').sort.should == [
+          'mock-redis-test:regexp-key4a',
+          'mock-redis-test:regexp-key4b',
+          'mock-redis-test:regexp-key4c',
         ]
       end
     end
