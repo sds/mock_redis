@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix bug where certain characters in keys were treated as regex characters
+  rather than literals
+
 ### 0.13.0
 
 * Fix bug where SETBIT command would not correctly unset a bit
