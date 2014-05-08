@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.13.1
 
 * Fix bug where certain characters in keys were treated as regex characters
   rather than literals
