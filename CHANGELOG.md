@@ -4,6 +4,7 @@
 
 * Fix bug where certain characters in keys were treated as regex characters
   rather than literals
+* Add back support for legacy integer timeouts on blocking list commands
 
 ### 0.13.0
 
