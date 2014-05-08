@@ -46,6 +46,10 @@ describe '#blpop(key [, key, ...,], timeout)' do
       @redises.mock.blpop('mock-redis-test:not-here', :timeout => 1).should be_nil
     end
 
+    it "ignores positive legacy timeouts and returns nil" do
+      @redises.mock.blpop('mock-redis-test:not-here', 1).should be_nil
+    end
+
     it "raises WouldBlock on zero timeout (no blocking in the mock)" do
       lambda do
         @redises.mock.blpop('mock-redis-test:not-here', :timeout => 0)
