@@ -59,7 +59,7 @@ class MockRedis
     end
 
     def smembers(key)
-      with_set_at(key, &:to_a).reverse
+      with_set_at(key, &:to_a).map(&:dup).reverse
     end
 
     def smove(src, dest, member)
