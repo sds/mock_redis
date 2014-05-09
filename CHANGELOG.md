@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix SMEMBERS command to not return frozen elements
+
 ### 0.13.1
 
 * Fix bug where certain characters in keys were treated as regex characters
