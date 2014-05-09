@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.13.2
 
 * Fix SMEMBERS command to not return frozen elements
 
