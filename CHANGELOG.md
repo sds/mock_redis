@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix bug where SETBIT command would not correctly unset a bit
+
 ### 0.13.2
 
 * Fix SMEMBERS command to not return frozen elements
