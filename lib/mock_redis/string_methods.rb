@@ -123,7 +123,7 @@ class MockRedis
     def msetnx(*kvpairs)
       assert_has_args(kvpairs, 'msetnx')
 
-      if kvpairs.each_slice(2).any? {|(k,v)| exists(k)}
+      if kvpairs.each_slice(2).any? {|(k,_)| exists(k)}
         false
       else
         mset(*kvpairs)
@@ -199,9 +199,17 @@ class MockRedis
       char_as_number = char.each_byte.reduce(0) do |a, byte|
         (a << 8) + byte
       end
-      char_as_number ^=
-        (2**((char.bytesize * 8)-1) >>
-        (offset_within_char * 8 + offset_within_byte))
+
+      bitmask_length = (char.bytesize * 8 - offset_within_char * 8 - offset_within_byte - 1)
+      bitmask = 1 << bitmask_length
+
+      if value.zero?
+        bitmask ^= 2**(char.bytesize * 8) - 1
+        char_as_number &= bitmask
+      else
+        char_as_number |= bitmask
+      end
+
       str[char_index] = char_as_number.chr
 
       data[key] = str
