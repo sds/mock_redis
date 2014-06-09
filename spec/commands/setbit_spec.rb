@@ -44,5 +44,12 @@ describe "#setbit(key, offset)" do
     @redises.get(@key).should == "@"
   end
 
+  it "sets and retrieves bits" do
+    @redises.setbit(@key, 22, 1)
+    @redises.getbit(@key, 22).should == 1
+    @redises.setbit(@key, 23, 0)
+    @redises.getbit(@key, 23).should == 0
+  end
+
   it_should_behave_like "a string-only command"
 end
