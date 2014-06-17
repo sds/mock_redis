@@ -91,5 +91,21 @@ describe "#expire(key, seconds)" do
       end
     end
 
+    context 'with two key expirations' do
+      let(:other_key) { 'mock-redis-test:expire-other' }
+
+      before { @redises.set(other_key, 'spork-other') }
+
+      it 'removes keys after enough time has passed' do
+        @mock.expire(@key, 5)
+        @mock.expire(other_key, 10)
+
+        Time.stub(:now).and_return(@now + 5)
+        @mock.get(@key).should be_nil
+
+        Time.stub(:now).and_return(@now + 10)
+        @mock.get(other_key).should be_nil
+      end
+    end
   end
 end
