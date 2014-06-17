@@ -296,8 +296,6 @@ class MockRedis
       to_delete.each do |(time, key)|
         del(key)
       end
-
-      expire_times.slice!(0, to_delete.length)
     end
   end
 end
