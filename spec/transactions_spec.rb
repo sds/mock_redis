@@ -109,4 +109,29 @@ describe 'transactions (multi/exec/discard)' do
       responses[2].should == 1
     end
   end
+
+  context "saving commands with multi block" do
+    before(:each) do
+      @string = 'mock-redis-test:string'
+      @list = 'mock-redis-test:list'
+    end
+
+    it "commands return response after exec is called" do
+      redis = MockRedis.new
+
+      set_response = nil
+      lpush_response = nil
+      second_lpush_response = nil
+
+      redis.multi do |mult|
+        set_response = mult.set(@string, 'string')
+        lpush_response = mult.lpush(@list, 'list')
+        second_lpush_response = mult.lpush(@list, 'list')
+      end
+
+      set_response.value.should == 'OK'
+      lpush_response.value.should == 1
+      second_lpush_response.value.should == 2
+    end
+  end
 end

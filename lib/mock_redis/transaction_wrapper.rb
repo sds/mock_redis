@@ -10,14 +10,21 @@ class MockRedis
 
     def initialize(db)
       @db = db
-      @queued_commands = []
+      @transaction_futures = []
       @in_multi = false
+      @multi_block_given = false
     end
 
     def method_missing(method, *args, &block)
       if @in_multi
-        @queued_commands << [method, *args]
-        'QUEUED'
+        future = MockRedis::Future.new([method, *args])
+        @transaction_futures << future
+
+        if @multi_block_given
+          future
+        else
+          'QUEUED'
+        end
       else
         @db.expire_keys
         @db.send(method, *args, &block)
@@ -27,7 +34,7 @@ class MockRedis
     def initialize_copy(source)
       super
       @db = @db.clone
-      @queued_commands = @queued_commands.clone
+      @transaction_futures = @transaction_futures.clone
     end
 
     def discard
@@ -35,7 +42,8 @@ class MockRedis
         raise Redis::CommandError, "ERR DISCARD without MULTI"
       end
       @in_multi = false
-      @queued_commands = []
+      @multi_block_given = false
+      @transaction_futures = []
       'OK'
     end
 
@@ -44,14 +52,19 @@ class MockRedis
         raise Redis::CommandError, "ERR EXEC without MULTI"
       end
       @in_multi = false
-      responses = @queued_commands.map do |cmd|
+      @multi_block_given = false
+
+      responses = @transaction_futures.map do |future|
         begin
-          send(*cmd)
+          result = send(*future.command)
+          future.set_result(result)
+          result
         rescue => e
           e
         end
       end
-      @queued_commands = []
+
+      @transaction_futures = []
       responses
     end
 
@@ -61,6 +74,7 @@ class MockRedis
       end
       @in_multi = true
       if block_given?
+        @multi_block_given = true
         begin
           yield(self)
           self.exec
