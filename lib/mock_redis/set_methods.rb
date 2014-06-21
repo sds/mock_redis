@@ -127,6 +127,7 @@ class MockRedis
     end
 
     def with_sets_at(*keys, &blk)
+      keys = keys.flatten
       if keys.length == 1
         with_set_at(keys.first, &blk)
       else
