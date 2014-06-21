@@ -117,13 +117,11 @@ describe 'transactions (multi/exec/discard)' do
     end
 
     it "commands return response after exec is called" do
-      redis = MockRedis.new
-
       set_response = nil
       lpush_response = nil
       second_lpush_response = nil
 
-      redis.multi do |mult|
+      @redises.multi do |mult|
         set_response = mult.set(@string, 'string')
         lpush_response = mult.lpush(@list, 'list')
         second_lpush_response = mult.lpush(@list, 'list')
