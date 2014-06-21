@@ -18,6 +18,10 @@ describe '#sunion(key [, key, ...])' do
       should == %w[2 3 5 7]
   end
 
+  it "allows Array as argument" do
+    @redises.sunion([@evens, @primes]).should == %w[2 4 6 8 10 3 5 7]
+  end
+
   it "raises an error if given 0 sets" do
     lambda do
       @redises.sunion
