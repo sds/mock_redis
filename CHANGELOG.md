@@ -5,6 +5,7 @@
 * Fix bug where SETBIT command would not correctly unset a bit
 * Fix bug where a key that expired would cause another key that expired later
   to prematurely expire
+* Add support to set methods to take array as argument
 
 ### 0.13.2
 
