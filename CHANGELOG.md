@@ -6,6 +6,7 @@
 * Fix bug where a key that expired would cause another key that expired later
   to prematurely expire
 * Add support to set methods to take array as argument
+* Evaluate futures at the end of `#multi` blocks
 
 ### 0.13.2
 
