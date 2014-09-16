@@ -7,11 +7,11 @@ describe "#expire(key, seconds)" do
   end
 
   it "returns true for a key that exists" do
-    @redises.expire(@key, 1).should be_true
+    @redises.expire(@key, 1).should == true
   end
 
   it "returns false for a key that does not exist" do
-    @redises.expire('mock-redis-test:nonesuch', 1).should be_false
+    @redises.expire('mock-redis-test:nonesuch', 1).should == false
   end
 
   it "removes a key immediately when seconds==0" do

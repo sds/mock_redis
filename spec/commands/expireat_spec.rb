@@ -7,11 +7,11 @@ describe "#expireat(key, timestamp)" do
   end
 
   it "returns true for a key that exists" do
-    @redises.expireat(@key, Time.now.to_i + 1).should be_true
+    @redises.expireat(@key, Time.now.to_i + 1).should == true
   end
 
   it "returns false for a key that does not exist" do
-    @redises.expireat('mock-redis-test:nonesuch', Time.now.to_i + 1).should be_false
+    @redises.expireat('mock-redis-test:nonesuch', Time.now.to_i + 1).should == false
   end
 
   it "removes a key immediately when timestamp is now" do

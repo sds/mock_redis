@@ -6,12 +6,12 @@ describe "#hsetnx(key, field)" do
   end
 
   it "returns true if the field is absent" do
-    @redises.hsetnx(@key, 'field', 'val').should be_true
+    @redises.hsetnx(@key, 'field', 'val').should == true
   end
 
   it "returns 0 if the field is present" do
     @redises.hset(@key, 'field', 'val')
-    @redises.hsetnx(@key, 'field', 'val').should be_false
+    @redises.hsetnx(@key, 'field', 'val').should == false
   end
 
   it "leaves the field unchanged if the field is present" do

@@ -1,8 +1,8 @@
 shared_examples_for "a zset-only command" do
-  it "raises an error for non-zset values" do
+  it "raises an error for non-zset values" do |example|
     key = 'mock-redis-test:zset-only'
 
-    method = method_from_description
+    method = method_from_description(example)
     args = args_for_method(method).unshift(key)
 
     @redises.set(key, 1)
@@ -23,10 +23,10 @@ shared_examples_for "arg 2 is a score" do
 end
 
 shared_examples_for "arg N is a score" do
-  before do
+  before do |example|
     key = 'mock-redis-test:zset-only'
 
-    @method = method_from_description
+    @method = method_from_description(example)
     @args = args_for_method(@method).unshift(key)
   end
 

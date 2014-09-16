@@ -9,12 +9,12 @@ describe '#renamenx(key, newkey)' do
   end
 
   it "responds with true when newkey does not exist" do
-    @redises.renamenx(@key, @newkey).should be_true
+    @redises.renamenx(@key, @newkey).should == true
   end
 
   it "responds with false when newkey exists" do
     @redises.set(@newkey, 'monkey')
-    @redises.renamenx(@key, @newkey).should be_false
+    @redises.renamenx(@key, @newkey).should == false
   end
 
   it "moves the data" do

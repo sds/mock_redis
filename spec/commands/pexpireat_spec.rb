@@ -7,12 +7,12 @@ describe "#pexpireat(key, timestamp_ms)" do
   end
 
   it "returns true for a key that exists" do
-    @redises.pexpireat(@key, (Time.now.to_f * 1000).to_i + 1).should be_true
+    @redises.pexpireat(@key, (Time.now.to_f * 1000).to_i + 1).should == true
   end
 
   it "returns false for a key that does not exist" do
     @redises.pexpireat('mock-redis-test:nonesuch',
-                       (Time.now.to_f * 1000).to_i + 1).should be_false
+                       (Time.now.to_f * 1000).to_i + 1).should == false
   end
 
   it "removes a key immediately when timestamp is now" do

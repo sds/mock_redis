@@ -1,8 +1,8 @@
 shared_examples_for "a list-only command" do
-  it "raises an error for non-list values" do
+  it "raises an error for non-list values" do |example|
     key = 'mock-redis-test:list-only'
 
-    method = method_from_description
+    method = method_from_description(example)
     args = args_for_method(method).unshift(key)
 
     @redises.set(key, 1)

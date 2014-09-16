@@ -9,11 +9,11 @@ describe '#srem(key, member)' do
   end
 
   it "returns true if member is in the set" do
-    @redises.srem(@key, 'bert').should be_true
+    @redises.srem(@key, 'bert').should == true
   end
 
   it "returns false if member is not in the set" do
-    @redises.srem(@key, 'cookiemonster').should be_false
+    @redises.srem(@key, 'cookiemonster').should == false
   end
 
   it "removes member from the set" do
@@ -23,7 +23,7 @@ describe '#srem(key, member)' do
 
   it "stringifies member" do
     @redises.sadd(@key, '1')
-    @redises.srem(@key, 1).should be_true
+    @redises.srem(@key, 1).should == true
   end
 
   it "cleans up empty sets" do

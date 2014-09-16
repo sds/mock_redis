@@ -4,12 +4,12 @@ describe '#setnx(key, value)' do
   before { @key = 'mock-redis-test:setnx' }
 
   it "returns true if the key was absent" do
-    @redises.setnx(@key, 1).should be_true
+    @redises.setnx(@key, 1).should == true
   end
 
   it "returns false if the key was present" do
     @redises.set(@key, 2)
-    @redises.setnx(@key, 1).should be_false
+    @redises.setnx(@key, 1).should == false
   end
 
   it "sets the value if missing" do

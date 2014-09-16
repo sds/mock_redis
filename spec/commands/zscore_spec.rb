@@ -4,13 +4,13 @@ describe "#zscore(key, member)" do
   before { @key = 'mock-redis-test:zscore' }
 
   it "returns the score as a string" do
-    @redises.zadd(@key, 0.25, 'foo').should be_true
+    @redises.zadd(@key, 0.25, 'foo').should == true
     @redises.zscore(@key, 'foo').should == 0.25
   end
 
   it "handles integer members correctly" do
     member = 11
-    @redises.zadd(@key, 0.25, member).should be_true
+    @redises.zadd(@key, 0.25, member).should == true
     @redises.zscore(@key, member).should == 0.25
   end
 

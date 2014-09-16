@@ -7,11 +7,11 @@ describe "#pexpire(key, ms)" do
   end
 
   it "returns true for a key that exists" do
-    @redises.pexpire(@key, 1).should be_true
+    @redises.pexpire(@key, 1).should == true
   end
 
   it "returns false for a key that does not exist" do
-    @redises.pexpire('mock-redis-test:nonesuch', 1).should be_false
+    @redises.pexpire('mock-redis-test:nonesuch', 1).should == false
   end
 
   it "removes a key immediately when ms==0" do

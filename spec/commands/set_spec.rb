@@ -21,16 +21,16 @@ describe '#set(key, value)' do
     it 'accepts NX' do
       key = 'mock-redis-test'
       @redises.del(key)
-      @redises.set(key, 1, nx: true).should be_true
-      @redises.set(key, 1, nx: true).should be_false
+      @redises.set(key, 1, nx: true).should == true
+      @redises.set(key, 1, nx: true).should == false
     end
 
     it 'accepts XX' do
       key = 'mock-redis-test'
       @redises.del(key)
-      @redises.set(key, 1, xx: true).should be_false
+      @redises.set(key, 1, xx: true).should == false
       @redises.set(key, 1).should == 'OK'
-      @redises.set(key, 1, xx: true).should be_true
+      @redises.set(key, 1, xx: true).should == true
     end
 
     context '[mock only]' do

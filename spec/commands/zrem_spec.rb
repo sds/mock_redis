@@ -9,11 +9,11 @@ describe "#zrem(key, member)" do
   end
 
   it "returns true if member is present in the set" do
-    @redises.zrem(@key, 'one').should be_true
+    @redises.zrem(@key, 'one').should == true
   end
 
   it "returns false if member is not present in the set" do
-    @redises.zrem(@key, 'nobody home').should be_false
+    @redises.zrem(@key, 'nobody home').should == false
   end
 
   it "removes member from the set" do
@@ -24,7 +24,7 @@ describe "#zrem(key, member)" do
   it "removes integer member from the set" do
     member = 11
     @redises.zadd(@key, 3, member)
-    @redises.zrem(@key, member).should be_true
+    @redises.zrem(@key, member).should == true
     @redises.zrange(@key, 0, -1).should == ['one', 'two']
   end
 

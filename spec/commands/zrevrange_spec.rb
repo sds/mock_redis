@@ -15,7 +15,7 @@ describe "#zrevrange(key, start, stop [, :with_scores => true])" do
     end
 
     it 'should return an empty array' do
-      @redises.exists(@key).should be_false
+      @redises.exists(@key).should == false
       @redises.zrevrange(@key, 0, 4).should == []
     end
   end

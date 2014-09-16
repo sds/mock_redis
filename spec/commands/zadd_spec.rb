@@ -4,12 +4,12 @@ describe "#zadd(key, score, member)" do
   before { @key = 'mock-redis-test:zadd' }
 
   it "returns true if member wasn't present in the set" do
-    @redises.zadd(@key, 1, 'foo').should be_true
+    @redises.zadd(@key, 1, 'foo').should == true
   end
 
   it "returns false if member was present in the set" do
     @redises.zadd(@key, 1, 'foo')
-    @redises.zadd(@key, 1, 'foo').should be_false
+    @redises.zadd(@key, 1, 'foo').should == false
   end
 
   it "adds member to the set" do

@@ -7,7 +7,7 @@ describe '#msetnx(key, value [, key, value, ...])' do
   end
 
   it "responds with 1 if any keys were set" do
-    @redises.msetnx(@key1, 1).should be_true
+    @redises.msetnx(@key1, 1).should == true
   end
 
   it "sets the values" do
@@ -23,7 +23,7 @@ describe '#msetnx(key, value [, key, value, ...])' do
 
   it "responds with 0 if any value is already set" do
     @redises.set(@key1, "old1")
-    @redises.msetnx(@key1, 'value1', @key2, 'value2').should be_false
+    @redises.msetnx(@key1, 'value1', @key2, 'value2').should == false
   end
 
   it "raises an error if given an odd number of arguments" do

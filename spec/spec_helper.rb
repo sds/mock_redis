@@ -1,4 +1,5 @@
 require 'rspec'
+require 'rspec/its'
 require 'redis'
 $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, "..", "..", "lib")))
 require 'mock_redis'
@@ -7,12 +8,12 @@ $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
 Dir["spec/support/**/*.rb"].each {|x| require x}
 
 module TypeCheckingHelper
-  def method_from_description
+  def method_from_description(example)
     # extracting this from the RSpec description string may or may not
     # be a good idea. On the one hand, it enforces the convention of
     # putting the method name in the right place; on the other hand,
     # it's pretty magic-looking.
-    self.example.full_description.match(/#(\w+)/).captures.first
+    example.full_description.match(/#(\w+)/).captures.first
   end
 
   def args_for_method(method)

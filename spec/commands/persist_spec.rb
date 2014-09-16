@@ -8,21 +8,21 @@ describe "#persist(key)" do
 
   it "returns true for a key with a timeout" do
     @redises.expire(@key, 10000)
-    @redises.persist(@key).should be_true
+    @redises.persist(@key).should == true
   end
 
   it "returns false for a key with no timeout" do
-    @redises.persist(@key).should be_false
+    @redises.persist(@key).should == false
   end
 
   it "returns false for a key that does not exist" do
-    @redises.persist('mock-redis-test:nonesuch').should be_false
+    @redises.persist('mock-redis-test:nonesuch').should == false
   end
 
   it "removes the timeout" do
     @redises.expire(@key, 10000)
     @redises.persist(@key)
-    @redises.persist(@key).should be_false
+    @redises.persist(@key).should == false
   end
 
   context "[mock only]" do
