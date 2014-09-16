@@ -27,6 +27,14 @@ module TypeCheckingHelper
 end
 
 RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:expect, :should]
+  end
+
+  config.mock_with :rspec do |c|
+    c.syntax = [:expect, :should]
+  end
+
   config.include(TypeCheckingHelper)
 
   config.before(:all) do
