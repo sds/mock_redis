@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'date'
 
 describe "#zremrangebyscore(key, min, max)" do
   before do
