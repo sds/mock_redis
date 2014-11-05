@@ -112,6 +112,17 @@ class MockRedis
       data.keys.grep(redis_pattern_to_ruby_regex(format))
     end
 
+    def scan(cursor, opts = {})
+      count = (opts[:count] || 10).to_i
+      match = opts[:match] || '*'
+
+      keys = data.keys
+      limit = cursor + count
+      next_cursor = limit >= keys.length ? '0' : limit.to_s
+
+      [next_cursor, keys[cursor..limit].grep(redis_pattern_to_ruby_regex(match))]
+    end
+
     def lastsave
       @base.now.to_i
     end
