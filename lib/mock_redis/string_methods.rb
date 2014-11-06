@@ -159,7 +159,7 @@ class MockRedis
       if expire_option
         type, duration = expire_option
         if duration == 0
-          raise Redis::CommandError, 'ERR invalid expire time in SETEX'
+          raise Redis::CommandError, 'ERR invalid expire time in set'
         end
         expire(key, type.to_sym == :ex ? duration : duration / 1000.0)
       end
