@@ -8,7 +8,7 @@ MockRedis provides the same interface as `redis-rb`, but it stores its
 data in memory instead of talking to a Redis server. It is intended
 for use in tests.
 
-The current implementation is tested against *Redis 2.8.4*. Older versions
+The current implementation is tested against *Redis 2.8.17*. Older versions
 of Redis may return different results or not support some commands.
 
 ## Getting Started
