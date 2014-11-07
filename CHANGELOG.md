@@ -7,6 +7,7 @@
   to prematurely expire
 * Add support to set methods to take array as argument
 * Evaluate futures at the end of `#multi` blocks
+* Add support for the SCAN command
 
 ### 0.13.2
 
