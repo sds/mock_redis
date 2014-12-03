@@ -19,7 +19,7 @@ class MockRedis
         end
       elsif args.size == 2
         score, member = args
-        assert_scorey(score)
+        assert_scorey(score) unless score =~ /(\+|\-)inf/
         retval = !zscore(key, member)
         with_zset_at(key) {|z| z.add(score, member.to_s)}
       else
@@ -34,8 +34,8 @@ class MockRedis
     end
 
     def zcount(key, min, max)
-      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
-      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+      assert_scorey(min, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
+      assert_scorey(max, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
 
       with_zset_at(key) do |zset|
         zset.in_range(min, max).size
@@ -67,8 +67,8 @@ class MockRedis
     end
 
     def zrangebyscore(key, min, max, options={})
-      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
-      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+      assert_scorey(min, 'ERR min or max is not a float') unless min =~ /\(?(\-|\+)inf/
+      assert_scorey(max, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
 
       with_zset_at(key) do |zset|
         all_results = zset.in_range(min, max)
@@ -107,8 +107,8 @@ class MockRedis
     end
 
     def zremrangebyscore(key, min, max)
-      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
-      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+      assert_scorey(min, 'ERR min or max is not a float') unless min =~ /\(?(\-|\+)inf/
+      assert_scorey(max, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
 
       zrangebyscore(key, min, max).
         each {|member| zrem(key, member)}.
@@ -116,8 +116,8 @@ class MockRedis
     end
 
     def zrevrangebyscore(key, max, min, options={})
-      assert_scorey(min, 'ERR min or max is not a float') unless min == '-inf'
-      assert_scorey(max, 'ERR min or max is not a float') unless max == '+inf'
+      assert_scorey(min, 'ERR min or max is not a float') unless min =~ /\(?(\-|\+)inf/
+      assert_scorey(max, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
 
       with_zset_at(key) do |zset|
         to_response(
