@@ -19,7 +19,7 @@ class MockRedis
         end
       elsif args.size == 2
         score, member = args
-        assert_scorey(score)
+        assert_scorey(score) unless score =~ /(\+|\-)inf/
         retval = !zscore(key, member)
         with_zset_at(key) {|z| z.add(score, member.to_s)}
       else
