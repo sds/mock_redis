@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.14.0
 
 * Fix bug where SETBIT command would not correctly unset a bit
 * Fix bug where a key that expired would cause another key that expired later
