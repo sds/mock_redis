@@ -98,7 +98,7 @@ supported.
 
 If you want to work on this, you'll probably want to run the
 tests. (Just kidding! There's no probably about it.) These tests were
-written with Redis `2.8.4` running on localhost without any passwords
+written with Redis running on `localhost` without any passwords
 required. If you're using a different version of Redis, you may see
 failures due to error message text being different. If you're running
 a really old version of Redis, you'll definitely see failures due to
