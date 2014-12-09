@@ -34,7 +34,7 @@ class MockRedis
     end
 
     def zcount(key, min, max)
-      assert_scorey(min, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
+      assert_scorey(min, 'ERR min or max is not a float') unless min =~ /\(?(\-|\+)inf/
       assert_scorey(max, 'ERR min or max is not a float') unless max =~ /\(?(\-|\+)inf/
 
       with_zset_at(key) do |zset|
