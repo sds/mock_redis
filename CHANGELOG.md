@@ -8,6 +8,7 @@
 * Add support to set methods to take array as argument
 * Evaluate futures at the end of `#multi` blocks
 * Add support for the SCAN command
+* Add support for `[+/-]inf` values for min/max in ordered set commands
 
 ### 0.13.2
 
