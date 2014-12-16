@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Upgrade `redis` gem dependency to 3.2.x series
+
 ### 0.14.0
 
 * Fix bug where SETBIT command would not correctly unset a bit
