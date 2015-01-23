@@ -19,10 +19,10 @@ class MockRedis
     include SortMethod
     include InfoMethod
 
-    attr_reader :data, :expire_times
+    attr_reader :data, :expire_times, :redis
 
-    def initialize(base, *args)
-      @base = base
+    def initialize(redis, *args)
+      @redis = redis
       @data = MockRedis::IndifferentHash.new
       @expire_times = []
     end
@@ -73,7 +73,7 @@ class MockRedis
     end
 
     def pexpire(key, ms)
-      now_ms = (@base.now.to_r * 1000).to_i
+      now_ms = (redis.now.to_r * 1000).to_i
       pexpireat(key, now_ms + ms.to_i)
     end
 
@@ -92,7 +92,7 @@ class MockRedis
 
       if exists(key)
         timestamp = Rational(timestamp_ms.to_i, 1000)
-        set_expiration(key, @base.time_at(timestamp))
+        set_expiration(key, redis.time_at(timestamp))
         true
       else
         false
@@ -124,7 +124,7 @@ class MockRedis
     end
 
     def lastsave
-      @base.now.to_i
+      redis.now.to_i
     end
 
     def persist(key)
@@ -184,7 +184,7 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        expiration(key).to_i - @base.now.to_i
+        expiration(key).to_i - redis.now.to_i
       else
         -1
       end
@@ -194,7 +194,7 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        (expiration(key).to_r * 1000).to_i - (@base.now.to_r * 1000).to_i
+        (expiration(key).to_r * 1000).to_i - (redis.now.to_r * 1000).to_i
       else
         -1
       end
@@ -275,7 +275,7 @@ class MockRedis
     end
 
     def remove_expiration(key)
-      expire_times.delete_if do |(t, k)|
+      expire_times.delete_if do |(_, k)|
         key.to_s == k
       end
     end
@@ -298,13 +298,13 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now = @base.now
+      now = redis.now
 
-      to_delete = expire_times.take_while do |(time, key)|
+      to_delete = expire_times.take_while do |(time, _)|
         (time.to_r * 1_000).to_i <= (now.to_r * 1_000).to_i
       end
 
-      to_delete.each do |(time, key)|
+      to_delete.each do |(_, key)|
         del(key)
       end
     end
