@@ -1,3 +1,7 @@
-CommitMsg:
-  GerritChangeId:
-    enabled: true
+PreCommit:
+  Rubocop:
+    command: ['bundle', 'exec', 'rubocop']
+
+  TravisLint:
+    command: ['bundle', 'exec', 'travis']
+    flags: ['lint', '--skip-version-check']
