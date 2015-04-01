@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.version     = MockRedis::VERSION
   s.license     = 'MIT'
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ['Causes Engineering', 'Samuel Merritt']
-  s.email       = ['eng@causes.com']
-  s.homepage    = 'https://github.com/causes/mock_redis'
+  s.authors     = ['Brigade Engineering', 'Samuel Merritt']
+  s.email       = ['eng@brigade.com']
+  s.homepage    = 'https://github.com/brigade/mock_redis'
   s.summary     = 'Redis mock that just lives in memory; useful for testing.'
 
   s.description = <<-EOS.strip.gsub(/\s+/, ' ')
