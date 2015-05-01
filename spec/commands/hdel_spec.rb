@@ -43,5 +43,12 @@ describe "#hdel(key, field)" do
     @redises.get(@key).should be_nil
   end
 
+  it "treats variable arguments as strings" do
+    field = 2
+    @redises.hset(@key, field, 'two')
+    @redises.hdel(@key, [field])
+    @redises.hget(@key, field).should be_nil
+  end
+
   it_should_behave_like "a hash-only command"
 end

@@ -10,7 +10,8 @@ class MockRedis
       with_hash_at(key) do |hash|
         if field.is_a?(Array)
           orig_size = hash.size
-          hash.delete_if { |k,v| field.include?(k) }
+          fields    = field.map(&:to_s)
+          hash.delete_if { |k,v| fields.include?(k) }
           orig_size - hash.size
         else
           hash.delete(field.to_s) ? 1 : 0
