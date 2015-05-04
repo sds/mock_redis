@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.14.1
 
 * Upgrade `redis` gem dependency to 3.2.x series
 * Map `HDEL` field to string when given as an array
