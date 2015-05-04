@@ -3,6 +3,7 @@
 ### master (unreleased)
 
 * Upgrade `redis` gem dependency to 3.2.x series
+* Map `HDEL` field to string when given as an array
 
 ### 0.14.0
 
