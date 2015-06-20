@@ -58,6 +58,16 @@ describe MockRedis do
       its(:now) { should == now }
     end
 
+    describe '.time' do
+      let(:now)       { 'Now' }
+      let(:time_stub) { double 'Time', :now => now }
+      let(:options)   { { :time_class => time_stub } }
+
+      subject { MockRedis.new(options) }
+
+      its(:time) { should == now }
+    end
+
     describe '.expireat' do
       let(:time_at)   { 'expireat' }
       let(:time_stub) { double 'Time' }

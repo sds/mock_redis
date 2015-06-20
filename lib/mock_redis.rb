@@ -63,6 +63,7 @@ class MockRedis
   def now
     self.options[:time_class].now
   end
+  alias :time :now
 
   def time_at(timestamp)
     self.options[:time_class].at(timestamp)
