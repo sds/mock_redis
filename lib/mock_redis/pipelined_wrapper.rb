@@ -28,7 +28,7 @@ class MockRedis
       end
     end
 
-    def pipelined(options = {})
+    def pipelined(_options = {})
       @in_pipeline = true
       yield self
       @in_pipeline = false

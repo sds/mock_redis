@@ -44,7 +44,7 @@ class MockRedis
   end
   alias :location :id
 
-  def call(command, &block)
+  def call(command, &_block)
      send(*command)
   end
 
