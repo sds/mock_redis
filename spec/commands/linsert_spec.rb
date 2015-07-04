@@ -39,15 +39,15 @@ describe '#linsert(key, :before|:after, pivot, value)' do
   it 'inserts elements after the pivot when given :after as position' do
     @redises.lpush(@key, 'bert')
     @redises.linsert(@key, :after, 'bert', 'ernie')
-    
+
     @redises.lindex(@key, 0).should == 'bert'
     @redises.lindex(@key, 1).should == 'ernie'
   end
-    
+
   it "inserts elements after the pivot when given 'after' as position" do
     @redises.lpush(@key, 'bert')
     @redises.linsert(@key, 'after', 'bert', 'ernie')
-    
+
     @redises.lindex(@key, 0).should == 'bert'
     @redises.lindex(@key, 1).should == 'ernie'
   end
