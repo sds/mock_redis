@@ -51,7 +51,7 @@ describe '#keys()' do
 
       it "treats \? as a literal ?" do
         @redises.keys('mock-redis-test:special-key\?').sort.should == [
-          'mock-redis-test:special-key?'
+          'mock-redis-test:special-key?',
         ]
       end
     end
@@ -71,7 +71,7 @@ describe '#keys()' do
 
       it "treats \* as a literal *" do
         @redises.keys('mock-redis-test:special-key\*').sort.should == [
-          'mock-redis-test:special-key*'
+          'mock-redis-test:special-key*',
         ]
       end
     end
@@ -88,7 +88,7 @@ describe '#keys()' do
     describe 'the | character' do
       it "is treated as literal (not 'or')" do
         @redises.keys('mock-redis-test:regexp-key(1|22)').sort.should == [
-          'mock-redis-test:regexp-key(1|22)'
+          'mock-redis-test:regexp-key(1|22)',
         ]
       end
     end
@@ -96,7 +96,7 @@ describe '#keys()' do
     describe 'the + character' do
       it "is treated as literal (not 'one or more' quantifier)" do
         @redises.keys('mock-redis-test:regexp-key3+').sort.should == [
-          'mock-redis-test:regexp-key3+'
+          'mock-redis-test:regexp-key3+',
         ]
       end
     end

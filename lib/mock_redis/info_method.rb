@@ -14,14 +14,14 @@ class MockRedis
       'run_id' => '1f3f7af2fc11eb68011eb43e154adce125c85e9a',
       'tcp_port' => '6379',
       'uptime_in_days' => '0',
-      'uptime_in_seconds' => '84215'
+      'uptime_in_seconds' => '84215',
     }
 
     CLIENTS_INFO = {
       'blocked_clients' => '0',
       'client_biggest_input_buf' => '0',
       'client_longest_output_list' => '0',
-      'connected_clients' => '1'
+      'connected_clients' => '1',
     }
 
     MEMORY_INFO = {
@@ -32,7 +32,7 @@ class MockRedis
       'used_memory_lua' => '31744',
       'used_memory_peak' => '1005424',
       'used_memory_peak_human' => '981.86K',
-      'used_memory_rss' => '1904640'
+      'used_memory_rss' => '1904640',
     }
 
     PERSISTENCE_INFO = {
@@ -48,7 +48,7 @@ class MockRedis
       'rdb_current_bgsave_time_sec' => '-1',
       'rdb_last_bgsave_status' => 'ok',
       'rdb_last_bgsave_time_sec' => '-1',
-      'rdb_last_save_time' => '1361423635'
+      'rdb_last_save_time' => '1361423635',
     }
 
     STATS_INFO = {
@@ -62,23 +62,23 @@ class MockRedis
       'pubsub_patterns' => '0',
       'rejected_connections' => '0',
       'total_commands_processed' => '196800',
-      'total_connections_received' => '4359'
+      'total_connections_received' => '4359',
     }
 
     REPLICATION_INFO = {
       'role' => 'master',
-      'connected_slaves' => '0'
+      'connected_slaves' => '0',
     }
 
     CPU_INFO = {
       'used_cpu_sys' => '5.54',
       'used_cpu_sys_childrens' => '0.00',
       'used_cpu_user' => '7.65',
-      'used_cpu_user_childrens' => '0.02'
+      'used_cpu_user_childrens' => '0.02',
     }
 
     KEYSPACE_INFO = {
-      'db0' => 'keys=8,expires=0'
+      'db0' => 'keys=8,expires=0',
     }
 
     # The Ruby Reids client returns commandstats differently when it's called as
@@ -100,7 +100,7 @@ class MockRedis
       'set' => {'calls' => '6975081982', 'usec' => '16453671451', 'usec_per_call' => '2.36'},
       'slowlog' => {'calls' => '136', 'usec' => '16815', 'usec_per_call' => '123.64'},
       'smembers' => {'calls' => '58', 'usec' => '231', 'usec_per_call' => '3.98'},
-      'sunionstore' => {'calls' => '4185027', 'usec' => '11762454022', 'usec_per_call' => '2810.60'}
+      'sunionstore' => {'calls' => '4185027', 'usec' => '11762454022', 'usec_per_call' => '2810.60'},
     }
 
     COMMAND_STATS_COMBINED_INFO = {
@@ -120,7 +120,7 @@ class MockRedis
       'cmdstat_set' => 'calls=6975081982,usec=16453671451,usec_per_call=2.36',
       'cmdstat_slowlog' => 'calls=136,usec=16815,usec_per_call=123.64',
       'cmdstat_smembers' => 'calls=58,usec=231,usec_per_call=3.98',
-      'cmdstat_sunionstore' => 'calls=4185027,usec=11762454022,usec_per_call=2810.60'
+      'cmdstat_sunionstore' => 'calls=4185027,usec=11762454022,usec_per_call=2810.60',
     }
 
     DEFAULT_INFO = [
@@ -131,12 +131,12 @@ class MockRedis
       STATS_INFO,
       REPLICATION_INFO,
       CPU_INFO,
-      KEYSPACE_INFO
+      KEYSPACE_INFO,
     ].inject({}){ |memo,info| memo.merge(info) }
 
     ALL_INFO = [
       DEFAULT_INFO,
-      COMMAND_STATS_COMBINED_INFO
+      COMMAND_STATS_COMBINED_INFO,
     ].inject({}){ |memo,info| memo.merge(info) }
 
     def info( section = :default )
