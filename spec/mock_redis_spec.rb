@@ -72,7 +72,7 @@ describe MockRedis do
       let(:time_at)   { 'expireat' }
       let(:time_stub) { double 'Time' }
       let(:options)   { { :time_class => time_stub } }
-      let(:timestamp) { 123456 }
+      let(:timestamp) { 123_456 }
 
       subject { MockRedis.new(options) }
 

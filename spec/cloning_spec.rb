@@ -49,7 +49,7 @@ describe 'MockRedis#clone' do
   context 'expiration times' do
     before do
       @mock.set('foo', 1)
-      @mock.expire('foo', 60026)
+      @mock.expire('foo', 60_026)
 
       @clone = @mock.clone
     end

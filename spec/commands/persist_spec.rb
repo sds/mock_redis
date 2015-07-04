@@ -7,7 +7,7 @@ describe '#persist(key)' do
   end
 
   it 'returns true for a key with a timeout' do
-    @redises.expire(@key, 10000)
+    @redises.expire(@key, 10_000)
     @redises.persist(@key).should == true
   end
 
@@ -20,7 +20,7 @@ describe '#persist(key)' do
   end
 
   it 'removes the timeout' do
-    @redises.expire(@key, 10000)
+    @redises.expire(@key, 10_000)
     @redises.persist(@key)
     @redises.persist(@key).should == false
   end

@@ -8,12 +8,12 @@ describe '#setex(key, seconds, value)' do
   end
 
   it 'sets the value' do
-    @redises.setex(@key, 10000, 'value')
+    @redises.setex(@key, 10_000, 'value')
     @redises.get(@key).should == 'value'
   end
 
   it 'sets the expiration time' do
-    @redises.setex(@key, 10000, 'value')
+    @redises.setex(@key, 10_000, 'value')
 
     # no guarantee these are the same
     @redises.real.ttl(@key).should > 0

@@ -30,7 +30,7 @@ describe '#flushdb [mock only]' do
 
   it 'removes expiration times' do
     @mock.set('k1', 'v1')
-    @mock.expire('k1', 360000)
+    @mock.expire('k1', 360_000)
     @mock.flushdb
     @mock.set('k1', 'v1')
     @mock.ttl('k1').should == -1

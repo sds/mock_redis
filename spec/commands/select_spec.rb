@@ -52,10 +52,10 @@ describe '#select(db)' do
 
     it 'keeps expire times in miliseconds per-db' do
       @mock.select(0)
-      (100000 - 1000..100000 + 1000).should cover(@mock.pttl(@key))
+      (100_000 - 1000..100_000 + 1000).should cover(@mock.pttl(@key))
 
       @mock.select(1)
-      (200000 - 1000..200000 + 1000).should cover(@mock.pttl(@key))
+      (200_000 - 1000..200_000 + 1000).should cover(@mock.pttl(@key))
     end
   end
 end

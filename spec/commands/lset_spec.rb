@@ -23,7 +23,7 @@ describe '#lset(key, index, value)' do
   end
 
   it 'stringifies value' do
-    @redises.lset(@key, 0, 12345)
+    @redises.lset(@key, 0, 12_345)
     @redises.lindex(@key, 0).should == '12345'
   end
 
