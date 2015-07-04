@@ -12,7 +12,7 @@ class MockRedis
 
     def initialize
       @members = Set.new
-      @scores  = Hash.new
+      @scores  = {}
     end
 
     def initialize_copy(source)
