@@ -33,7 +33,7 @@ class MockRedis
 
     def delete?(member)
       scores.delete(member)
-      members.delete?(member) and self
+      members.delete?(member) && self
     end
 
     def each
