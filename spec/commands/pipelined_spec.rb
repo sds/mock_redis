@@ -26,7 +26,7 @@ describe '#pipelined' do
         redis.get key2
       end
 
-      results.should == [ value1, value2 ]
+      results.should == [value1, value2]
     end
 
     it 'returns futures' do
