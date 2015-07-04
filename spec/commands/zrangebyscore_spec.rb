@@ -46,7 +46,7 @@ describe '#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
 
     lambda do
       @redises.zrangebyscore(@key, -100, 100, :limit => '1, 2')
-    end.should raise_error
+    end.should raise_error(RedisMultiplexer::MismatchedResponse)
   end
 
   it 'treats scores like floats, not strings' do
