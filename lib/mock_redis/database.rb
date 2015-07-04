@@ -251,11 +251,11 @@ class MockRedis
     end
 
     def expiration(key)
-      expire_times.find { |(_,k)| k == key.to_s }.first
+      expire_times.find { |(_, k)| k == key.to_s }.first
     end
 
     def has_expiration?(key)
-      expire_times.any? { |(_,k)| k == key.to_s }
+      expire_times.any? { |(_, k)| k == key.to_s }
     end
 
     def looks_like_integer?(str)

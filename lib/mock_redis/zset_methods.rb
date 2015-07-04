@@ -157,7 +157,7 @@ class MockRedis
     end
 
     def to_response(score_member_pairs, options)
-      score_member_pairs.map do |(score,member)|
+      score_member_pairs.map do |(score, member)|
         if options[:with_scores] || options[:withscores]
           [member, score.to_f]
         else
@@ -174,11 +174,11 @@ class MockRedis
 
       aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
                    when :sum
-                     proc { |a,b| [a,b].compact.reduce(&:+) }
+                     proc { |a, b| [a, b].compact.reduce(&:+) }
                    when :min
-                     proc { |a,b| [a,b].compact.min }
+                     proc { |a, b| [a, b].compact.min }
                    when :max
-                     proc { |a,b| [a,b].compact.max }
+                     proc { |a, b| [a, b].compact.max }
                    else
                      raise Redis::CommandError, 'ERR syntax error'
                    end

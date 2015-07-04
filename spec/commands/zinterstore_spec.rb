@@ -51,7 +51,7 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
 
     it 'raises an error if the number of weights != the number of keys' do
       lambda do
-        @redises.zinterstore(@dest, [@odds, @primes], :weights => [1,2,3])
+        @redises.zinterstore(@dest, [@odds, @primes], :weights => [1, 2, 3])
       end.should raise_error(RuntimeError)
     end
   end

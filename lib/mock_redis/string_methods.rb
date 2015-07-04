@@ -109,8 +109,8 @@ class MockRedis
         raise Redis::CommandError, 'ERR wrong number of arguments for MSET'
       end
 
-      kvpairs.each_slice(2) do |(k,v)|
-        set(k,v)
+      kvpairs.each_slice(2) do |(k, v)|
+        set(k, v)
       end
 
       'OK'
@@ -123,7 +123,7 @@ class MockRedis
     def msetnx(*kvpairs)
       assert_has_args(kvpairs, 'msetnx')
 
-      if kvpairs.each_slice(2).any? { |(k,_)| exists(k) }
+      if kvpairs.each_slice(2).any? { |(k, _)| exists(k) }
         false
       else
         mset(*kvpairs)

@@ -50,7 +50,7 @@ describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
 
     it 'raises an error if the number of weights != the number of keys' do
       lambda do
-        @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [1,2])
+        @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [1, 2])
       end.should raise_error(RuntimeError)
     end
   end
