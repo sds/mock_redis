@@ -12,8 +12,8 @@ describe '#mapped_mget(*keys)' do
 
   it 'returns a hash' do
     @redises.mapped_mget(@key1, @key2, @key3).should eq(@key1 => '1',
-                                                         @key2 => '2',
-                                                         @key3 => nil)
+                                                        @key2 => '2',
+                                                        @key3 => nil)
   end
 
   it 'returns a hash even when no matches' do

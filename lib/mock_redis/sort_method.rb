@@ -51,11 +51,11 @@ class MockRedis
       sorter =
         case direction.upcase
         when 'DESC'
-            DESCENDING_SORT
+          DESCENDING_SORT
         when 'ASC', 'ALPHA'
-            ASCENDING_SORT
-          else
-            raise "Invalid direction '#{direction}'"
+          ASCENDING_SORT
+        else
+          raise "Invalid direction '#{direction}'"
         end
 
       projected.sort(&sorter).map(&:last)

@@ -16,13 +16,13 @@ class MockRedis
 
   DEFAULTS = {
     :scheme => 'redis',
-     :host => '127.0.0.1',
-     :port => 6379,
-     :path => nil,
-     :timeout => 5.0,
-     :password => nil,
-     :db => 0,
-     :time_class => Time,
+    :host => '127.0.0.1',
+    :port => 6379,
+    :path => nil,
+    :timeout => 5.0,
+    :password => nil,
+    :db => 0,
+    :time_class => Time,
   }
 
   def self.connect(*args)
@@ -45,7 +45,7 @@ class MockRedis
   alias_method :location, :id
 
   def call(command, &_block)
-     send(*command)
+    send(*command)
   end
 
   def host
