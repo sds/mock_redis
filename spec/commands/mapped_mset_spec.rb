@@ -11,7 +11,7 @@ describe '#mapped_mset(hash)' do
   end
 
   it 'sets the values properly' do
-    @redises.mapped_mset({ @key1 => 'one', @key3 => 'three' }).should eq('OK')
+    @redises.mapped_mset(@key1 => 'one', @key3 => 'three').should eq('OK')
     @redises.get(@key1).should eq('one')
     @redises.get(@key2).should eq('2') # left alone
     @redises.get(@key3).should eq('three')
