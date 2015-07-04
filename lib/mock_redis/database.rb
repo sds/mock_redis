@@ -301,6 +301,7 @@ class MockRedis
     end
 
     public
+
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys

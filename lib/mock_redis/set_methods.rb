@@ -122,6 +122,7 @@ class MockRedis
     end
 
     private
+
     def with_set_at(key, &blk)
       with_thing_at(key, :assert_sety, proc { Set.new }, &blk)
     end

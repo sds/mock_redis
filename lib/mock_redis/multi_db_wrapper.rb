@@ -75,6 +75,7 @@ class MockRedis
     end
 
     private
+
     def current_db
       @databases[@db_index]
     end

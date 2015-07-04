@@ -143,6 +143,7 @@ class MockRedis
     end
 
     private
+
     def apply_limit(collection, limit)
       if limit
         if limit.is_a?(Array) && limit.length == 2

@@ -274,6 +274,7 @@ class MockRedis
     end
 
     private
+
     def stringy?(key)
       data[key].nil? || data[key].kind_of?(String)
     end

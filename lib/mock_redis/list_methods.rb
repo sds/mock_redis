@@ -179,6 +179,7 @@ class MockRedis
     end
 
     private
+
     def list_at?(key)
       data[key] && listy?(key)
     end
