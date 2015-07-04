@@ -32,7 +32,7 @@ describe 'MockRedis#clone' do
 
     it 'performs a deep copy (hash values)' do
       @mock.hset('foohash', 'bar', 'quux')
-      @clone.hgetall('foohash').should == {'bar' => 'baz'}
+      @clone.hgetall('foohash').should == { 'bar' => 'baz' }
     end
 
     it 'performs a deep copy (set values)' do

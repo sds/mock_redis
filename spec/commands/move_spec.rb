@@ -104,7 +104,7 @@ describe '#move(key, db)' do
 
     it 'copies key to destdb' do
       @redises.select(@destdb)
-      @redises.hgetall(@key).should == {'a' => '1', 'b' => '2'}
+      @redises.hgetall(@key).should == { 'a' => '1', 'b' => '2' }
     end
   end
 

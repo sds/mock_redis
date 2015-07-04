@@ -7,12 +7,12 @@ describe '#mapped_hmget(key, *fields)' do
   end
 
   it 'returns values stored at key' do
-    @redises.mapped_hmget(@key, 'k1', 'k2').should == {'k1' => 'v1', 'k2' => 'v2'}
+    @redises.mapped_hmget(@key, 'k1', 'k2').should == { 'k1' => 'v1', 'k2' => 'v2' }
   end
 
   it 'returns nils for missing fields' do
     @redises.mapped_hmget(@key, 'k1', 'mock-redis-test:nonesuch').
-      should == {'k1' => 'v1', 'mock-redis-test:nonesuch' => nil}
+      should == { 'k1' => 'v1', 'mock-redis-test:nonesuch' => nil }
   end
 
   it 'raises an error if given no fields' do
