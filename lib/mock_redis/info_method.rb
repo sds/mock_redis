@@ -156,4 +156,3 @@ class MockRedis
     end
   end
 end
-

@@ -37,5 +37,3 @@ describe '#sinter(key [, key, ...])' do
     end.should raise_error(RuntimeError)
   end
 end
-
-    

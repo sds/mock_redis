@@ -40,5 +40,3 @@ describe '#sunion(key [, key, ...])' do
     end.should raise_error(RuntimeError)
   end
 end
-
-

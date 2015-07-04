@@ -95,4 +95,3 @@ class RedisMultiplexer < BlankSlate
     end
   end
 end
-

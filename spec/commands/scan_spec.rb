@@ -48,4 +48,3 @@ describe '#scan' do
     end
   end
 end
-
