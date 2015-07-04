@@ -98,6 +98,5 @@ class MockRedis
         'OK'
       end
     end
-
   end
 end

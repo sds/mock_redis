@@ -94,7 +94,6 @@ class MockRedis
     @db = @db.clone
   end
 
-
   protected
 
   def _parse_options(options)
@@ -140,5 +139,4 @@ class MockRedis
 
     options
   end
-
 end

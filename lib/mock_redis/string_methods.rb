@@ -273,9 +273,6 @@ class MockRedis
       (data[key] || '').bytesize
     end
 
-
-
-
     private
     def stringy?(key)
       data[key].nil? || data[key].kind_of?(String)
@@ -287,6 +284,5 @@ class MockRedis
         raise Redis::CommandError, message
       end
     end
-
   end
 end

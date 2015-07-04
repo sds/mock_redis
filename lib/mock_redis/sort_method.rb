@@ -77,6 +77,5 @@ class MockRedis
         get key
       end
     end
-
   end
 end

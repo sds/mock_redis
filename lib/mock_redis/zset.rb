@@ -105,6 +105,5 @@ class MockRedis
         end
       end
     end
-
   end
 end

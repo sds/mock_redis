@@ -43,6 +43,5 @@ describe '#expireat(key, timestamp)' do
       Time.stub(:now).and_return(@now + 5)
       @mock.get(@key).should be_nil
     end
-
   end
 end

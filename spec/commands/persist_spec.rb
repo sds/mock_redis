@@ -44,6 +44,5 @@ describe '#persist(key)' do
       Time.stub(:now).and_return(@now + 5)
       @mock.get(@key).should_not be_nil
     end
-
   end
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe '#keys()' do
-
   it 'returns [] when no keys are found (no regex characters)' do
     @redises.keys('mock-redis-test:29016').should == []
   end

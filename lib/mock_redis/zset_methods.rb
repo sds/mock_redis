@@ -192,7 +192,6 @@ class MockRedis
           za.send(how, zb, &aggregator)
         end
       end
-
     end
 
     def with_zset_at(key, &blk)

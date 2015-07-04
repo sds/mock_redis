@@ -92,5 +92,4 @@ describe 'MockRedis#clone' do
       @mock.exec.should == [1, 3, 7]
     end
   end
-
 end

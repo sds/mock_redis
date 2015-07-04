@@ -149,6 +149,5 @@ class MockRedis
         raise Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
-
   end
 end

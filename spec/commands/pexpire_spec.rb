@@ -82,6 +82,5 @@ describe '#pexpire(key, ms)' do
         @mock.lindex(@key, 0).should_not be_nil
       end
     end
-
   end
 end

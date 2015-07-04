@@ -19,7 +19,6 @@ describe '#sadd(key, member)' do
   end
 
   describe 'adding multiple members at once' do
-
     it 'returns the amount of added members' do
       @redises.sadd(@key, [1, 2, 3]).should == 3
       @redises.sadd(@key, [1, 2, 3, 4]).should == 1

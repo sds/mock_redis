@@ -24,6 +24,5 @@ class MockRedis
         del(key)
       end
     end
-
   end
 end

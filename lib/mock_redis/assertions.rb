@@ -8,6 +8,5 @@ class MockRedis
         "ERR wrong number of arguments for '#{command}' command"
       end
     end
-
   end
 end
