@@ -40,33 +40,33 @@ class MockRedis
   end
 
   def id
-    "redis://#{self.host}:#{self.port}/#{self.db}"
+    "redis://#{host}:#{port}/#{db}"
   end
   alias :location :id
 
   def call(command, &block)
-     self.send(*command)
+     send(*command)
   end
 
   def host
-    self.options[:host]
+    options[:host]
   end
 
   def port
-    self.options[:port]
+    options[:port]
   end
 
   def db
-    self.options[:db]
+    options[:db]
   end
 
   def now
-    self.options[:time_class].now
+    options[:time_class].now
   end
   alias :time :now
 
   def time_at(timestamp)
-    self.options[:time_class].at(timestamp)
+    options[:time_class].at(timestamp)
   end
 
   def client

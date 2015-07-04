@@ -74,8 +74,8 @@ class MockRedis
       if !block_given?
         intersection(other, &:+)
       else
-        self.members.intersection(other.members).reduce(self.class.new) do |acc, m|
-          new_score = yield(self.score(m), other.score(m))
+        members.intersection(other.members).reduce(self.class.new) do |acc, m|
+          new_score = yield(score(m), other.score(m))
           acc.add(new_score, m)
         end
       end
@@ -99,8 +99,8 @@ class MockRedis
       if !block_given?
         union(other, &:+)
       else
-        self.members.union(other.members).reduce(self.class.new) do |acc, m|
-          new_score = yield(self.score(m), other.score(m))
+        members.union(other.members).reduce(self.class.new) do |acc, m|
+          new_score = yield(score(m), other.score(m))
           acc.add(new_score, m)
         end
       end

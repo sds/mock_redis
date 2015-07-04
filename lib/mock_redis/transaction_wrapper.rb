@@ -77,9 +77,9 @@ class MockRedis
         @multi_block_given = true
         begin
           yield(self)
-          self.exec
+          exec
         rescue StandardError => e
-          self.discard
+          discard
           raise e
         end
       else
