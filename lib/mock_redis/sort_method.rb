@@ -27,8 +27,8 @@ class MockRedis
 
     private
 
-    ASCENDING_SORT  = Proc.new { |a, b| a.first <=> b.first }
-    DESCENDING_SORT = Proc.new { |a, b| b.first <=> a.first }
+    ASCENDING_SORT  = proc { |a, b| a.first <=> b.first }
+    DESCENDING_SORT = proc { |a, b| b.first <=> a.first }
 
     def project(enumerable, by, get_patterns)
       enumerable.map do |*elements|
