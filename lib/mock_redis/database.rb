@@ -106,7 +106,7 @@ class MockRedis
     end
 
     def exists(key)
-      data.has_key?(key)
+      data.key?(key)
     end
 
     def flushdb

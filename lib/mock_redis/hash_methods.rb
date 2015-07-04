@@ -20,7 +20,7 @@ class MockRedis
     end
 
     def hexists(key, field)
-      with_hash_at(key) { |h| h.has_key?(field.to_s) }
+      with_hash_at(key) { |h| h.key?(field.to_s) }
     end
 
     def hget(key, field)
