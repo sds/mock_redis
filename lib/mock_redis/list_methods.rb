@@ -52,7 +52,7 @@ class MockRedis
 
     def linsert(key, position, pivot, value)
       unless %w[before after].include?(position.to_s)
-        raise Redis::CommandError, "ERR syntax error"
+        raise Redis::CommandError, 'ERR syntax error'
       end
 
       assert_listy(key)
@@ -106,7 +106,7 @@ class MockRedis
 
     def lrem(key, count, value)
       unless looks_like_integer?(count.to_s)
-        raise Redis::CommandError, "ERR value is not an integer or out of range"
+        raise Redis::CommandError, 'ERR value is not an integer or out of range'
       end
       count = count.to_i
       value = value.to_s
@@ -132,12 +132,12 @@ class MockRedis
       assert_listy(key)
 
       unless list_at?(key)
-        raise Redis::CommandError, "ERR no such key"
+        raise Redis::CommandError, 'ERR no such key'
       end
 
       index = index.to_i
       unless (0...llen(key)).include?(index)
-        raise Redis::CommandError, "ERR index out of range"
+        raise Redis::CommandError, 'ERR index out of range'
       end
 
       data[key][index] = value.to_s
@@ -194,7 +194,7 @@ class MockRedis
     def assert_listy(key)
       unless listy?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise Redis::CommandError, "WRONGTYPE Operation against a key holding the wrong kind of value"
+        raise Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
 

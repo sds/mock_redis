@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])" do
+describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
   before do
     @set1 = 'mock-redis-test:zunionstore1'
     @set2 = 'mock-redis-test:zunionstore2'
@@ -17,45 +17,45 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     @redises.zadd(@set3, 3, 'three')
   end
 
-  it "returns the number of elements in the new set" do
+  it 'returns the number of elements in the new set' do
     @redises.zunionstore(@dest, [@set1, @set2, @set3]).should == 3
   end
 
   it "sums the members' scores by default" do
     @redises.zunionstore(@dest, [@set1, @set2, @set3])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      [["one", 3.0], ["three", 3.0], ["two", 4.0]]
+      [['one', 3.0], ['three', 3.0], ['two', 4.0]]
   end
 
-  it "removes existing elements in destination" do
+  it 'removes existing elements in destination' do
     @redises.zadd(@dest, 10, 'ten')
 
     @redises.zunionstore(@dest, [@set1])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      [["one", 1.0]]
+      [['one', 1.0]]
   end
 
-  it "raises an error if keys is empty" do
+  it 'raises an error if keys is empty' do
     lambda do
       @redises.zunionstore(@dest, [])
     end.should raise_error(RuntimeError)
   end
 
-  context "the :weights argument" do
-    it "multiplies the scores by the weights while aggregating" do
+  context 'the :weights argument' do
+    it 'multiplies the scores by the weights while aggregating' do
       @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [2, 3, 5])
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        [["one", 10.0], ["three", 15.0], ["two", 16.0]]
+        [['one', 10.0], ['three', 15.0], ['two', 16.0]]
     end
 
-    it "raises an error if the number of weights != the number of keys" do
+    it 'raises an error if the number of weights != the number of keys' do
       lambda do
         @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [1,2])
       end.should raise_error(RuntimeError)
     end
   end
 
-  context "the :aggregate argument" do
+  context 'the :aggregate argument' do
     before do
       @smalls = 'mock-redis-test:zunionstore:smalls'
       @bigs   = 'mock-redis-test:zunionstore:bigs'
@@ -66,19 +66,19 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       @redises.zadd(@bigs, 200, 'ernie')
     end
 
-    it "aggregates scores with min when :aggregate => :min is specified" do
+    it 'aggregates scores with min when :aggregate => :min is specified' do
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :min)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        [["bert", 1.0], ["ernie", 2.0]]
+        [['bert', 1.0], ['ernie', 2.0]]
     end
 
-    it "aggregates scores with max when :aggregate => :max is specified" do
+    it 'aggregates scores with max when :aggregate => :max is specified' do
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :max)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        [["bert", 100.0], ["ernie", 200.0]]
+        [['bert', 100.0], ['ernie', 200.0]]
     end
 
-    it "ignores scores for missing members" do
+    it 'ignores scores for missing members' do
       @redises.zadd(@smalls, 3, 'grover')
       @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :min)
       @redises.zscore(@dest, 'grover').should == 3.0
@@ -95,7 +95,7 @@ describe "#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       @redises.zscore(@dest, 'bert').should == 1.0
     end
 
-    it "raises an error for unknown aggregation function" do
+    it 'raises an error for unknown aggregation function' do
       lambda do
         @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :mix)
       end.should raise_error(RuntimeError)

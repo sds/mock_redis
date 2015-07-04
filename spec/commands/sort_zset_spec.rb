@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe '#sort(key, options)' do
   before do
-    @key = "mock-redis-test:zset_sort"
+    @key = 'mock-redis-test:zset_sort'
 
     @redises.zadd(@key, 100, '1')
     @redises.zadd(@key, 99, '2')
@@ -17,5 +17,5 @@ describe '#sort(key, options)' do
     @redises.hset('mock-redis-test:hash_2', 'key', 'y')
   end
 
-  it_should_behave_like "a sortable"
+  it_should_behave_like 'a sortable'
 end

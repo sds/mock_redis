@@ -1,4 +1,4 @@
-shared_examples_for "a sortable" do
+shared_examples_for 'a sortable' do
   it 'returns empty array on nil' do
     @redises.sort(nil).should == []
   end
@@ -9,7 +9,7 @@ shared_examples_for "a sortable" do
     end
 
     it 'orders by descending when specified' do
-      @redises.sort(@key, :order => "DESC").should == ['2', '1']
+      @redises.sort(@key, :order => 'DESC').should == ['2', '1']
     end
   end
 
@@ -33,11 +33,11 @@ shared_examples_for "a sortable" do
 
   context 'weights' do
     it 'weights by projecting through a key pattern' do
-      @redises.sort(@key, :by => "mock-redis-test:weight_*").should == ['2', '1']
+      @redises.sort(@key, :by => 'mock-redis-test:weight_*').should == ['2', '1']
     end
 
     it 'weights by projecting through a key pattern and a specific order' do
-      @redises.sort(@key, :order => "DESC", :by => "mock-redis-test:weight_*").should == ['1', '2']
+      @redises.sort(@key, :order => 'DESC', :by => 'mock-redis-test:weight_*').should == ['1', '2']
     end
   end
 
@@ -49,8 +49,8 @@ shared_examples_for "a sortable" do
 
   context 'store' do
     it 'stores into another key' do
-      @redises.sort(@key, :store => "mock-redis-test:some_bucket").should == 2
-      @redises.lrange("mock-redis-test:some_bucket", 0, -1).should == ['1', '2']
+      @redises.sort(@key, :store => 'mock-redis-test:some_bucket').should == 2
+      @redises.lrange('mock-redis-test:some_bucket', 0, -1).should == ['1', '2']
     end
   end
 end

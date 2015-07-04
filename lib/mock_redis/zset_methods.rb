@@ -23,7 +23,7 @@ class MockRedis
         retval = !zscore(key, member)
         with_zset_at(key) {|z| z.add(score, member.to_s)}
       else
-        raise Redis::CommandError, "ERR wrong number of arguments"
+        raise Redis::CommandError, 'ERR wrong number of arguments'
       end
 
       retval
@@ -149,7 +149,7 @@ class MockRedis
           offset, count = limit
           collection.drop(offset).take(count)
         else
-          raise Redis::CommandError, "ERR syntax error"
+          raise Redis::CommandError, 'ERR syntax error'
         end
       else
         collection
@@ -169,7 +169,7 @@ class MockRedis
     def combine_weighted_zsets(keys, options, how)
       weights = options.fetch(:weights, keys.map { 1 })
       if weights.length != keys.length
-        raise Redis::CommandError, "ERR syntax error"
+        raise Redis::CommandError, 'ERR syntax error'
       end
 
       aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
@@ -180,7 +180,7 @@ class MockRedis
                    when :max
                      proc {|a,b| [a,b].compact.max}
                    else
-                     raise Redis::CommandError, "ERR syntax error"
+                     raise Redis::CommandError, 'ERR syntax error'
                    end
 
       with_zsets_at(*keys) do |*zsets|
@@ -218,7 +218,7 @@ class MockRedis
     def assert_zsety(key)
       unless zsety?(key)
         raise Redis::CommandError,
-        "WRONGTYPE Operation against a key holding the wrong kind of value"
+        'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
 
@@ -227,7 +227,7 @@ class MockRedis
       !!Float(x) rescue false
     end
 
-    def assert_scorey(value, message = "ERR value is not a valid float")
+    def assert_scorey(value, message = 'ERR value is not a valid float')
       return if value =~ /\(?(\-|\+)inf/
 
       value = $1 if value.to_s.match(/\((.*)/)

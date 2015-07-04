@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'date'
 
-describe "#zremrangebyscore(key, min, max)" do
+describe '#zremrangebyscore(key, min, max)' do
   before do
     @key = 'mock-redis-test:zremrangebyscore'
     @redises.zadd(@key, 1, 'Washington')
@@ -10,24 +10,24 @@ describe "#zremrangebyscore(key, min, max)" do
     @redises.zadd(@key, 4, 'Madison')
   end
 
-  it "returns the number of elements in range" do
+  it 'returns the number of elements in range' do
     @redises.zremrangebyscore(@key, 2, 3).should == 2
   end
 
-  it "removes the elements" do
+  it 'removes the elements' do
     @redises.zremrangebyscore(@key, 2, 3)
     @redises.zrange(@key, 0, -1).should == %w[Washington Madison]
   end
 
   # As seen in http://redis.io/commands/zremrangebyscore
-  it "removes the elements for complex statements" do
+  it 'removes the elements for complex statements' do
     @redises.zremrangebyscore(@key, '-inf', '(4')
     @redises.zrange(@key, 0, -1).should == %w[Madison]
   end
 
-  it_should_behave_like "a zset-only command"
+  it_should_behave_like 'a zset-only command'
 
-  it "throws a command error" do
+  it 'throws a command error' do
     expect { @redises.zrevrangebyscore(@key, DateTime.now, '-inf') }.to raise_error(Redis::CommandError)
   end
 end

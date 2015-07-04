@@ -1,5 +1,5 @@
-shared_examples_for "a hash-only command" do
-  it "raises an error for non-hash values" do |example|
+shared_examples_for 'a hash-only command' do
+  it 'raises an error for non-hash values' do |example|
     key = 'mock-redis-test:hash-only'
 
     method = method_from_description(example)

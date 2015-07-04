@@ -15,7 +15,7 @@ class MockRedis
       limit        = options[:limit] || []
       store        = options[:store]
       get_patterns = Array(options[:get])
-      order        = options[:order] || "ASC"
+      order        = options[:order] || 'ASC'
       direction    = order.split.first
 
       projected = project(enumerable, by, get_patterns)
@@ -38,7 +38,7 @@ class MockRedis
 
         if get_patterns.length > 0
           value = get_patterns.map do |pattern|
-            pattern == "#" ? element : lookup_from_pattern(pattern, element)
+            pattern == '#' ? element : lookup_from_pattern(pattern, element)
           end
           value = value.first if value.length == 1
         end
@@ -50,9 +50,9 @@ class MockRedis
     def sort_by(projected, direction)
       sorter =
         case direction.upcase
-          when "DESC"
+          when 'DESC'
             DESCENDING_SORT
-          when "ASC", "ALPHA"
+          when 'ASC', 'ALPHA'
             ASCENDING_SORT
           else
             raise "Invalid direction '#{direction}'"

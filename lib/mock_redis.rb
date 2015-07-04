@@ -15,8 +15,8 @@ class MockRedis
   attr_reader :options
 
   DEFAULTS = {
-     :scheme => "redis",
-     :host => "127.0.0.1",
+     :scheme => 'redis',
+     :host => '127.0.0.1',
      :port => 6379,
      :path => nil,
      :timeout => 5.0,
@@ -102,19 +102,19 @@ class MockRedis
 
     defaults = DEFAULTS.dup
 
-    url = options[:url] || ENV["REDIS_URL"]
+    url = options[:url] || ENV['REDIS_URL']
 
     # Override defaults from URL if given
     if url
-      require "uri"
+      require 'uri'
 
       uri = URI(url)
 
-      if uri.scheme == "unix"
+      if uri.scheme == 'unix'
         defaults[:path]   = uri.path
       else
         # Require the URL to have at least a host
-        raise ArgumentError, "invalid url" unless uri.host
+        raise ArgumentError, 'invalid url' unless uri.host
 
         defaults[:scheme]   = uri.scheme
         defaults[:host]     = uri.host
@@ -127,7 +127,7 @@ class MockRedis
     options = defaults.merge(options)
 
     if options[:path]
-      options[:scheme] = "unix"
+      options[:scheme] = 'unix'
       options.delete(:host)
       options.delete(:port)
     else

@@ -10,18 +10,18 @@ describe '#mset(key, value [, key, value, ...])' do
     @redises.mset(@key1, 1).should == 'OK'
   end
 
-  it "sets the values" do
+  it 'sets the values' do
     @redises.mset(@key1, 'value1', @key2, 'value2')
     @redises.mget(@key1, @key2).should == %w[value1 value2]
   end
 
-  it "raises an error if given an odd number of arguments" do
+  it 'raises an error if given an odd number of arguments' do
     lambda do
       @redises.mset(@key1, 'value1', @key2)
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error if given 0 arguments" do
+  it 'raises an error if given 0 arguments' do
     lambda do
       @redises.mset()
     end.should raise_error(RuntimeError)

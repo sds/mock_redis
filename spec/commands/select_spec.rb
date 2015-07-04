@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#select(db)" do
+describe '#select(db)' do
   before { @key = 'mock-redis-test:select' }
 
   it "returns 'OK'" do
@@ -14,7 +14,7 @@ describe "#select(db)" do
     @redises.get(@key).should == 'foo'
   end
 
-  it "switches databases" do
+  it 'switches databases' do
     @redises.select(0)
     @redises.set(@key, 'foo')
 
@@ -25,7 +25,7 @@ describe "#select(db)" do
     @redises.get(@key).should == 'foo'
   end
 
-  context "[mock only]" do
+  context '[mock only]' do
     # Time dependence introduces a bit of nondeterminism here
     before do
       @now = Time.now
@@ -42,7 +42,7 @@ describe "#select(db)" do
       @mock.expire(@key, 200)
     end
 
-    it "keeps expire times per-db" do
+    it 'keeps expire times per-db' do
       @mock.select(0)
       @mock.ttl(@key).should == 100
 
@@ -50,7 +50,7 @@ describe "#select(db)" do
       @mock.ttl(@key).should == 200
     end
 
-    it "keeps expire times in miliseconds per-db" do
+    it 'keeps expire times in miliseconds per-db' do
       @mock.select(0)
       (100000 - 1000..100000 + 1000).should cover(@mock.pttl(@key))
 

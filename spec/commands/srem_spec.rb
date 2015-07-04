@@ -8,33 +8,33 @@ describe '#srem(key, member)' do
     @redises.sadd(@key, 'ernie')
   end
 
-  it "returns true if member is in the set" do
+  it 'returns true if member is in the set' do
     @redises.srem(@key, 'bert').should == true
   end
 
-  it "returns false if member is not in the set" do
+  it 'returns false if member is not in the set' do
     @redises.srem(@key, 'cookiemonster').should == false
   end
 
-  it "removes member from the set" do
+  it 'removes member from the set' do
     @redises.srem(@key, 'ernie')
     @redises.smembers(@key).should == ['bert']
   end
 
-  it "stringifies member" do
+  it 'stringifies member' do
     @redises.sadd(@key, '1')
     @redises.srem(@key, 1).should == true
   end
 
-  it "cleans up empty sets" do
+  it 'cleans up empty sets' do
     @redises.smembers(@key).each {|m| @redises.srem(@key, m)}
     @redises.get(@key).should be_nil
   end
 
-  it "supports a variable number of arguments" do
+  it 'supports a variable number of arguments' do
     @redises.srem(@key, ['bert', 'ernie']).should == 2
     @redises.get(@key).should be_nil
   end
 
-  it_should_behave_like "a set-only command"
+  it_should_behave_like 'a set-only command'
 end

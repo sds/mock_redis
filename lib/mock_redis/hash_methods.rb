@@ -35,13 +35,13 @@ class MockRedis
       with_hash_at(key) do |hash|
         field = field.to_s
         unless can_incr?(data[key][field])
-          raise Redis::CommandError, "ERR hash value is not an integer"
+          raise Redis::CommandError, 'ERR hash value is not an integer'
         end
         unless looks_like_integer?(increment.to_s)
-          raise Redis::CommandError, "ERR value is not an integer or out of range"
+          raise Redis::CommandError, 'ERR value is not an integer or out of range'
         end
 
-        new_value = (hash[field] || "0").to_i + increment.to_i
+        new_value = (hash[field] || '0').to_i + increment.to_i
         hash[field] = new_value.to_s
         new_value
       end
@@ -51,14 +51,14 @@ class MockRedis
       with_hash_at(key) do |hash|
         field = field.to_s
         unless can_incr_float?(data[key][field])
-          raise Redis::CommandError, "ERR hash value is not a valid float"
+          raise Redis::CommandError, 'ERR hash value is not a valid float'
         end
 
         unless looks_like_float?(increment.to_s)
-          raise Redis::CommandError, "ERR value is not a valid float"
+          raise Redis::CommandError, 'ERR value is not a valid float'
         end
 
-        new_value = (hash[field] || "0").to_f + increment.to_f
+        new_value = (hash[field] || '0').to_f + increment.to_f
         new_value = new_value.to_i if new_value % 1 == 0
         hash[field] = new_value.to_s
         new_value
@@ -86,7 +86,7 @@ class MockRedis
     def hmset(key, *kvpairs)
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
-        raise Redis::CommandError, "ERR wrong number of arguments for HMSET"
+        raise Redis::CommandError, 'ERR wrong number of arguments for HMSET'
       end
 
       kvpairs.each_slice(2) do |(k,v)|
@@ -135,7 +135,7 @@ class MockRedis
 
     def assert_hashy(key)
       unless hashy?(key)
-        raise Redis::CommandError, "WRONGTYPE Operation against a key holding the wrong kind of value"
+        raise Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
   end

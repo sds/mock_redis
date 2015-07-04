@@ -9,33 +9,33 @@ describe '#smove(source, destination, member)' do
     @redises.sadd(@dest, 2)
   end
 
-  it "returns true if the member exists in src" do
+  it 'returns true if the member exists in src' do
     @redises.smove(@src, @dest, 1).should == true
   end
 
-  it "returns false if the member exists in src" do
+  it 'returns false if the member exists in src' do
     @redises.smove(@src, @dest, 'nope').should == false
   end
 
-  it "returns true if the member exists in src and dest" do
+  it 'returns true if the member exists in src and dest' do
     @redises.sadd(@dest, 1)
     @redises.smove(@src, @dest, 1).should == true
   end
 
-  it "moves member from source to destination" do
+  it 'moves member from source to destination' do
     @redises.smove(@src, @dest, 1)
     @redises.sismember(@dest, 1).should == true
     @redises.sismember(@src, 1).should == false
   end
 
-  it "cleans up empty sets" do
+  it 'cleans up empty sets' do
     @redises.smove(@src, @dest, 1)
     @redises.get(@src).should be_nil
   end
 
-  it "treats a nonexistent value as an empty set" do
+  it 'treats a nonexistent value as an empty set' do
     @redises.smove('mock-redis-test:nonesuch', @dest, 1).should == false
   end
 
-  it_should_behave_like "a set-only command"
+  it_should_behave_like 'a set-only command'
 end

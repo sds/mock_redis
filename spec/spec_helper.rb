@@ -1,11 +1,11 @@
 require 'rspec'
 require 'rspec/its'
 require 'redis'
-$LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, "..", "..", "lib")))
+$LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, '..', '..', 'lib')))
 require 'mock_redis'
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
-Dir["spec/support/**/*.rb"].each {|x| require x}
+Dir['spec/support/**/*.rb'].each {|x| require x}
 
 module TypeCheckingHelper
   def method_from_description(example)
@@ -45,7 +45,7 @@ RSpec.configure do |config|
     # databases mentioned in our tests
     [1, 0].each do |db|
       @redises.send_without_checking(:select, db)
-      @redises.send_without_checking(:keys, "mock-redis-test:*").each do |key|
+      @redises.send_without_checking(:keys, 'mock-redis-test:*').each do |key|
         @redises.send_without_checking(:del, key)
       end
     end

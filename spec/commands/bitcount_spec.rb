@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe "#bitcount(key [, start, end ])" do
+describe '#bitcount(key [, start, end ])' do
   before do
     @key = 'mock-redis-test:bitcount'
-    @redises.set(@key, "foobar")
+    @redises.set(@key, 'foobar')
   end
 
   it 'gets the number of set bits from the key' do
@@ -21,5 +21,5 @@ describe "#bitcount(key [, start, end ])" do
     @redises.bitcount('mock-redis-test:not-found').should == 0
   end
 
-  it_should_behave_like "a string-only command"
+  it_should_behave_like 'a string-only command'
 end

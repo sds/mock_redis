@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])" do
+describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
   before do
     @odds   = 'mock-redis-test:zinterstore:odds'
     @primes = 'mock-redis-test:zinterstore:primes'
@@ -18,45 +18,45 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     @redises.zadd(@primes, 7, 'seven')
   end
 
-  it "returns the number of elements in the new set" do
+  it 'returns the number of elements in the new set' do
     @redises.zinterstore(@dest, [@odds, @primes]).should == 3
   end
 
   it "sums the members' scores by default" do
     @redises.zinterstore(@dest, [@odds, @primes])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      [["three", 6.0], ["five", 10.0], ["seven", 14.0]]
+      [['three', 6.0], ['five', 10.0], ['seven', 14.0]]
   end
 
-  it "removes existing elements in destination" do
+  it 'removes existing elements in destination' do
     @redises.zadd(@dest, 10, 'ten')
 
     @redises.zinterstore(@dest, [@primes])
     @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-      [["two", 2.0], ["three", 3.0], ["five", 5.0], ["seven", 7.0]]
+      [['two', 2.0], ['three', 3.0], ['five', 5.0], ['seven', 7.0]]
   end
 
-  it "raises an error if keys is empty" do
+  it 'raises an error if keys is empty' do
     lambda do
       @redises.zinterstore(@dest, [])
     end.should raise_error(RuntimeError)
   end
 
-  context "the :weights argument" do
-    it "multiplies the scores by the weights while aggregating" do
+  context 'the :weights argument' do
+    it 'multiplies the scores by the weights while aggregating' do
       @redises.zinterstore(@dest, [@odds, @primes], :weights => [2, 3])
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        [["three", 15.0], ["five", 25.0], ["seven", 35.0]]
+        [['three', 15.0], ['five', 25.0], ['seven', 35.0]]
     end
 
-    it "raises an error if the number of weights != the number of keys" do
+    it 'raises an error if the number of weights != the number of keys' do
       lambda do
         @redises.zinterstore(@dest, [@odds, @primes], :weights => [1,2,3])
       end.should raise_error(RuntimeError)
     end
   end
 
-  context "the :aggregate argument" do
+  context 'the :aggregate argument' do
     before do
       @smalls = 'mock-redis-test:zinterstore:smalls'
       @bigs   = 'mock-redis-test:zinterstore:bigs'
@@ -67,16 +67,16 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       @redises.zadd(@bigs, 200, 'ernie')
     end
 
-    it "aggregates scores with min when :aggregate => :min is specified" do
+    it 'aggregates scores with min when :aggregate => :min is specified' do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :min)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        [["bert", 1.0], ["ernie", 2.0]]
+        [['bert', 1.0], ['ernie', 2.0]]
     end
 
-    it "aggregates scores with max when :aggregate => :max is specified" do
+    it 'aggregates scores with max when :aggregate => :max is specified' do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :max)
       @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
-        [["bert", 100.0], ["ernie", 200.0]]
+        [['bert', 100.0], ['ernie', 200.0]]
     end
 
     it "allows 'min', 'MIN', etc. as aliases for :min" do
@@ -87,7 +87,7 @@ describe "#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       @redises.zscore(@dest, 'bert').should == 1.0
     end
 
-    it "raises an error for unknown aggregation function" do
+    it 'raises an error for unknown aggregation function' do
       lambda do
         @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :mix)
       end.should raise_error(RuntimeError)

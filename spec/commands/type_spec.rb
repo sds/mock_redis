@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#type(key)" do
+describe '#type(key)' do
   before do
     @key = 'mock-redis-test:type'
   end

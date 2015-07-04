@@ -42,9 +42,9 @@ class MockRedis
 
     def in_range(min, max)
       in_from_the_left = case min
-                         when "-inf"
+                         when '-inf'
                              lambda {|_| true }
-                         when "+inf"
+                         when '+inf'
                              lambda {|_| false }
                          when /\((.*)$/
                              val = $1.to_f
@@ -54,9 +54,9 @@ class MockRedis
                          end
 
       in_from_the_right = case max
-                          when "-inf"
+                          when '-inf'
                               lambda {|_| false }
-                          when "+inf"
+                          when '+inf'
                               lambda {|_| true }
                           when /\((.*)$/
                               val = $1.to_f

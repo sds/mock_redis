@@ -11,29 +11,29 @@ describe '#sdiff(key [, key, ...])' do
     [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
   end
 
-  it "returns the first set minus the second set" do
+  it 'returns the first set minus the second set' do
     @redises.sdiff(@numbers, @evens).should == %w[1 3 5 7 9]
   end
 
-  it "returns the first set minus all the other sets" do
+  it 'returns the first set minus all the other sets' do
     @redises.sdiff(@numbers, @evens, @primes).should == %w[1 9]
   end
 
-  it "treats missing keys as empty sets" do
+  it 'treats missing keys as empty sets' do
     @redises.sdiff(@evens, 'mock-redis-test:nonesuch').should == %w[2 4 6 8 10]
   end
 
-  it "returns the first set when called with a single argument" do
+  it 'returns the first set when called with a single argument' do
     @redises.sdiff(@primes).should == %w[2 3 5 7]
   end
 
-  it "raises an error if given 0 arguments" do
+  it 'raises an error if given 0 arguments' do
     lambda do
       @redises.sdiff()
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error if any argument is not a a set" do
+  it 'raises an error if any argument is not a a set' do
     @redises.set('foo', 1)
 
     lambda do

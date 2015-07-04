@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "#zrem(key, member)" do
+describe '#zrem(key, member)' do
   before do
     @key = 'mock-redis-test:zrem'
 
@@ -8,30 +8,30 @@ describe "#zrem(key, member)" do
     @redises.zadd(@key, 2, 'two')
   end
 
-  it "returns true if member is present in the set" do
+  it 'returns true if member is present in the set' do
     @redises.zrem(@key, 'one').should == true
   end
 
-  it "returns false if member is not present in the set" do
+  it 'returns false if member is not present in the set' do
     @redises.zrem(@key, 'nobody home').should == false
   end
 
-  it "removes member from the set" do
+  it 'removes member from the set' do
     @redises.zrem(@key, 'one')
     @redises.zrange(@key, 0, -1).should == ['two']
   end
 
-  it "removes integer member from the set" do
+  it 'removes integer member from the set' do
     member = 11
     @redises.zadd(@key, 3, member)
     @redises.zrem(@key, member).should == true
     @redises.zrange(@key, 0, -1).should == ['one', 'two']
   end
 
-  it "supports a variable number of arguments" do
+  it 'supports a variable number of arguments' do
     @redises.zrem(@key, ['one', 'two'])
     @redises.zrange(@key, 0, -1).should be_empty
   end
 
-  it_should_behave_like "a zset-only command"
+  it_should_behave_like 'a zset-only command'
 end

@@ -6,7 +6,7 @@ class MockRedis
 
     def append(key, value)
       assert_stringy(key)
-      data[key] ||= ""
+      data[key] ||= ''
       data[key] << value
       data[key].length
     end
@@ -35,7 +35,7 @@ class MockRedis
       offset_within_byte = offset % 8
 
       # String#getbyte would be lovely, but it's not in 1.8.7.
-      byte = (data[key] || "").each_byte.drop(offset_of_byte).first
+      byte = (data[key] || '').each_byte.drop(offset_of_byte).first
 
       if byte
         (byte & (2**7 >> offset_within_byte)) > 0 ? 1 : 0
@@ -46,7 +46,7 @@ class MockRedis
 
     def getrange(key, start, stop)
       assert_stringy(key)
-      (data[key] || "")[start..stop]
+      (data[key] || '')[start..stop]
     end
 
     def getset(key, value)
@@ -62,11 +62,11 @@ class MockRedis
     def incrby(key, n)
       assert_stringy(key)
       unless can_incr?(data[key])
-        raise Redis::CommandError, "ERR value is not an integer or out of range"
+        raise Redis::CommandError, 'ERR value is not an integer or out of range'
       end
 
       unless looks_like_integer?(n.to_s)
-        raise Redis::CommandError, "ERR value is not an integer or out of range"
+        raise Redis::CommandError, 'ERR value is not an integer or out of range'
       end
 
       new_value = data[key].to_i + n.to_i
@@ -78,11 +78,11 @@ class MockRedis
     def incrbyfloat(key, n)
       assert_stringy(key)
       unless can_incr_float?(data[key])
-        raise Redis::CommandError, "ERR value is not a valid float"
+        raise Redis::CommandError, 'ERR value is not a valid float'
       end
 
       unless looks_like_float?(n.to_s)
-        raise Redis::CommandError, "ERR value is not a valid float"
+        raise Redis::CommandError, 'ERR value is not a valid float'
       end
 
       new_value = data[key].to_f + n.to_f
@@ -106,14 +106,14 @@ class MockRedis
     def mset(*kvpairs)
       assert_has_args(kvpairs, 'mset')
       if kvpairs.length.odd?
-        raise Redis::CommandError, "ERR wrong number of arguments for MSET"
+        raise Redis::CommandError, 'ERR wrong number of arguments for MSET'
       end
 
       kvpairs.each_slice(2) do |(k,v)|
         set(k,v)
       end
 
-      "OK"
+      'OK'
     end
 
     def mapped_mset(hash)
@@ -171,10 +171,10 @@ class MockRedis
     end
 
     def setbit(key, offset, value)
-      assert_stringy(key, "ERR bit is not an integer or out of range")
+      assert_stringy(key, 'ERR bit is not an integer or out of range')
       retval = getbit(key, offset)
 
-      str = data[key] || ""
+      str = data[key] || ''
 
       offset_of_byte = offset / 8
       offset_within_byte = offset % 8
@@ -219,7 +219,7 @@ class MockRedis
     def bitcount(key, start = 0, stop = -1)
       assert_stringy(key)
 
-      str   = data[key] || ""
+      str   = data[key] || ''
       count = 0
       m1    = 0x5555555555555555
       m2    = 0x3333333333333333
@@ -261,16 +261,16 @@ class MockRedis
     def setrange(key, offset, value)
       assert_stringy(key)
       value = value.to_s
-      old_value = (data[key] || "")
+      old_value = (data[key] || '')
 
       prefix = zero_pad(old_value[0...offset], offset)
-      data[key] = prefix + value + (old_value[(offset + value.length)..-1] || "")
+      data[key] = prefix + value + (old_value[(offset + value.length)..-1] || '')
       data[key].length
     end
 
     def strlen(key)
       assert_stringy(key)
-      (data[key] || "").bytesize
+      (data[key] || '').bytesize
     end
 
 
@@ -282,7 +282,7 @@ class MockRedis
     end
 
     def assert_stringy(key,
-        message="WRONGTYPE Operation against a key holding the wrong kind of value")
+        message='WRONGTYPE Operation against a key holding the wrong kind of value')
       unless stringy?(key)
         raise Redis::CommandError, message
       end

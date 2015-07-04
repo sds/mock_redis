@@ -1,26 +1,26 @@
 require 'spec_helper'
 
-describe "#pttl(key)" do
+describe '#pttl(key)' do
   before do
     @key = 'mock-redis-test:persist'
     @redises.set(@key, 'spork')
   end
 
-  it "returns -1 for a key with no expiration" do
+  it 'returns -1 for a key with no expiration' do
     @redises.pttl(@key).should == -1
   end
 
-  it "returns -2 for a key that does not exist" do
+  it 'returns -2 for a key that does not exist' do
     @redises.pttl('mock-redis-test:nonesuch').should == -2
   end
 
-  it "stringifies key" do
+  it 'stringifies key' do
     @redises.expire(@key, 8)
     # Don't check against Redis since millisecond timing differences are likely
     @redises.send_without_checking(:pttl, @key.to_sym).should > 0
   end
 
-  context "[mock only]" do
+  context '[mock only]' do
     # These are mock-only since we can't actually manipulate time in
     # the real Redis.
 

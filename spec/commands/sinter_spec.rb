@@ -11,21 +11,21 @@ describe '#sinter(key [, key, ...])' do
     [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
   end
 
-  it "returns the elements in the resulting set" do
-    @redises.sinter(@evens, @primes).should == ["2"]
+  it 'returns the elements in the resulting set' do
+    @redises.sinter(@evens, @primes).should == ['2']
   end
 
-  it "treats missing keys as empty sets" do
+  it 'treats missing keys as empty sets' do
     @redises.sinter(@destination, 'mock-redis-test:nonesuch').should == []
   end
 
-  it "raises an error if given 0 sets" do
+  it 'raises an error if given 0 sets' do
     lambda do
       @redises.sinter
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error if any argument is not a a set" do
+  it 'raises an error if any argument is not a a set' do
     @redises.set('mock-redis-test:notset', 1)
 
     lambda do

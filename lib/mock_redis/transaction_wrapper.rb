@@ -39,7 +39,7 @@ class MockRedis
 
     def discard
       unless @in_multi
-        raise Redis::CommandError, "ERR DISCARD without MULTI"
+        raise Redis::CommandError, 'ERR DISCARD without MULTI'
       end
       @in_multi = false
       @multi_block_given = false
@@ -49,7 +49,7 @@ class MockRedis
 
     def exec
       unless @in_multi
-        raise Redis::CommandError, "ERR EXEC without MULTI"
+        raise Redis::CommandError, 'ERR EXEC without MULTI'
       end
       @in_multi = false
       @multi_block_given = false
@@ -70,7 +70,7 @@ class MockRedis
 
     def multi
       if @in_multi
-        raise Redis::CommandError, "ERR MULTI calls can not be nested"
+        raise Redis::CommandError, 'ERR MULTI calls can not be nested'
       end
       @in_multi = true
       if block_given?

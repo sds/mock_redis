@@ -12,34 +12,34 @@ describe '#sinterstore(destination, key [, key, ...])' do
     [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
   end
 
-  it "returns the number of elements in the resulting set" do
+  it 'returns the number of elements in the resulting set' do
     @redises.sinterstore(@destination, @numbers, @evens).should == 5
   end
 
-  it "stores the resulting set" do
+  it 'stores the resulting set' do
     @redises.sinterstore(@destination, @numbers, @evens)
     @redises.smembers(@destination).should == %w[10 8 6 4 2]
   end
 
-  it "does not store empty sets" do
+  it 'does not store empty sets' do
     @redises.sinterstore(@destination, 'mock-redis-test:nonesuch', @numbers).should == 0
     @redises.get(@destination).should be_nil
   end
 
-  it "removes existing elements in destination" do
+  it 'removes existing elements in destination' do
     @redises.sadd(@destination, 42)
 
     @redises.sinterstore(@destination, @primes)
     @redises.smembers(@destination).should == %w[7 5 3 2]
   end
 
-  it "raises an error if given 0 sets" do
+  it 'raises an error if given 0 sets' do
     lambda do
       @redises.sinterstore(@destination)
     end.should raise_error(RuntimeError)
   end
 
-  it "raises an error if any argument is not a a set" do
+  it 'raises an error if any argument is not a a set' do
     @redises.set('mock-redis-test:notset', 1)
 
     lambda do

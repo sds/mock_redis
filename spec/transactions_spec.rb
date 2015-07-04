@@ -5,19 +5,19 @@ describe 'transactions (multi/exec/discard)' do
     @redises.discard rescue nil
   end
 
-  context "#multi" do
+  context '#multi' do
     it "responds with 'OK'" do
       @redises.multi.should == 'OK'
     end
 
-    it "forbids nesting" do
+    it 'forbids nesting' do
       @redises.multi
       lambda do
         @redises.multi
       end.should raise_error(RuntimeError)
     end
 
-    it "cleanup the state of tansaction wrapper if an exception occurs while a transaction is being processed" do
+    it 'cleanup the state of tansaction wrapper if an exception occurs while a transaction is being processed' do
       lambda do
         @redises.mock.multi do |r|
           raise "i'm a command that fails"
@@ -34,18 +34,18 @@ describe 'transactions (multi/exec/discard)' do
     end
   end
 
-  context "#blocks" do
-    it "implicitly runs exec when finished" do
-      @redises.set("counter", 5)
+  context '#blocks' do
+    it 'implicitly runs exec when finished' do
+      @redises.set('counter', 5)
       @redises.multi do |r|
-        r.set("test", 1)
-        r.incr("counter")
+        r.set('test', 1)
+        r.incr('counter')
       end
-      @redises.get("counter").should == "6"
-      @redises.get("test").should == "1"
+      @redises.get('counter').should == '6'
+      @redises.get('test').should == '1'
     end
 
-    it "forbids nesting via blocks" do
+    it 'forbids nesting via blocks' do
       # Have to use only the mock here. redis-rb has a bug in it where
       # nested #multi calls raise NoMethodError because it gets a nil
       # where it's not expecting one.
@@ -57,7 +57,7 @@ describe 'transactions (multi/exec/discard)' do
     end
   end
 
-  context "#discard" do
+  context '#discard' do
     it "responds with 'OK' after #multi" do
       @redises.multi
       @redises.discard.should == 'OK'
@@ -70,15 +70,15 @@ describe 'transactions (multi/exec/discard)' do
     end
   end
 
-  context "#exec" do
-    it "raises an error outside of #multi" do
+  context '#exec' do
+    it 'raises an error outside of #multi' do
       lambda do
         @redises.exec.should raise_error
       end
     end
   end
 
-  context "saving up commands for later" do
+  context 'saving up commands for later' do
     before(:each) do
       @redises.multi
       @string = 'mock-redis-test:string'
@@ -110,13 +110,13 @@ describe 'transactions (multi/exec/discard)' do
     end
   end
 
-  context "saving commands with multi block" do
+  context 'saving commands with multi block' do
     before(:each) do
       @string = 'mock-redis-test:string'
       @list = 'mock-redis-test:list'
     end
 
-    it "commands return response after exec is called" do
+    it 'commands return response after exec is called' do
       set_response = nil
       lpush_response = nil
       second_lpush_response = nil

@@ -10,10 +10,10 @@ describe '#pipelined' do
   end
 
   context 'with a few added data' do
-    let(:key1)   { "hello" }
-    let(:key2)   { "world" }
-    let(:value1) { "foo" }
-    let(:value2) { "bar" }
+    let(:key1)   { 'hello' }
+    let(:key2)   { 'world' }
+    let(:value1) { 'foo' }
+    let(:value2) { 'bar' }
 
     before do
       @redises.set key1, value1
