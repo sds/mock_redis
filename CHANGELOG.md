@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.15.0
 
 * Add support for the `time` method
 
