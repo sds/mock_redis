@@ -139,7 +139,7 @@ class MockRedis
       COMMAND_STATS_COMBINED_INFO,
     ].inject({}) { |memo, info| memo.merge(info) }
 
-    def info( section = :default )
+    def info(section = :default)
       case section
       when :default;      DEFAULT_INFO
       when :all;          ALL_INFO
