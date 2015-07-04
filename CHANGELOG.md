@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Add support for the `time` method
+
 ### 0.14.1
 
 * Upgrade `redis` gem dependency to 3.2.x series
