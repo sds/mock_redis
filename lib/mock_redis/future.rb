@@ -14,7 +14,7 @@ class MockRedis
       @result
     end
 
-    def set_result(result)
+    def store_result(result)
       @result_set = true
       @result = result
     end

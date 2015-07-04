@@ -14,7 +14,7 @@ describe MockRedis::Future do
   end
 
   it 'returns the value after the result has been set' do
-    @future.set_result(result)
+    @future.store_result(result)
     @future.value.should eq(result)
   end
 end

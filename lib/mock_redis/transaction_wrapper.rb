@@ -57,7 +57,7 @@ class MockRedis
       responses = @transaction_futures.map do |future|
         begin
           result = send(*future.command)
-          future.set_result(result)
+          future.store_result(result)
           result
         rescue => e
           e
