@@ -30,7 +30,7 @@ class MockRedis
     def initialize_copy(_source)
       @data = @data.clone
       @data.keys.each { |k| @data[k] = @data[k].clone }
-      @expire_times = @expire_times.map { |x| x.clone }
+      @expire_times = @expire_times.map(&:clone)
     end
 
     # Redis commands go below this line and above 'private'
