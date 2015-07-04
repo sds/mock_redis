@@ -35,11 +35,17 @@ class MockRedis
 
     # Redis commands go below this line and above 'private'
 
-    def auth(_) 'OK' end
+    def auth(_)
+      'OK'
+    end
 
-    def bgrewriteaof() 'Background append only file rewriting started' end
+    def bgrewriteaof()
+      'Background append only file rewriting started'
+    end
 
-    def bgsave() 'Background saving started' end
+    def bgsave()
+      'Background saving started'
+    end
 
     def disconnect
       nil

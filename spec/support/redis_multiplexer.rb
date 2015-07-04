@@ -77,8 +77,13 @@ class RedisMultiplexer < BlankSlate
     end
   end
 
-  def mock() @mock_redis end
-  def real() @real_redis end
+  def mock()
+    @mock_redis
+  end
+
+  def real()
+    @real_redis
+  end
 
   # Used in cleanup before() blocks.
   def send_without_checking(method, *args)
