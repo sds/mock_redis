@@ -81,7 +81,7 @@ class MockRedis
     self
   end
 
-  def respond_to?(method, include_private=false)
+  def respond_to?(method, include_private = false)
     super || @db.respond_to?(method, include_private)
   end
 

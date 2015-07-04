@@ -52,20 +52,20 @@ class MockRedis
       end
     end
 
-    def zinterstore(destination, keys, options={})
+    def zinterstore(destination, keys, options = {})
       assert_has_args(keys, 'zinterstore')
 
       data[destination] = combine_weighted_zsets(keys, options, :intersection)
       zcard(destination)
     end
 
-    def zrange(key, start, stop, options={})
+    def zrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
         to_response(z.sorted[start.to_i..stop.to_i] || [], options)
       end
     end
 
-    def zrangebyscore(key, min, max, options={})
+    def zrangebyscore(key, min, max, options = {})
       assert_range_args(min, max)
 
       with_zset_at(key) do |zset|
@@ -92,7 +92,7 @@ class MockRedis
       retval
     end
 
-    def zrevrange(key, start, stop, options={})
+    def zrevrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
         to_response(z.sorted.reverse[start..stop] || [], options)
       end
@@ -112,7 +112,7 @@ class MockRedis
         size
     end
 
-    def zrevrangebyscore(key, max, min, options={})
+    def zrevrangebyscore(key, max, min, options = {})
       assert_range_args(min, max)
 
       with_zset_at(key) do |zset|
@@ -135,7 +135,7 @@ class MockRedis
       end
     end
 
-    def zunionstore(destination, keys, options={})
+    def zunionstore(destination, keys, options = {})
       assert_has_args(keys, 'zunionstore')
 
       data[destination] = combine_weighted_zsets(keys, options, :union)

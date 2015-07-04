@@ -4,7 +4,7 @@ class MockRedis
   module SortMethod
     include Assertions
 
-    def sort(key, options={})
+    def sort(key, options = {})
       return [] if key.nil?
 
       enumerable = data[key]

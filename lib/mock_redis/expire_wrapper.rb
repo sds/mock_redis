@@ -4,7 +4,7 @@ class MockRedis
   class ExpireWrapper
     include UndefRedisMethods
 
-    def respond_to?(method, include_private=false)
+    def respond_to?(method, include_private = false)
       super || @db.respond_to?(method)
     end
 

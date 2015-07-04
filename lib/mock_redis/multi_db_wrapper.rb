@@ -13,7 +13,7 @@ class MockRedis
       @databases[@db_index] = db
     end
 
-    def respond_to?(method, include_private=false)
+    def respond_to?(method, include_private = false)
       super || current_db.respond_to?(method, include_private)
     end
 
