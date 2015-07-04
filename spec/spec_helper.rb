@@ -1,4 +1,13 @@
-require 'rspec'
+if ENV['TRAVIS']
+  # When running in Travis, report coverage stats to Coveralls.
+  require 'coveralls'
+  Coveralls.wear!
+else
+  # Otherwise render coverage information in coverage/index.html and display
+  # coverage percentage in the console.
+  require 'simplecov'
+end
+
 require 'rspec/its'
 require 'redis'
 $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, '..', '..', 'lib')))
