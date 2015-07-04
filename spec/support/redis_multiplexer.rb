@@ -77,11 +77,11 @@ class RedisMultiplexer < BlankSlate
     end
   end
 
-  def mock()
+  def mock
     @mock_redis
   end
 
-  def real()
+  def real
     @real_redis
   end
 

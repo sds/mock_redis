@@ -39,11 +39,11 @@ class MockRedis
       'OK'
     end
 
-    def bgrewriteaof()
+    def bgrewriteaof
       'Background append only file rewriting started'
     end
 
-    def bgsave()
+    def bgsave
       'Background saving started'
     end
 
