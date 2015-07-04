@@ -276,7 +276,7 @@ class MockRedis
     private
 
     def stringy?(key)
-      data[key].nil? || data[key].kind_of?(String)
+      data[key].nil? || data[key].is_a?(String)
     end
 
     def assert_stringy(key,

@@ -248,7 +248,7 @@ class MockRedis
       if options.is_a?(Hash) && options[:timeout]
         timeout = assert_valid_timeout(options[:timeout])
         [arglist[0..-2], timeout]
-      elsif options.kind_of?(Integer)
+      elsif options.is_a?(Integer)
         timeout = assert_valid_timeout(options)
         [arglist[0..-2], timeout]
       else

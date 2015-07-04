@@ -141,7 +141,7 @@ class MockRedis
     end
 
     def sety?(key)
-      data[key].nil? || data[key].kind_of?(Set)
+      data[key].nil? || data[key].is_a?(Set)
     end
 
     def assert_sety(key)

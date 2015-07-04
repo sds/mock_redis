@@ -130,7 +130,7 @@ class MockRedis
     end
 
     def hashy?(key)
-      data[key].nil? || data[key].kind_of?(Hash)
+      data[key].nil? || data[key].is_a?(Hash)
     end
 
     def assert_hashy(key)

@@ -14,7 +14,7 @@ class MockRedis
     end
 
     def primitive?(value)
-      value.kind_of?(::Array) || value.kind_of?(::Hash) || value.kind_of?(::String)
+      value.is_a?(::Array) || value.is_a?(::Hash) || value.is_a?(::String)
     end
 
     def clean_up_empties_at(key)

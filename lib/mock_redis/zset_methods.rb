@@ -212,7 +212,7 @@ class MockRedis
     end
 
     def zsety?(key)
-      data[key].nil? || data[key].kind_of?(Zset)
+      data[key].nil? || data[key].is_a?(Zset)
     end
 
     def assert_zsety(key)
