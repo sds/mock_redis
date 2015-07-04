@@ -8,7 +8,7 @@ describe '#lrem(key, count, value)' do
        99 bottles of beer
        take one down
        pass it around
-       98 bottles of beer on the wall].reverse.each do |x|
+       98 bottles of beer on the wall].reverse_each do |x|
       @redises.lpush(@key, x)
     end
   end

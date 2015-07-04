@@ -4,7 +4,7 @@ describe '#ltrim(key, start, stop)' do
   before do
     @key = 'mock-redis-test:22310'
 
-    %w[v0 v1 v2 v3 v4].reverse.each { |v| @redises.lpush(@key, v) }
+    %w[v0 v1 v2 v3 v4].reverse_each { |v| @redises.lpush(@key, v) }
   end
 
   it "returns 'OK'" do
