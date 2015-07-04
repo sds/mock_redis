@@ -29,7 +29,7 @@ describe '#sdiff(key [, key, ...])' do
 
   it 'raises an error if given 0 arguments' do
     lambda do
-      @redises.sdiff()
+      @redises.sdiff
     end.should raise_error(RuntimeError)
   end
 

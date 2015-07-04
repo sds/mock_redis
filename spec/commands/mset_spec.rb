@@ -23,7 +23,7 @@ describe '#mset(key, value [, key, value, ...])' do
 
   it 'raises an error if given 0 arguments' do
     lambda do
-      @redises.mset()
+      @redises.mset
     end.should raise_error(RuntimeError)
   end
 end

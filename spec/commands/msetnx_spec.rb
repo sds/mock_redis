@@ -34,7 +34,7 @@ describe '#msetnx(key, value [, key, value, ...])' do
 
   it 'raises an error if given 0 arguments' do
     lambda do
-      @redises.msetnx()
+      @redises.msetnx
     end.should raise_error(RuntimeError)
   end
 end
