@@ -281,7 +281,7 @@ class MockRedis
     end
 
     def remove_expiration(key)
-      expire_times.delete_if do |(t, k)|
+      expire_times.delete_if do |(_t, k)|
         key.to_s == k
       end
     end
@@ -307,11 +307,11 @@ class MockRedis
     def expire_keys
       now = @base.now
 
-      to_delete = expire_times.take_while do |(time, key)|
+      to_delete = expire_times.take_while do |(time, _key)|
         (time.to_r * 1_000).to_i <= (now.to_r * 1_000).to_i
       end
 
-      to_delete.each do |(time, key)|
+      to_delete.each do |(_time, key)|
         del(key)
       end
     end

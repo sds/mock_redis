@@ -11,7 +11,7 @@ class MockRedis
         if field.is_a?(Array)
           orig_size = hash.size
           fields    = field.map(&:to_s)
-          hash.delete_if { |k, v| fields.include?(k) }
+          hash.delete_if { |k, _v| fields.include?(k) }
           orig_size - hash.size
         else
           hash.delete(field.to_s) ? 1 : 0

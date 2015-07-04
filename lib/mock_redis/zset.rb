@@ -65,7 +65,7 @@ class MockRedis
                             lambda { |x| x.to_f <= max.to_f }
                           end
 
-      sorted.find_all do |(score, member)|
+      sorted.find_all do |(score, _member)|
         in_from_the_left[score] && in_from_the_right[score]
       end
     end
