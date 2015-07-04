@@ -199,7 +199,7 @@ class MockRedis
     end
 
     def first_nonempty_list(keys)
-      keys.find{ |k| llen(k) > 0 }
+      keys.find { |k| llen(k) > 0 }
     end
   end
 end

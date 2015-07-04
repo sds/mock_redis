@@ -30,7 +30,7 @@ class MockRedis
     def initialize_copy(source)
       @data = @data.clone
       @data.keys.each { |k| @data[k] = @data[k].clone }
-      @expire_times = @expire_times.map{ |x| x.clone }
+      @expire_times = @expire_times.map { |x| x.clone }
     end
 
     # Redis commands go below this line and above 'private'
@@ -64,7 +64,7 @@ class MockRedis
       assert_has_args(keys, 'del')
 
       keys.
-        find_all{ |key| data[key] }.
+        find_all { |key| data[key] }.
         each { |k| persist(k) }.
         each { |k| data.delete(k) }.
         length

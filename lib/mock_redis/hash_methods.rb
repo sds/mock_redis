@@ -75,7 +75,7 @@ class MockRedis
 
     def hmget(key, *fields)
       assert_has_args(fields, 'hmget')
-      fields.map{ |f| hget(key, f) }
+      fields.map { |f| hget(key, f) }
     end
 
     def mapped_hmget(key, *fields)
