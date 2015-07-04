@@ -123,7 +123,7 @@ class MockRedis
     def msetnx(*kvpairs)
       assert_has_args(kvpairs, 'msetnx')
 
-      if kvpairs.each_slice(2).any? {|(k,_)| exists(k)}
+      if kvpairs.each_slice(2).any? { |(k,_)| exists(k) }
         false
       else
         mset(*kvpairs)

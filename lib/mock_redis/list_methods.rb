@@ -47,7 +47,7 @@ class MockRedis
     end
 
     def lindex(key, index)
-      with_list_at(key) {|l| l[index.to_i]}
+      with_list_at(key) { |l| l[index.to_i] }
     end
 
     def linsert(key, position, pivot, value)
@@ -85,7 +85,7 @@ class MockRedis
     def lpush(key, values)
       values = [values] unless values.is_a?(Array)
       assert_has_args(values, 'lpush')
-      with_list_at(key) {|l| values.each {|v| l.unshift(v.to_s)}}
+      with_list_at(key) { |l| values.each { |v| l.unshift(v.to_s) } }
       llen(key)
     end
 
@@ -101,7 +101,7 @@ class MockRedis
 
     def lrange(key, start, stop)
       start = start.to_i
-      with_list_at(key) {|l| start < l.size ? l[[start, -l.length].max..stop.to_i] : []}
+      with_list_at(key) { |l| start < l.size ? l[[start, -l.length].max..stop.to_i] : [] }
     end
 
     def lrem(key, count, value)
@@ -124,7 +124,7 @@ class MockRedis
                               indices_with_value.reverse.take(-count)
                             end
 
-        indices_to_delete.each {|i| list.delete_at(i)}.length
+        indices_to_delete.each { |i| list.delete_at(i) }.length
       end
     end
 
@@ -152,7 +152,7 @@ class MockRedis
     end
 
     def rpop(key)
-      with_list_at(key) {|list| list.pop if list}
+      with_list_at(key) { |list| list.pop if list }
     end
 
     def rpoplpush(source, destination)
@@ -164,7 +164,7 @@ class MockRedis
     def rpush(key, values)
       values = [values] unless values.is_a?(Array)
       assert_has_args(values, 'rpush')
-      with_list_at(key) {|l| values.each {|v| l.push(v.to_s)}}
+      with_list_at(key) { |l| values.each { |v| l.push(v.to_s) } }
       llen(key)
     end
 
@@ -184,7 +184,7 @@ class MockRedis
     end
 
     def with_list_at(key, &blk)
-      with_thing_at(key, :assert_listy, proc {[]}, &blk)
+      with_thing_at(key, :assert_listy, proc { [] }, &blk)
     end
 
     def listy?(key)
@@ -199,7 +199,7 @@ class MockRedis
     end
 
     def first_nonempty_list(keys)
-      keys.find{|k| llen(k) > 0}
+      keys.find{ |k| llen(k) > 0 }
     end
 
   end

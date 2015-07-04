@@ -132,12 +132,12 @@ class MockRedis
       REPLICATION_INFO,
       CPU_INFO,
       KEYSPACE_INFO
-    ].inject({}){|memo,info| memo.merge(info)}
+    ].inject({}){ |memo,info| memo.merge(info) }
 
     ALL_INFO = [
       DEFAULT_INFO,
       COMMAND_STATS_COMBINED_INFO
-    ].inject({}){|memo,info| memo.merge(info)}
+    ].inject({}){ |memo,info| memo.merge(info) }
 
     def info( section = :default )
       case section

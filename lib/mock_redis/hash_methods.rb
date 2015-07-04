@@ -20,15 +20,15 @@ class MockRedis
     end
 
     def hexists(key, field)
-      with_hash_at(key) {|h| h.has_key?(field.to_s)}
+      with_hash_at(key) { |h| h.has_key?(field.to_s) }
     end
 
     def hget(key, field)
-      with_hash_at(key) {|h| h[field.to_s]}
+      with_hash_at(key) { |h| h[field.to_s] }
     end
 
     def hgetall(key)
-      with_hash_at(key) {|h| h}
+      with_hash_at(key) { |h| h }
     end
 
     def hincrby(key, field, increment)
@@ -75,7 +75,7 @@ class MockRedis
 
     def hmget(key, *fields)
       assert_has_args(fields, 'hmget')
-      fields.map{|f| hget(key, f)}
+      fields.map{ |f| hget(key, f) }
     end
 
     def mapped_hmget(key, *fields)
@@ -106,7 +106,7 @@ class MockRedis
     end
 
     def hset(key, field, value)
-      with_hash_at(key) {|h| h[field.to_s] = value.to_s}
+      with_hash_at(key) { |h| h[field.to_s] = value.to_s }
       true
     end
 
@@ -126,7 +126,7 @@ class MockRedis
     private
 
     def with_hash_at(key, &blk)
-      with_thing_at(key, :assert_hashy, proc {{}}, &blk)
+      with_thing_at(key, :assert_hashy, proc { {} }, &blk)
     end
 
     def hashy?(key)

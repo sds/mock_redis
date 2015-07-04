@@ -13,7 +13,7 @@ class MockRedis
       with_set_at(key) do |s|
         if members.size > 1
           size_before = s.size
-          members.reverse.each {|m| s << m}
+          members.reverse.each { |m| s << m }
           s.size - size_before
         else
           !!s.add?(members.first)
@@ -22,12 +22,12 @@ class MockRedis
     end
 
     def scard(key)
-      with_set_at(key) {|s| s.length}
+      with_set_at(key) { |s| s.length }
     end
 
     def sdiff(*keys)
       assert_has_args(keys, 'sdiff')
-      with_sets_at(*keys) {|*sets| sets.reduce(&:-)}.to_a
+      with_sets_at(*keys) { |*sets| sets.reduce(&:-) }.to_a
     end
 
     def sdiffstore(destination, *keys)
@@ -55,7 +55,7 @@ class MockRedis
     end
 
     def sismember(key, member)
-      with_set_at(key) {|s| s.include?(member.to_s)}
+      with_set_at(key) { |s| s.include?(member.to_s) }
     end
 
     def smembers(key)
@@ -110,7 +110,7 @@ class MockRedis
 
     def sunion(*keys)
       assert_has_args(keys, 'sunion')
-      with_sets_at(*keys) {|*sets| sets.reduce(&:+).to_a}
+      with_sets_at(*keys) { |*sets| sets.reduce(&:+).to_a }
     end
 
     def sunionstore(destination, *keys)
@@ -123,7 +123,7 @@ class MockRedis
 
     private
     def with_set_at(key, &blk)
-      with_thing_at(key, :assert_sety, proc {Set.new}, &blk)
+      with_thing_at(key, :assert_sety, proc { Set.new }, &blk)
     end
 
     def with_sets_at(*keys, &blk)

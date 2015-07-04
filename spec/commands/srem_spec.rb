@@ -27,7 +27,7 @@ describe '#srem(key, member)' do
   end
 
   it 'cleans up empty sets' do
-    @redises.smembers(@key).each {|m| @redises.srem(@key, m)}
+    @redises.smembers(@key).each { |m| @redises.srem(@key, m) }
     @redises.get(@key).should be_nil
   end
 

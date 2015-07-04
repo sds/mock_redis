@@ -6,8 +6,8 @@ describe '#sunionstore(destination, key [, key, ...])' do
     @primes      = 'mock-redis-test:sunionstore:primes'
     @destination = 'mock-redis-test:sunionstore:destination'
 
-    [2, 4, 6, 8, 10].each {|i| @redises.sadd(@evens, i) }
-    [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
+    [2, 4, 6, 8, 10].each { |i| @redises.sadd(@evens, i) }
+    [2, 3, 5, 7].each { |i| @redises.sadd(@primes, i) }
   end
 
   it 'returns the number of elements in the resulting set' do

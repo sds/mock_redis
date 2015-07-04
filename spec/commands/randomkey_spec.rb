@@ -14,7 +14,7 @@ describe '#randomkey [mock only]' do
   end
 
   it 'returns nil when there are no keys' do
-    @mock.keys('*').each {|k| @mock.del(k)}
+    @mock.keys('*').each { |k| @mock.del(k) }
     @mock.randomkey.should be_nil
   end
 end

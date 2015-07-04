@@ -6,9 +6,9 @@ describe '#sinter(key [, key, ...])' do
     @evens   = 'mock-redis-test:sinter:evens'
     @primes  = 'mock-redis-test:sinter:primes'
 
-    (1..10).each {|i| @redises.sadd(@numbers, i) }
-    [2, 4, 6, 8, 10].each {|i| @redises.sadd(@evens, i) }
-    [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
+    (1..10).each { |i| @redises.sadd(@numbers, i) }
+    [2, 4, 6, 8, 10].each { |i| @redises.sadd(@evens, i) }
+    [2, 3, 5, 7].each { |i| @redises.sadd(@primes, i) }
   end
 
   it 'returns the elements in the resulting set' do

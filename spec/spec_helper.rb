@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, '..', '..', 'lib')))
 require 'mock_redis'
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
-Dir['spec/support/**/*.rb'].each {|x| require x}
+Dir['spec/support/**/*.rb'].each { |x| require x }
 
 module TypeCheckingHelper
   def method_from_description(example)

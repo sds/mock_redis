@@ -29,8 +29,8 @@ class MockRedis
 
     def initialize_copy(source)
       @data = @data.clone
-      @data.keys.each {|k| @data[k] = @data[k].clone}
-      @expire_times = @expire_times.map{|x| x.clone}
+      @data.keys.each { |k| @data[k] = @data[k].clone }
+      @expire_times = @expire_times.map{ |x| x.clone }
     end
 
     # Redis commands go below this line and above 'private'
@@ -58,9 +58,9 @@ class MockRedis
       assert_has_args(keys, 'del')
 
       keys.
-        find_all{|key| data[key]}.
-        each {|k| persist(k)}.
-        each {|k| data.delete(k)}.
+        find_all{ |key| data[key] }.
+        each { |k| persist(k) }.
+        each { |k| data.delete(k) }.
         length
     end
 
@@ -104,7 +104,7 @@ class MockRedis
     end
 
     def flushdb
-      data.keys.each {|k| del(k)}
+      data.keys.each { |k| del(k) }
       'OK'
     end
 
@@ -251,11 +251,11 @@ class MockRedis
     end
 
     def expiration(key)
-      expire_times.find {|(_,k)| k == key.to_s}.first
+      expire_times.find { |(_,k)| k == key.to_s }.first
     end
 
     def has_expiration?(key)
-      expire_times.any? {|(_,k)| k == key.to_s}
+      expire_times.any? { |(_,k)| k == key.to_s }
     end
 
     def looks_like_integer?(str)

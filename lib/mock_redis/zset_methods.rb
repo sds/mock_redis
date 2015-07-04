@@ -21,7 +21,7 @@ class MockRedis
         score, member = args
         assert_scorey(score) unless score =~ /(\+|\-)inf/
         retval = !zscore(key, member)
-        with_zset_at(key) {|z| z.add(score, member.to_s)}
+        with_zset_at(key) { |z| z.add(score, member.to_s) }
       else
         raise Redis::CommandError, 'ERR wrong number of arguments'
       end
@@ -75,12 +75,12 @@ class MockRedis
     end
 
     def zrank(key, member)
-      with_zset_at(key) {|z| z.sorted_members.index(member.to_s) }
+      with_zset_at(key) { |z| z.sorted_members.index(member.to_s) }
     end
 
     def zrem(key, *args)
       if !args.first.is_a?(Array)
-        retval = with_zset_at(key) {|z| !!z.delete?(args.first.to_s)}
+        retval = with_zset_at(key) { |z| !!z.delete?(args.first.to_s) }
       else
         args = args.first
         retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
@@ -100,7 +100,7 @@ class MockRedis
 
     def zremrangebyrank(key, start, stop)
       zrange(key, start, stop).
-        each {|member| zrem(key, member)}.
+        each { |member| zrem(key, member) }.
         size
     end
 
@@ -108,7 +108,7 @@ class MockRedis
       assert_range_args(min, max)
 
       zrangebyscore(key, min, max).
-        each {|member| zrem(key, member)}.
+        each { |member| zrem(key, member) }.
         size
     end
 
@@ -125,7 +125,7 @@ class MockRedis
     end
 
     def zrevrank(key, member)
-      with_zset_at(key) {|z| z.sorted_members.reverse.index(member.to_s) }
+      with_zset_at(key) { |z| z.sorted_members.reverse.index(member.to_s) }
     end
 
     def zscore(key, member)
@@ -174,11 +174,11 @@ class MockRedis
 
       aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
                    when :sum
-                     proc {|a,b| [a,b].compact.reduce(&:+)}
+                     proc { |a,b| [a,b].compact.reduce(&:+) }
                    when :min
-                     proc {|a,b| [a,b].compact.min}
+                     proc { |a,b| [a,b].compact.min }
                    when :max
-                     proc {|a,b| [a,b].compact.max}
+                     proc { |a,b| [a,b].compact.max }
                    else
                      raise Redis::CommandError, 'ERR syntax error'
                    end
@@ -196,7 +196,7 @@ class MockRedis
     end
 
     def with_zset_at(key, &blk)
-      with_thing_at(key, :assert_zsety, proc {Zset.new}, &blk)
+      with_thing_at(key, :assert_zsety, proc { Zset.new }, &blk)
     end
 
     def with_zsets_at(*keys, &blk)

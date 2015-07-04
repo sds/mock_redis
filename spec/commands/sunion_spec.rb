@@ -5,8 +5,8 @@ describe '#sunion(key [, key, ...])' do
     @evens   = 'mock-redis-test:sunion:evens'
     @primes  = 'mock-redis-test:sunion:primes'
 
-    [2, 4, 6, 8, 10].each {|i| @redises.sadd(@evens, i) }
-    [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
+    [2, 4, 6, 8, 10].each { |i| @redises.sadd(@evens, i) }
+    [2, 3, 5, 7].each { |i| @redises.sadd(@primes, i) }
   end
 
   it 'returns the elements in the resulting set' do

@@ -7,9 +7,9 @@ describe '#sinterstore(destination, key [, key, ...])' do
     @primes      = 'mock-redis-test:sinterstore:primes'
     @destination = 'mock-redis-test:sinterstore:destination'
 
-    (1..10).each {|i| @redises.sadd(@numbers, i) }
-    [2, 4, 6, 8, 10].each {|i| @redises.sadd(@evens, i) }
-    [2, 3, 5, 7].each {|i| @redises.sadd(@primes, i) }
+    (1..10).each { |i| @redises.sadd(@numbers, i) }
+    [2, 4, 6, 8, 10].each { |i| @redises.sadd(@evens, i) }
+    [2, 3, 5, 7].each { |i| @redises.sadd(@primes, i) }
   end
 
   it 'returns the number of elements in the resulting set' do

@@ -20,8 +20,8 @@ describe '#scan' do
 
   context 'when keys are found' do
     context 'when count is lower than collection size' do
-      let(:collection) { (count+1).times.map {|i| "mock:key#{1}"} }
-      let(:expected) { [count.to_s, collection]}
+      let(:collection) { (count+1).times.map { |i| "mock:key#{1}" } }
+      let(:expected) { [count.to_s, collection] }
 
       it 'returns a the next cursor and the collection' do
         expect(subject.scan(0, count: count, match: match)).to eq(expected)
@@ -29,8 +29,8 @@ describe '#scan' do
     end
 
     context 'when count is greater or equal than collection size' do
-      let(:collection) { count.times.map {|i| "mock:key#{1}"} }
-      let(:expected) { ['0', collection]}
+      let(:collection) { count.times.map { |i| "mock:key#{1}" } }
+      let(:expected) { ['0', collection] }
 
       it 'returns a 0 cursor and the collection' do
         expect(subject.scan(0, count: count, match: match)).to eq(expected)
@@ -40,7 +40,7 @@ describe '#scan' do
     context 'when giving a custom match filter' do
       let(:match) { 'mock:key*' }
       let(:collection) { %w[mock:key mock:key2 mock:otherkey] }
-      let(:expected) { ['0', %w[mock:key mock:key2]]}
+      let(:expected) { ['0', %w[mock:key mock:key2]] }
 
       it 'returns a 0 cursor and the filtered collection' do
         expect(subject.scan(0, count: count, match: match)).to eq(expected)

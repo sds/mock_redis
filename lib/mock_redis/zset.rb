@@ -37,32 +37,32 @@ class MockRedis
     end
 
     def each
-      members.each {|m| yield score(m), m}
+      members.each { |m| yield score(m), m }
     end
 
     def in_range(min, max)
       in_from_the_left = case min
                          when '-inf'
-                             lambda {|_| true }
+                             lambda { |_| true }
                          when '+inf'
-                             lambda {|_| false }
+                             lambda { |_| false }
                          when /\((.*)$/
                              val = $1.to_f
-                           lambda {|x| x.to_f > val }
+                           lambda { |x| x.to_f > val }
                          else
-                           lambda {|x| x.to_f >= min.to_f }
+                           lambda { |x| x.to_f >= min.to_f }
                          end
 
       in_from_the_right = case max
                           when '-inf'
-                              lambda {|_| false }
+                              lambda { |_| false }
                           when '+inf'
-                              lambda {|_| true }
+                              lambda { |_| true }
                           when /\((.*)$/
                               val = $1.to_f
-                            lambda {|x| x.to_f < val }
+                            lambda { |x| x.to_f < val }
                           else
-                            lambda {|x| x.to_f <= max.to_f }
+                            lambda { |x| x.to_f <= max.to_f }
                           end
 
       sorted.find_all do |(score, member)|
