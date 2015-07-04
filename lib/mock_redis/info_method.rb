@@ -141,17 +141,17 @@ class MockRedis
 
     def info( section = :default )
       case section
-        when :default ;      DEFAULT_INFO
-        when :all ;          ALL_INFO
-        when :server ;       SERVER_INFO
-        when :clients ;      CLIENTS_INFO
-        when :memory ;       MEMORY_INFO
-        when :persistence ;  PERSISTENCE_INFO
-        when :stats ;        STATS_INFO
-        when :replication ;  REPLICATION_INFO
-        when :cpu ;          CPU_INFO
-        when :keyspace ;     KEYSPACE_INFO
-        when :commandstats ; COMMAND_STATS_SOLO_INFO
+      when :default ;      DEFAULT_INFO
+      when :all ;          ALL_INFO
+      when :server ;       SERVER_INFO
+      when :clients ;      CLIENTS_INFO
+      when :memory ;       MEMORY_INFO
+      when :persistence ;  PERSISTENCE_INFO
+      when :stats ;        STATS_INFO
+      when :replication ;  REPLICATION_INFO
+      when :cpu ;          CPU_INFO
+      when :keyspace ;     KEYSPACE_INFO
+      when :commandstats ; COMMAND_STATS_SOLO_INFO
       end
     end
   end

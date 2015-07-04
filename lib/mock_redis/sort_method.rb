@@ -50,9 +50,9 @@ class MockRedis
     def sort_by(projected, direction)
       sorter =
         case direction.upcase
-          when 'DESC'
+        when 'DESC'
             DESCENDING_SORT
-          when 'ASC', 'ALPHA'
+        when 'ASC', 'ALPHA'
             ASCENDING_SORT
           else
             raise "Invalid direction '#{direction}'"
