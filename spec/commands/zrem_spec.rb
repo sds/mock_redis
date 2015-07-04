@@ -25,11 +25,11 @@ describe '#zrem(key, member)' do
     member = 11
     @redises.zadd(@key, 3, member)
     @redises.zrem(@key, member).should == true
-    @redises.zrange(@key, 0, -1).should == ['one', 'two']
+    @redises.zrange(@key, 0, -1).should == %w[one two]
   end
 
   it 'supports a variable number of arguments' do
-    @redises.zrem(@key, ['one', 'two'])
+    @redises.zrem(@key, %w[one two])
     @redises.zrange(@key, 0, -1).should be_empty
   end
 

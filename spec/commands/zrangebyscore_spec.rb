@@ -21,7 +21,7 @@ describe '#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
   end
 
   it 'returns the elements in order by score' do
-    @redises.zrangebyscore(@key, 1, 2).should == ['Washington', 'Adams']
+    @redises.zrangebyscore(@key, 1, 2).should == %w[Washington Adams]
   end
 
   it 'returns the scores when :with_scores is specified' do
@@ -36,7 +36,7 @@ describe '#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
 
   it 'honors the :limit => [offset count] argument' do
     @redises.zrangebyscore(@key, -100, 100, :limit => [1, 2]).
-      should == ['Adams', 'Jefferson']
+      should == %w[Adams Jefferson]
   end
 
   it "raises an error if :limit isn't a 2-tuple" do
@@ -51,20 +51,20 @@ describe '#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
 
   it 'treats scores like floats, not strings' do
     @redises.zadd(@key, '10', 'Tyler')
-    @redises.zrangebyscore(@key, 1, 2).should == ['Washington', 'Adams']
+    @redises.zrangebyscore(@key, 1, 2).should == %w[Washington Adams]
   end
 
   it 'treats -inf as negative infinity' do
     @redises.zrangebyscore(@key, '-inf', 3).should ==
-      ['Washington', 'Adams', 'Jefferson']
+      %w[Washington Adams Jefferson]
   end
 
   it 'treats +inf as positive infinity' do
-    @redises.zrangebyscore(@key, 3, '+inf').should == ['Jefferson', 'Madison']
+    @redises.zrangebyscore(@key, 3, '+inf').should == %w[Jefferson Madison]
   end
 
   it 'treats +inf as positive infinity' do
-    @redises.zrangebyscore(@key, 3, '+inf').should == ['Jefferson', 'Madison']
+    @redises.zrangebyscore(@key, 3, '+inf').should == %w[Jefferson Madison]
   end
 
   it 'honors exclusive ranges on the left' do

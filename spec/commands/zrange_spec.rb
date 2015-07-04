@@ -21,15 +21,15 @@ describe '#zrange(key, start, stop [, :with_scores => true])' do
   end
 
   it 'returns the elements when the range is given as strings' do
-    @redises.zrange(@key, '0', '1').should == ['Washington', 'Adams']
+    @redises.zrange(@key, '0', '1').should == %w[Washington Adams]
   end
 
   it 'returns the elements in order by score' do
-    @redises.zrange(@key, 0, 1).should == ['Washington', 'Adams']
+    @redises.zrange(@key, 0, 1).should == %w[Washington Adams]
   end
 
   it 'returns the elements in order by score (negative indices)' do
-    @redises.zrange(@key, -2, -1).should == ['Jefferson', 'Madison']
+    @redises.zrange(@key, -2, -1).should == %w[Jefferson Madison]
   end
 
   it 'returns empty list when start is too large' do

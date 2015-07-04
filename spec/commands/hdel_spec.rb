@@ -39,7 +39,7 @@ describe '#hdel(key, field)' do
   end
 
   it 'supports a variable number of arguments' do
-    @redises.hdel(@key, ['k1', 'k2'])
+    @redises.hdel(@key, %w[k1 k2])
     @redises.get(@key).should be_nil
   end
 

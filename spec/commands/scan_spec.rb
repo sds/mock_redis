@@ -39,8 +39,8 @@ describe '#scan' do
 
     context 'when giving a custom match filter' do
       let(:match) { 'mock:key*' }
-      let(:collection) { %w(mock:key mock:key2 mock:otherkey) }
-      let(:expected) { ['0', %w(mock:key mock:key2)]}
+      let(:collection) { %w[mock:key mock:key2 mock:otherkey] }
+      let(:expected) { ['0', %w[mock:key mock:key2]]}
 
       it 'returns a 0 cursor and the filtered collection' do
         expect(subject.scan(0, count: count, match: match)).to eq(expected)

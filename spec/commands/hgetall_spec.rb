@@ -25,7 +25,7 @@ describe '#hgetall(key)' do
     hash =  mr.hgetall(@key)
     hash['dont'] = 'mutate'
     new_hash = mr.hgetall(@key)
-    new_hash.keys.sort.should == ['k1', 'k2']
+    new_hash.keys.sort.should == %w[k1 k2]
   end
 
   it_should_behave_like 'a hash-only command'

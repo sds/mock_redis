@@ -21,7 +21,7 @@ describe '#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [
   end
 
   it 'returns the elements in order by score' do
-    @redises.zrevrangebyscore(@key, 4, 3).should == ['Madison', 'Jefferson']
+    @redises.zrevrangebyscore(@key, 4, 3).should == %w[Madison Jefferson]
   end
 
   it 'returns the scores when :with_scores is specified' do
@@ -41,7 +41,7 @@ describe '#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [
 
   it 'honors the :limit => [offset count] argument' do
     @redises.zrevrangebyscore(@key, 100, -100, :limit => [1, 2]).
-      should == ['Jefferson', 'Adams']
+      should == %w[Jefferson Adams]
   end
 
   it "raises an error if :limit isn't a 2-tuple" do

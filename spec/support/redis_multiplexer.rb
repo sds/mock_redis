@@ -1,5 +1,5 @@
 class BlankSlate
-  instance_methods.each {|m| undef_method(m) unless m =~ /^__/ || ['inspect', 'object_id'].include?(m.to_s)}
+  instance_methods.each {|m| undef_method(m) unless m =~ /^__/ || %w[inspect object_id].include?(m.to_s)}
 end
 
 class RedisMultiplexer < BlankSlate

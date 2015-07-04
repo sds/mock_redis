@@ -21,11 +21,11 @@ describe '#zrevrange(key, start, stop [, :with_scores => true])' do
   end
 
   it 'returns the elements in order by score' do
-    @redises.zrevrange(@key, 0, 1).should == ['Madison', 'Jefferson']
+    @redises.zrevrange(@key, 0, 1).should == %w[Madison Jefferson]
   end
 
   it 'returns the elements in order by score (negative indices)' do
-    @redises.zrevrange(@key, -2, -1).should == ['Adams', 'Washington']
+    @redises.zrevrange(@key, -2, -1).should == %w[Adams Washington]
   end
 
   it 'returns empty list when start is too large' do

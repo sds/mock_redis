@@ -32,7 +32,7 @@ describe '#srem(key, member)' do
   end
 
   it 'supports a variable number of arguments' do
-    @redises.srem(@key, ['bert', 'ernie']).should == 2
+    @redises.srem(@key, %w[bert ernie]).should == 2
     @redises.get(@key).should be_nil
   end
 
