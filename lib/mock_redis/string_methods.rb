@@ -180,7 +180,7 @@ class MockRedis
       offset_within_byte = offset % 8
 
       if offset_of_byte >= str.bytesize
-        str = zero_pad(str, offset_of_byte+1)
+        str = zero_pad(str, offset_of_byte + 1)
       end
 
       char_index = byte_index = offset_within_char = 0
@@ -231,10 +231,10 @@ class MockRedis
       str.bytes.to_a[start..stop].each do |byte|
         # Naive Hamming weight
         c = byte
-        c = (c & m1)  + ((c >> 1) & m1)
-        c = (c & m2)  + ((c >> 2) & m2)
-        c = (c & m4)  + ((c >> 4) & m4)
-        c = (c & m8)  + ((c >> 8) & m8)
+        c = (c & m1) + ((c >> 1) & m1)
+        c = (c & m2) + ((c >> 2) & m2)
+        c = (c & m4) + ((c >> 4) & m4)
+        c = (c & m8) + ((c >> 8) & m8)
         c = (c & m16) + ((c >> 16) & m16)
         c = (c & m32) + ((c >> 32) & m32)
         count += c
