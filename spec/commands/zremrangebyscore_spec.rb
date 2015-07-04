@@ -28,6 +28,8 @@ describe '#zremrangebyscore(key, min, max)' do
   it_should_behave_like 'a zset-only command'
 
   it 'throws a command error' do
-    expect { @redises.zrevrangebyscore(@key, DateTime.now, '-inf') }.to raise_error(Redis::CommandError)
+    expect do
+      @redises.zrevrangebyscore(@key, DateTime.now, '-inf')
+    end.to raise_error(Redis::CommandError)
   end
 end

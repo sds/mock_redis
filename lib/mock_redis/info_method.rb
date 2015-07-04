@@ -83,6 +83,7 @@ class MockRedis
 
     # The Ruby Reids client returns commandstats differently when it's called as
     # "INFO commandstats".
+    # rubocop:disable Metrics/LineLength
     COMMAND_STATS_SOLO_INFO = {
       'auth' => { 'calls' => '572501', 'usec' => '2353163', 'usec_per_call' => '4.11' },
       'client' => { 'calls' => '1', 'usec' => '80', 'usec_per_call' => '80.00' },
@@ -122,6 +123,7 @@ class MockRedis
       'cmdstat_smembers' => 'calls=58,usec=231,usec_per_call=3.98',
       'cmdstat_sunionstore' => 'calls=4185027,usec=11762454022,usec_per_call=2810.60',
     }
+    # rubocop:enable Metrics/LineLength
 
     DEFAULT_INFO = [
       SERVER_INFO,

@@ -37,7 +37,7 @@ describe '#srandmember(key)' do
       @redises.send_without_checking(:srandmember, @key, 2).size.should == 2
     end
 
-    it 'returns random members up to count from the set when count is negative even if count.abs is greater than the set size' do
+    it 'returns random members up to count from the set when count is negative even if count.abs is greater than the set size' do # rubocop:disable Metrics/LineLength
       @redises.send_without_checking(:srandmember, @key, -5).size.should == 5
     end
 

@@ -135,7 +135,8 @@ class MockRedis
 
     def assert_hashy(key)
       unless hashy?(key)
-        raise Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Redis::CommandError,
+              'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
   end

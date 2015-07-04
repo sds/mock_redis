@@ -17,7 +17,7 @@ describe 'transactions (multi/exec/discard)' do
       end.should raise_error(RuntimeError)
     end
 
-    it 'cleanup the state of tansaction wrapper if an exception occurs while a transaction is being processed' do
+    it 'cleans state of tansaction wrapper if exception occurs during transaction' do
       lambda do
         @redises.mock.multi do |_r|
           raise "i'm a command that fails"

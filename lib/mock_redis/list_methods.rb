@@ -195,7 +195,8 @@ class MockRedis
     def assert_listy(key)
       unless listy?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Redis::CommandError,
+              'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
 

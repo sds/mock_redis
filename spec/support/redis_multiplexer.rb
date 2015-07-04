@@ -1,5 +1,7 @@
 class BlankSlate
-  instance_methods.each { |m| undef_method(m) unless m =~ /^__/ || %w[inspect object_id].include?(m.to_s) }
+  instance_methods.each do |m|
+    undef_method(m) unless m =~ /^__/ || %w[inspect object_id].include?(m.to_s)
+  end
 end
 
 class RedisMultiplexer < BlankSlate
@@ -11,21 +13,25 @@ class RedisMultiplexer < BlankSlate
   end
 
   def method_missing(method, *args, &blk)
-    # if we're in a Redis command that accepts a block, and we execute more redis commands, ONLY execute them
-    # on the Redis implementation that the block came from.
-    # e.g. if a pipelined command is started on a MockRedis object, DON'T send commands inside the pipelined block
-    # to the real Redis object, as that one WON'T be inside a pipelined command, and we'll see weird behaviour
+    # If we're in a Redis command that accepts a block, and we execute more
+    # redis commands, ONLY execute them on the Redis implementation that the
+    # block came from.
+    # e.g. if a pipelined command is started on a MockRedis object, DON'T send
+    # commands inside the pipelined block to the real Redis object, as that one
+    # WON'T be inside a pipelined command, and we'll see weird behaviour
     if blk
       @in_mock_block  = false
       @in_redis_block = true
     end
-    real_retval, real_error = catch_errors { @in_mock_block ? :no_op : @real_redis.send(method, *args, &blk) }
+    real_retval, real_error =
+      catch_errors { @in_mock_block ? :no_op : @real_redis.send(method, *args, &blk) }
 
     if blk
       @in_mock_block  = true
       @in_redis_block = false
     end
-    mock_retval, mock_error = catch_errors { @in_redis_block ? :no_op : @mock_redis.send(method, *args, &blk) }
+    mock_retval, mock_error =
+      catch_errors { @in_redis_block ? :no_op : @mock_redis.send(method, *args, &blk) }
 
     if blk
       @in_mock_block  = false
