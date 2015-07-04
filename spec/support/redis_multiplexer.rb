@@ -87,11 +87,9 @@ class RedisMultiplexer < BlankSlate
   end
 
   def catch_errors
-    begin
-      retval = yield
-      [retval, nil]
-    rescue StandardError => e
-      [nil, e]
-    end
+    retval = yield
+    [retval, nil]
+  rescue StandardError => e
+    [nil, e]
   end
 end
