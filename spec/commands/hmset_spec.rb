@@ -30,13 +30,13 @@ describe '#hmset(key, field, value [, field, value ...])' do
   it 'raises an error if given no fields or values' do
     lambda do
       @redises.hmset(@key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if given an odd number of fields+values' do
     lambda do
       @redises.hmset(@key, 'k1', 1, 'k2')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a hash-only command'

@@ -29,6 +29,6 @@ describe '#mget(key [, key, ...])' do
   it 'raises an error if you pass it 0 arguments' do
     lambda do
       @redises.mget
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 end

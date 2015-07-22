@@ -29,7 +29,7 @@ describe '#hmget(key, field [, field, ...])' do
   it 'raises an error if given no fields' do
     lambda do
       @redises.hmget(@key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a hash-only command'

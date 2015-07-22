@@ -22,7 +22,7 @@ describe '#sinter(key [, key, ...])' do
   it 'raises an error if given 0 sets' do
     lambda do
       @redises.sinter
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if any argument is not a a set' do
@@ -30,10 +30,10 @@ describe '#sinter(key [, key, ...])' do
 
     lambda do
       @redises.sinter(@numbers, 'mock-redis-test:notset')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
 
     lambda do
       @redises.sinter('mock-redis-test:notset', @numbers)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 end

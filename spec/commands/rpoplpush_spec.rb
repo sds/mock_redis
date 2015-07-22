@@ -43,7 +43,7 @@ describe '#rpoplpush(source, destination)' do
 
     lambda do
       @redises.rpoplpush(@list1, @list2)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a list-only command'

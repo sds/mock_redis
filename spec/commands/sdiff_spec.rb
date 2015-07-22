@@ -30,7 +30,7 @@ describe '#sdiff(key [, key, ...])' do
   it 'raises an error if given 0 arguments' do
     lambda do
       @redises.sdiff
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if any argument is not a a set' do
@@ -38,10 +38,10 @@ describe '#sdiff(key [, key, ...])' do
 
     lambda do
       @redises.sdiff(@numbers, 'foo')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
 
     lambda do
       @redises.sdiff('foo', @numbers)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 end

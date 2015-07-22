@@ -55,7 +55,7 @@ describe '#linsert(key, :before|:after, pivot, value)' do
   it 'raises an error when given a position that is neither before nor after' do
     lambda do
       @redises.linsert(@key, :near, 1, 2)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'stores values as strings' do

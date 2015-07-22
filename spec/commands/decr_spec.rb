@@ -27,7 +27,7 @@ describe '#decr(key)' do
     @redises.set(@key, 'minus one')
     lambda do
       @redises.decr(@key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a string-only command'

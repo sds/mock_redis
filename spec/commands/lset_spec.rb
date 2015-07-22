@@ -30,13 +30,13 @@ describe '#lset(key, index, value)' do
   it 'raises an exception for nonexistent keys' do
     lambda do
       @redises.lset('mock-redis-test:bogus-key', 100, 'value')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an exception for out-of-range indices' do
     lambda do
       @redises.lset(@key, 100, 'value')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a list-only command'

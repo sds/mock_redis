@@ -10,7 +10,7 @@ describe MockRedis::Future do
   end
 
   it 'raises an error if the value is requested before the result is set' do
-    expect { @future.value }.to raise_error(RuntimeError)
+    expect { @future.value }.to raise_error(MockRedis::FutureNotReady)
   end
 
   it 'returns the value after the result has been set' do

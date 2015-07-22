@@ -27,7 +27,7 @@ describe '#rename(key, newkey)' do
   it 'raises an error when key == newkey' do
     lambda do
       @redises.rename(@key, @key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'overwrites any existing value at newkey' do

@@ -45,13 +45,13 @@ describe '#hincrby(key, field, increment)' do
     @redises.hset(@key, @field, 'one')
     lambda do
       @redises.hincrby(@key, @field, 1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if the delta does not look like an integer' do
     lambda do
       @redises.hincrby(@key, @field, 'foo')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a hash-only command'

@@ -27,7 +27,7 @@ describe '#decrby(key, decrement)' do
     @redises.set(@key, 'one')
     lambda do
       @redises.decrby(@key, 1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a string-only command'

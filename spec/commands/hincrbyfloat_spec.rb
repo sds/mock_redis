@@ -45,13 +45,13 @@ describe '#hincrbyfloat(key, field, increment)' do
     @redises.hset(@key, @field, 'one.two')
     lambda do
       @redises.hincrbyfloat(@key, @field, 1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if the delta does not look like a float' do
     lambda do
       @redises.hincrbyfloat(@key, @field, 'foobar.baz')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a hash-only command'

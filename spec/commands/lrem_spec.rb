@@ -64,7 +64,7 @@ describe '#lrem(key, count, value)' do
   it 'raises an error if the value does not look like an integer' do
     lambda do
       @redises.lrem(@key, 'foo', 'bottles')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'removes empty lists' do

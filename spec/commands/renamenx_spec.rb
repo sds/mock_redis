@@ -32,7 +32,7 @@ describe '#renamenx(key, newkey)' do
   it 'raises an error when key == newkey' do
     lambda do
       @redises.renamenx(@key, @key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'leaves any existing value at newkey alone' do

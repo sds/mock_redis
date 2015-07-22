@@ -27,7 +27,7 @@ describe '#incr(key)' do
     @redises.set(@key, 'one')
     lambda do
       @redises.incr(@key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a string-only command'

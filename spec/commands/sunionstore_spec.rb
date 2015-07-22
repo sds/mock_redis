@@ -42,7 +42,7 @@ describe '#sunionstore(destination, key [, key, ...])' do
   it 'raises an error if given 0 sets' do
     lambda do
       @redises.sunionstore(@destination)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if any argument is not a a set' do
@@ -50,10 +50,10 @@ describe '#sunionstore(destination, key [, key, ...])' do
 
     lambda do
       @redises.sunionstore(@destination, @primes, 'mock-redis-test:notset')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
 
     lambda do
       @redises.sunionstore(@destination, 'mock-redis-test:notset', @primes)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 end

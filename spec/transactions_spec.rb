@@ -14,7 +14,7 @@ describe 'transactions (multi/exec/discard)' do
       @redises.multi
       lambda do
         @redises.multi
-      end.should raise_error(RuntimeError)
+      end.should raise_error(Redis::CommandError)
     end
 
     it 'cleans state of tansaction wrapper if exception occurs during transaction' do
@@ -52,7 +52,7 @@ describe 'transactions (multi/exec/discard)' do
       @redises.mock.multi do |r|
         lambda do
           r.multi {}
-        end.should raise_error(RuntimeError)
+        end.should raise_error(Redis::CommandError)
       end
     end
   end
@@ -66,7 +66,7 @@ describe 'transactions (multi/exec/discard)' do
     it "can't be run outside of #multi/#exec" do
       lambda do
         @redises.discard
-      end.should raise_error(RuntimeError)
+      end.should raise_error(Redis::CommandError)
     end
   end
 
@@ -105,7 +105,7 @@ describe 'transactions (multi/exec/discard)' do
 
       responses = @redises.exec
       responses[0].should == 'OK'
-      responses[1].should be_a(RuntimeError)
+      responses[1].should be_a(Redis::CommandError)
       responses[2].should == 1
     end
   end

@@ -18,7 +18,7 @@ describe '#mapped_hmget(key, *fields)' do
   it 'raises an error if given no fields' do
     lambda do
       @redises.mapped_hmget(@key)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a hash-only command'

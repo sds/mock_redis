@@ -31,13 +31,13 @@ describe '#incrbyfloat(key, increment)' do
     @redises.set(@key, 'one.two')
     lambda do
       @redises.incrbyfloat(@key, 1)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if the delta does not look like an float' do
     lambda do
       @redises.incrbyfloat(@key, 'foobar.baz')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a string-only command'

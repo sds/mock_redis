@@ -25,7 +25,7 @@ describe '#sunion(key [, key, ...])' do
   it 'raises an error if given 0 sets' do
     lambda do
       @redises.sunion
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if any argument is not a a set' do
@@ -33,10 +33,10 @@ describe '#sunion(key [, key, ...])' do
 
     lambda do
       @redises.sunion(@numbers, 'mock-redis-test:notset')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
 
     lambda do
       @redises.sunion('mock-redis-test:notset', @numbers)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 end

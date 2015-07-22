@@ -47,7 +47,7 @@ describe '#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [
   it "raises an error if :limit isn't a 2-tuple" do
     lambda do
       @redises.zrevrangebyscore(@key, 100, -100, :limit => [1, 2, 3])
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
 
     lambda do
       @redises.zrevrangebyscore(@key, 100, -100, :limit => '1, 2')

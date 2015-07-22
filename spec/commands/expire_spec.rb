@@ -22,7 +22,7 @@ describe '#expire(key, seconds)' do
   it 'raises an error if seconds is bogus' do
     lambda do
       @redises.expireat(@key, 'a couple minutes or so')
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'stringifies key' do

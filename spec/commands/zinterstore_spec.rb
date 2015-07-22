@@ -39,7 +39,7 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
   it 'raises an error if keys is empty' do
     lambda do
       @redises.zinterstore(@dest, [])
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   context 'the :weights argument' do
@@ -52,7 +52,7 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it 'raises an error if the number of weights != the number of keys' do
       lambda do
         @redises.zinterstore(@dest, [@odds, @primes], :weights => [1, 2, 3])
-      end.should raise_error(RuntimeError)
+      end.should raise_error(Redis::CommandError)
     end
   end
 
@@ -90,7 +90,7 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it 'raises an error for unknown aggregation function' do
       lambda do
         @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :mix)
-      end.should raise_error(RuntimeError)
+      end.should raise_error(Redis::CommandError)
     end
   end
 end

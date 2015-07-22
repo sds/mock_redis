@@ -38,7 +38,7 @@ describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
   it 'raises an error if keys is empty' do
     lambda do
       @redises.zunionstore(@dest, [])
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   context 'the :weights argument' do
@@ -51,7 +51,7 @@ describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it 'raises an error if the number of weights != the number of keys' do
       lambda do
         @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [1, 2])
-      end.should raise_error(RuntimeError)
+      end.should raise_error(Redis::CommandError)
     end
   end
 
@@ -98,7 +98,7 @@ describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     it 'raises an error for unknown aggregation function' do
       lambda do
         @redises.zunionstore(@dest, [@bigs, @smalls], :aggregate => :mix)
-      end.should raise_error(RuntimeError)
+      end.should raise_error(Redis::CommandError)
     end
   end
 end

@@ -29,12 +29,12 @@ describe '#msetnx(key, value [, key, value, ...])' do
   it 'raises an error if given an odd number of arguments' do
     lambda do
       @redises.msetnx(@key1, 'value1', @key2)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 
   it 'raises an error if given 0 arguments' do
     lambda do
       @redises.msetnx
-    end.should raise_error(RuntimeError)
+    end.should raise_error(Redis::CommandError)
   end
 end
