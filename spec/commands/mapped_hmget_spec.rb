@@ -15,6 +15,10 @@ describe '#mapped_hmget(key, *fields)' do
       should == { 'k1' => 'v1', 'mock-redis-test:nonesuch' => nil }
   end
 
+  it 'treats an array as the first key' do
+    @redises.mapped_hmget(@key, %w[k1 k2]).should == { %w[k1 k2] => 'v1' }
+  end
+
   it 'raises an error if given no fields' do
     lambda do
       @redises.mapped_hmget(@key)

@@ -11,6 +11,10 @@ describe '#hmget(key, field [, field, ...])' do
     @redises.hmget(@key, 'k1', 'k2').sort.should == %w[v1 v2]
   end
 
+  it 'treats an array as multiple keys' do
+    @redises.hmget(@key, %w[k1 k2]).sort.should == %w[v1 v2]
+  end
+
   it 'treats the fielsd as strings' do
     @redises.hset(@key, 1, 'one')
     @redises.hset(@key, 2, 'two')

@@ -75,12 +75,16 @@ class MockRedis
 
     def hmget(key, *fields)
       assert_has_args(fields, 'hmget')
-      fields.map { |f| hget(key, f) }
+      fields.flatten.map { |f| hget(key, f) }
     end
 
     def mapped_hmget(key, *fields)
       reply = hmget(key, *fields)
-      Hash[*fields.zip(reply).flatten]
+      if reply.is_a?(Array)
+        Hash[fields.zip(reply)]
+      else
+        reply
+      end
     end
 
     def hmset(key, *kvpairs)
