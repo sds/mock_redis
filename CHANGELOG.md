@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix `hmget` and `mapped_hmget` to allow passing of an array of keys
+
 ### 0.15.0
 
 * Add support for the `time` method
