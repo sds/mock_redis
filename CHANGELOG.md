@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.15.1
 
 * Fix `hmget` and `mapped_hmget` to allow passing of an array of keys
 
