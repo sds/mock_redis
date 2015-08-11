@@ -22,7 +22,7 @@ describe '#pexpireat(key, timestamp_ms)' do
 
   it "raises an error if you don't give it a Unix timestamp" do
     lambda do
-      @redises.pexpireat(@key, Time.now)   # oops, forgot .to_i
+      @redises.pexpireat(@key, Time.now) # oops, forgot .to_i
     end.should raise_error(Redis::CommandError)
   end
 

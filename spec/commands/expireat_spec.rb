@@ -21,7 +21,7 @@ describe '#expireat(key, timestamp)' do
 
   it "raises an error if you don't give it a Unix timestamp" do
     lambda do
-      @redises.expireat(@key, Time.now)   # oops, forgot .to_i
+      @redises.expireat(@key, Time.now) # oops, forgot .to_i
     end.should raise_error(Redis::CommandError)
   end
 

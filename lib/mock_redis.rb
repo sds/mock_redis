@@ -110,7 +110,7 @@ class MockRedis
       uri = URI(url)
 
       if uri.scheme == 'unix'
-        defaults[:path]   = uri.path
+        defaults[:path] = uri.path
       else
         # Require the URL to have at least a host
         raise ArgumentError, 'invalid url' unless uri.host

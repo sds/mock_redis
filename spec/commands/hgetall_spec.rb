@@ -22,7 +22,7 @@ describe '#hgetall(key)' do
     mr = MockRedis.new
     mr.hset(@key, 'k1', 'v1')
     mr.hset(@key, 'k2', 'v2')
-    hash =  mr.hgetall(@key)
+    hash = mr.hgetall(@key)
     hash['dont'] = 'mutate'
     new_hash = mr.hgetall(@key)
     new_hash.keys.sort.should == %w[k1 k2]

@@ -4,7 +4,7 @@ require 'spec_helper'
 describe '#setbit(key, offset)' do
   before do
     @key = 'mock-redis-test:setbit'
-    @redises.set(@key, 'h')    # ASCII 0x68
+    @redises.set(@key, 'h') # ASCII 0x68
   end
 
   it "returns the original stored bit's value" do
@@ -23,7 +23,7 @@ describe '#setbit(key, offset)' do
   end
 
   it 'does the right thing with multibyte characters' do
-    @redises.set(@key, '€99.94')   # the euro sign is 3 bytes wide in UTF-8
+    @redises.set(@key, '€99.94') # the euro sign is 3 bytes wide in UTF-8
     @redises.setbit(@key, 63, 1).should == 0
     @redises.get(@key).should == '€99.95'
   end

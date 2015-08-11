@@ -3,7 +3,7 @@ require 'spec_helper'
 describe '#getbit(key, offset)' do
   before do
     @key = 'mock-redis-test:getbit'
-    @redises.set(@key, 'h')    # ASCII 0x68
+    @redises.set(@key, 'h') # ASCII 0x68
   end
 
   it 'gets the bits from the key' do

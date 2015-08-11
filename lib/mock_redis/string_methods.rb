@@ -195,7 +195,7 @@ class MockRedis
       end
 
       char = str[char_index]
-      char = char.chr if char.respond_to?(:chr)  # ruby 1.8 vs 1.9
+      char = char.chr if char.respond_to?(:chr) # ruby 1.8 vs 1.9
       char_as_number = char.each_byte.reduce(0) do |a, byte|
         (a << 8) + byte
       end
