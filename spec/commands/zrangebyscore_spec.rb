@@ -76,7 +76,7 @@ describe '#zrangebyscore(key, start, stop [:with_scores => true] [:limit => [off
   end
 
   it 'honors exclusive ranges on the left and the right simultaneously' do
-    @redises.zrangebyscore(@key, '(1', '(4').should == ['Adams', 'Jefferson']
+    @redises.zrangebyscore(@key, '(1', '(4').should == %w[Adams Jefferson]
   end
 
   it_should_behave_like 'a zset-only command'
