@@ -47,8 +47,8 @@ class MockRedis
                          when '+inf'
                            lambda { |_| false }
                          when /\((.*)$/
-                           val = $1.to_f
-                           lambda { |x| x.to_f > val }
+                           left_val = $1.to_f
+                           lambda { |x| x.to_f > left_val }
                          else
                            lambda { |x| x.to_f >= min.to_f }
                          end
@@ -59,8 +59,8 @@ class MockRedis
                           when '+inf'
                             lambda { |_| true }
                           when /\((.*)$/
-                            val = $1.to_f
-                            lambda { |x| x.to_f < val }
+                            right_val = $1.to_f
+                            lambda { |x| x.to_f < right_val }
                           else
                             lambda { |x| x.to_f <= max.to_f }
                           end
