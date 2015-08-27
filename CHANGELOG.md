@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.15.2
 
 * Fix `zrangebyscore` to work with exclusive ranges on both ends of interval
 
