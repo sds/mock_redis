@@ -22,7 +22,7 @@ class MockRedis
     end
 
     def scard(key)
-      with_set_at(key) { |s| s.length }
+      with_set_at(key, &:length)
     end
 
     def sdiff(*keys)
