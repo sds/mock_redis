@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix `sadd` to return integers when adding arrays
+
 ### 0.15.2
 
 * Fix `zrangebyscore` to work with exclusive ranges on both ends of interval
