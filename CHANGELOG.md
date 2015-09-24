@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.15.3
 
 * Fix `sadd` to return integers when adding arrays
 
