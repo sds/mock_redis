@@ -28,7 +28,7 @@ describe '#zrange(key, start, stop [, :with_scores => true])' do
     @redises.zrange(@key, 0, 1).should == %w[Washington Adams]
   end
 
-  context 'when elements having the same score' do
+  context 'when a subset of elements have the same score' do
     before do
       @redises.zadd(@key, 1, 'Martha')
     end
