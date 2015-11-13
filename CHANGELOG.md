@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix `zrange`/`zrevrange` to return elements with equal values in
+  lexicographic order
+
 ### 0.15.3
 
 * Fix `sadd` to return integers when adding arrays
