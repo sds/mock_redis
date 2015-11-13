@@ -88,7 +88,7 @@ class MockRedis
     def sorted
       members.map do |m|
         [score(m), m]
-      end.sort_by(&:first)
+      end.sort
     end
 
     def sorted_members
