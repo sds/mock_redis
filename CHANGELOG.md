@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.15.4
 
 * Fix `zrange`/`zrevrange` to return elements with equal values in
   lexicographic order
