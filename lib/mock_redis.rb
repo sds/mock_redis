@@ -8,6 +8,7 @@ require 'mock_redis/multi_db_wrapper'
 require 'mock_redis/pipelined_wrapper'
 require 'mock_redis/transaction_wrapper'
 require 'mock_redis/undef_redis_methods'
+require 'mock_redis/pub_sub_methods'
 
 class MockRedis
   include UndefRedisMethods
@@ -25,6 +26,8 @@ class MockRedis
     :time_class => Time,
   }
 
+  @channels = Hash.new { |h, k| h[k] = [] }
+
   def self.connect(*args)
     new(*args)
   end
@@ -39,9 +42,14 @@ class MockRedis
             Database.new(self, *args)))))
   end
 
+  def channels
+    self.class.instance_variable_get '@channels'
+  end
+
   def id
     "redis://#{host}:#{port}/#{db}"
   end
+
   alias_method :location, :id
 
   def call(command, &_block)
