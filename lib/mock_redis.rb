@@ -13,7 +13,7 @@ require 'mock_redis/pub_sub_channel'
 class MockRedis
   include UndefRedisMethods
 
-  attr_reader :options
+  attr_reader :connection_id, :options
 
   DEFAULTS = {
     :scheme => 'redis',
@@ -34,6 +34,7 @@ class MockRedis
 
   def initialize(*args)
     @options = _parse_options(args.first)
+    @connection_id = SecureRandom.uuid
 
     @db = PipelinedWrapper.new(
       TransactionWrapper.new(
