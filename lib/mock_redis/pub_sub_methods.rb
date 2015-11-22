@@ -16,8 +16,12 @@ class MockRedis
     end
 
     # http://redis.io/commands/publish
-    def publish(channel, message)
-      assert_has_args([channel, message], 'publish')
+    def publish(*args)
+      # NOTE: Accept *args in order to mimick Redis args errors
+      channel = args[0]
+      message = args[1]
+
+      assert_has_args(args, 'publish', at_least: 2)
 
       channels[channel].messages << message
       channels[channel].subscribers.count
