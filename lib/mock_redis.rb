@@ -8,7 +8,7 @@ require 'mock_redis/multi_db_wrapper'
 require 'mock_redis/pipelined_wrapper'
 require 'mock_redis/transaction_wrapper'
 require 'mock_redis/undef_redis_methods'
-require 'mock_redis/pub_sub_methods'
+require 'mock_redis/pub_sub_channel'
 
 class MockRedis
   include UndefRedisMethods
@@ -26,7 +26,7 @@ class MockRedis
     :time_class => Time,
   }
 
-  @channels = Hash.new { |h, k| h[k] = [] }
+  @channels = IndifferentHash.new { |h, k| h[k] = PubSubChannel.new }
 
   def self.connect(*args)
     new(*args)

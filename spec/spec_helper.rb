@@ -57,6 +57,8 @@ RSpec.configure do |config|
       @redises.send_without_checking(:keys, 'mock-redis-test:*').each do |key|
         @redises.send_without_checking(:del, key)
       end
+
+      @redises.mock.channels.clear
     end
   end
 end

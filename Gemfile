@@ -11,3 +11,8 @@ gem 'rubocop', '0.35.1'
 gem 'travis', '~> 1.7'
 
 gem 'coveralls', require: false
+
+group :development, :test do
+  gem 'pry'
+  gem 'pry-byebug'
+end

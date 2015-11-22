@@ -4,6 +4,7 @@ require 'mock_redis/hash_methods'
 require 'mock_redis/list_methods'
 require 'mock_redis/set_methods'
 require 'mock_redis/string_methods'
+require 'mock_redis/pub_sub_methods'
 require 'mock_redis/zset_methods'
 require 'mock_redis/sort_method'
 require 'mock_redis/indifferent_hash'
@@ -15,6 +16,7 @@ class MockRedis
     include ListMethods
     include SetMethods
     include StringMethods
+    include PubSubMethods
     include ZsetMethods
     include SortMethod
     include InfoMethod
@@ -25,6 +27,10 @@ class MockRedis
       @base = base
       @data = MockRedis::IndifferentHash.new
       @expire_times = []
+    end
+
+    def channels
+      @base.channels
     end
 
     def initialize_copy(_source)
