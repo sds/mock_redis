@@ -80,6 +80,8 @@ Ruby process.
 
 * `#slowlog` isn't available.
 
+* `#script` is just a stub&mdash;it won't execute anything
+
 ## Remaining Work
 
 There are some things we want to have in here, but that we just

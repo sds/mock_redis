@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Add stub implementations for `script ...`-related commands
+
 ### 0.15.4
 
 * Fix `zrange`/`zrevrange` to return elements with equal values in
