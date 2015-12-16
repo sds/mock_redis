@@ -80,7 +80,7 @@ Ruby process.
 
 * `#slowlog` isn't available.
 
-* `#script` is just a stub&mdash;it won't execute anything
+* Scripting commands (`#script`, `#eval`, `#evalsha`) are just stubs&mdash;they won't execute anything
 
 ## Remaining Work
 
