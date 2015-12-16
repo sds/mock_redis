@@ -2,7 +2,7 @@
 
 ### master (unreleased)
 
-* Add stub implementations for `script ...`-related commands
+* Add stub implementations for `script`/`eval`/`evalsha` commands
 
 ### 0.15.4
 
