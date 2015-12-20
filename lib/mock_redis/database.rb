@@ -4,6 +4,7 @@ require 'mock_redis/hash_methods'
 require 'mock_redis/list_methods'
 require 'mock_redis/set_methods'
 require 'mock_redis/string_methods'
+require 'mock_redis/pub_sub_methods'
 require 'mock_redis/zset_methods'
 require 'mock_redis/sort_method'
 require 'mock_redis/indifferent_hash'
@@ -15,16 +16,21 @@ class MockRedis
     include ListMethods
     include SetMethods
     include StringMethods
+    include PubSubMethods
     include ZsetMethods
     include SortMethod
     include InfoMethod
 
-    attr_reader :data, :expire_times
+    attr_reader :client, :data, :expire_times
 
-    def initialize(base, *_args)
-      @base = base
+    def initialize(client, *_args)
+      @client = client
       @data = MockRedis::IndifferentHash.new
       @expire_times = []
+    end
+
+    def channels
+      @client.channels
     end
 
     def initialize_copy(_source)
@@ -79,7 +85,7 @@ class MockRedis
     end
 
     def pexpire(key, ms)
-      now_ms = (@base.now.to_r * 1000).to_i
+      now_ms = (@client.now.to_r * 1000).to_i
       pexpireat(key, now_ms + ms.to_i)
     end
 
@@ -98,7 +104,7 @@ class MockRedis
 
       if exists(key)
         timestamp = Rational(timestamp_ms.to_i, 1000)
-        set_expiration(key, @base.time_at(timestamp))
+        set_expiration(key, @client.time_at(timestamp))
         true
       else
         false
@@ -130,7 +136,7 @@ class MockRedis
     end
 
     def lastsave
-      @base.now.to_i
+      @client.now.to_i
     end
 
     def persist(key)
@@ -190,7 +196,7 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        expiration(key).to_i - @base.now.to_i
+        expiration(key).to_i - @client.now.to_i
       else
         -1
       end
@@ -200,7 +206,7 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        (expiration(key).to_r * 1000).to_i - (@base.now.to_r * 1000).to_i
+        (expiration(key).to_r * 1000).to_i - (@client.now.to_r * 1000).to_i
       else
         -1
       end
@@ -314,7 +320,7 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now = @base.now
+      now = @client.now
 
       to_delete = expire_times.take_while do |(time, _key)|
         (time.to_r * 1_000).to_i <= (now.to_r * 1_000).to_i

@@ -12,6 +12,8 @@ describe MockRedis do
       subject.db.should == 1
     end
 
+    its(:channels) { should == {} }
+
     its(:id) { should == url }
 
     its(:location) { should == url }

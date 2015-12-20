@@ -8,11 +8,12 @@ require 'mock_redis/multi_db_wrapper'
 require 'mock_redis/pipelined_wrapper'
 require 'mock_redis/transaction_wrapper'
 require 'mock_redis/undef_redis_methods'
+require 'mock_redis/pub_sub_channel'
 
 class MockRedis
   include UndefRedisMethods
 
-  attr_reader :options
+  attr_reader :connection_id, :options
 
   DEFAULTS = {
     :scheme => 'redis',
@@ -25,12 +26,15 @@ class MockRedis
     :time_class => Time,
   }
 
+  @channels = IndifferentHash.new { |h, k| h[k] = PubSubChannel.new }
+
   def self.connect(*args)
     new(*args)
   end
 
   def initialize(*args)
     @options = _parse_options(args.first)
+    @connection_id = SecureRandom.uuid
 
     @db = PipelinedWrapper.new(
       TransactionWrapper.new(
@@ -39,9 +43,14 @@ class MockRedis
             Database.new(self, *args)))))
   end
 
+  def channels
+    self.class.instance_variable_get '@channels'
+  end
+
   def id
     "redis://#{host}:#{port}/#{db}"
   end
+
   alias_method :location, :id
 
   def call(command, &_block)
