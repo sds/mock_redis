@@ -22,5 +22,21 @@ class MockRedis
         del(key)
       end
     end
+
+    def common_scan(values, cursor, opts = {})
+      count = (opts[:count] || 10).to_i
+      cursor = cursor.to_i
+      match = opts[:match] || '*'
+      key = opts[:key] || lambda { |x| x }
+
+      limit = cursor + count
+      next_cursor = limit >= values.length ? '0' : limit.to_s
+
+      filtered_values = values[cursor...limit].select do |val|
+        redis_pattern_to_ruby_regex(match).match(key.call(val))
+      end
+
+      [next_cursor, filtered_values]
+    end
   end
 end

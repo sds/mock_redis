@@ -7,7 +7,7 @@ describe '#scan' do
   let(:match) { '*' }
 
   before do
-    expect(subject).to receive_message_chain(:data, :keys).and_return(collection)
+    allow(subject).to receive_message_chain(:data, :keys).and_return(collection)
   end
 
   context 'when no keys are found' do
@@ -20,11 +20,16 @@ describe '#scan' do
 
   context 'when keys are found' do
     context 'when count is lower than collection size' do
-      let(:collection) { (count + 1).times.map { |i| "mock:key#{i}" } }
-      let(:expected) { [count.to_s, collection] }
+      let(:collection) { (count * 2).times.map { |i| "mock:key#{i}" } }
+      let(:expected_first) { [count.to_s, collection[0...count]] }
+      let(:expected_second) { ['0', collection[count..-1]] }
 
       it 'returns a the next cursor and the collection' do
-        expect(subject.scan(0, count: count, match: match)).to eq(expected)
+        expect(subject.scan(0, count: count, match: match)).to eq(expected_first)
+      end
+
+      it 'returns the correct results of the next cursor' do
+        expect(subject.scan(count, count: count, match: match)).to eq(expected_second)
       end
     end
 

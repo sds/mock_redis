@@ -109,6 +109,21 @@ class MockRedis
       hmset(key, *kvpairs)
     end
 
+    def hscan(key, cursor, opts = {})
+      opts = opts.merge(key: lambda { |x| x[0] })
+      common_scan(hgetall(key).to_a, cursor, opts)
+    end
+
+    def hscan_each(key, opts = {}, &block)
+      return to_enum(:hscan_each, key, opts) unless block_given?
+      cursor = 0
+      loop do
+        cursor, values = hscan(key, cursor, opts)
+        values.each(&block)
+        break if cursor == '0'
+      end
+    end
+
     def hset(key, field, value)
       with_hash_at(key) { |h| h[field.to_s] = value.to_s }
       true
