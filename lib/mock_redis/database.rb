@@ -8,6 +8,7 @@ require 'mock_redis/zset_methods'
 require 'mock_redis/sort_method'
 require 'mock_redis/indifferent_hash'
 require 'mock_redis/info_method'
+require 'mock_redis/utility_methods'
 
 class MockRedis
   class Database
@@ -18,6 +19,7 @@ class MockRedis
     include ZsetMethods
     include SortMethod
     include InfoMethod
+    include UtilityMethods
 
     attr_reader :data, :expire_times
 
@@ -119,14 +121,17 @@ class MockRedis
     end
 
     def scan(cursor, opts = {})
-      count = (opts[:count] || 10).to_i
-      match = opts[:match] || '*'
+      common_scan(data.keys, cursor, opts)
+    end
 
-      keys = data.keys
-      limit = cursor + count
-      next_cursor = limit >= keys.length ? '0' : limit.to_s
-
-      [next_cursor, keys[cursor..limit].grep(redis_pattern_to_ruby_regex(match))]
+    def scan_each(opts = {}, &block)
+      return to_enum(:scan_each, opts) unless block_given?
+      cursor = 0
+      loop do
+        cursor, keys = scan(cursor, opts)
+        keys.each(&block)
+        break if cursor == '0'
+      end
     end
 
     def lastsave

@@ -128,6 +128,23 @@ class MockRedis
       with_zset_at(key) { |z| z.sorted_members.reverse.index(member.to_s) }
     end
 
+    def zscan(key, cursor, opts = {})
+      opts = opts.merge({
+        key: lambda { |x| x[0] }
+      })
+      common_scan(zrange(key, 0, -1, withscores: true), cursor, opts)
+    end
+
+    def zscan_each(key, opts = {}, &block)
+      return to_enum(:zscan_each, key, opts) unless block_given?
+      cursor = 0
+      loop do
+        cursor, values = zscan(key, cursor, opts)
+        values.each(&block)
+        break if cursor == '0'
+      end
+    end
+
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member.to_s)
