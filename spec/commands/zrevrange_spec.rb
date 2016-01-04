@@ -24,6 +24,16 @@ describe '#zrevrange(key, start, stop [, :with_scores => true])' do
     @redises.zrevrange(@key, 0, 1).should == %w[Madison Jefferson]
   end
 
+  context 'when a subset of elements have the same score' do
+    before do
+      @redises.zadd(@key, 1, 'Martha')
+    end
+
+    it 'returns the elements in descending lexicographical order' do
+      @redises.zrevrange(@key, 3, 4).should == %w[Washington Martha]
+    end
+  end
+
   it 'returns the elements in order by score (negative indices)' do
     @redises.zrevrange(@key, -2, -1).should == %w[Adams Washington]
   end

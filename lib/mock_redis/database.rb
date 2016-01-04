@@ -229,6 +229,15 @@ class MockRedis
       end
     end
 
+    def script(subcommand, *args)
+    end
+
+    def evalsha(*args)
+    end
+
+    def eval(*args)
+    end
+
     private
 
     def assert_valid_timeout(timeout)

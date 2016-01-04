@@ -20,6 +20,7 @@ before_script:
 
 script:
   - bundle exec rspec
+  - bundle exec overcommit --sign
   - bundle exec overcommit --run
 
 matrix:

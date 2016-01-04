@@ -7,16 +7,22 @@ class MockRedis
     include UtilityMethods
 
     def sadd(key, members)
+      members_class = members.class
       members = [members].flatten.map(&:to_s)
       assert_has_args(members, 'sadd')
 
       with_set_at(key) do |s|
+        size_before = s.size
         if members.size > 1
-          size_before = s.size
           members.reverse_each { |m| s << m }
           s.size - size_before
         else
-          !!s.add?(members.first)
+          added = !!s.add?(members.first)
+          if members_class == Array
+            s.size - size_before
+          else
+            added
+          end
         end
       end
     end

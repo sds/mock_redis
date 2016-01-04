@@ -81,7 +81,7 @@ class MockRedis
       'db0' => 'keys=8,expires=0',
     }
 
-    # The Ruby Reids client returns commandstats differently when it's called as
+    # The Ruby Redis client returns commandstats differently when it's called as
     # "INFO commandstats".
     # rubocop:disable Metrics/LineLength
     COMMAND_STATS_SOLO_INFO = {

@@ -1,5 +1,18 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Add stub implementations for `script`/`eval`/`evalsha` commands
+
+### 0.15.4
+
+* Fix `zrange`/`zrevrange` to return elements with equal values in
+  lexicographic order
+
+### 0.15.3
+
+* Fix `sadd` to return integers when adding arrays
+
 ### 0.15.2
 
 * Fix `zrangebyscore` to work with exclusive ranges on both ends of interval

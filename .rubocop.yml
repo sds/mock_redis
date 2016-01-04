@@ -83,9 +83,10 @@ Style/SignalException:
 Style/SingleLineBlockParams:
   Enabled: false
 
-# End last item of a muli-line list with a comma for better diffs in future
+# Disabled since as of RuboCop 0.35.1 it reports false positives for trailing
+# commas in lists with a single item
 Style/TrailingComma:
-  EnforcedStyleForMultiline: comma
+  Enabled: false
 
 Style/WhenThen:
   Enabled: false

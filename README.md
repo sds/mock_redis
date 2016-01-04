@@ -80,6 +80,8 @@ Ruby process.
 
 * `#slowlog` isn't available.
 
+* Scripting commands (`#script`, `#eval`, `#evalsha`) are just stubs&mdash;they won't execute anything
+
 ## Remaining Work
 
 There are some things we want to have in here, but that we just
