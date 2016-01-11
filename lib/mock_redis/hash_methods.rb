@@ -110,9 +110,7 @@ class MockRedis
     end
 
     def hscan(key, cursor, opts = {})
-      opts = opts.merge({
-        key: lambda { |x| x[0] }
-      })
+      opts = opts.merge(key: lambda { |x| x[0] })
       common_scan(hgetall(key).to_a, cursor, opts)
     end
 

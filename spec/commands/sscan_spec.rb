@@ -18,7 +18,7 @@ describe '#sscan' do
       @redises.sadd(key, 'Test')
     end
 
-    let(:expected) { ['0', ['Test', 'World', 'Hello']] }
+    let(:expected) { ['0', %w[Test World Hello]] }
 
     it 'returns a 0 cursor and the collection' do
       expect(@redises.sscan(key, 0, count: count)).to eq(expected)

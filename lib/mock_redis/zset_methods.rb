@@ -129,9 +129,7 @@ class MockRedis
     end
 
     def zscan(key, cursor, opts = {})
-      opts = opts.merge({
-        key: lambda { |x| x[0] }
-      })
+      opts = opts.merge(key: lambda { |x| x[0] })
       common_scan(zrange(key, 0, -1, withscores: true), cursor, opts)
     end
 

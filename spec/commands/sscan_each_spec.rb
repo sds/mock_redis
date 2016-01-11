@@ -35,7 +35,7 @@ describe '#sscan_each' do
     context 'when giving a custom match filter' do
       let(:match) { 'k1*' }
       let(:collection) { 12.times.map { |i| "k#{i}" } }
-      let(:expected) { ['k1', 'k10', 'k11'] }
+      let(:expected) { %w[k1 k10 k11] }
 
       it 'iterates over each item in the filtered collection' do
         results = subject.sscan_each(key, match: match).map do |k|

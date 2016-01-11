@@ -35,7 +35,7 @@ describe '#hscan_each' do
     context 'when giving a custom match filter' do
       let(:match) { 'k1*' }
       let(:collection) { 12.times.map { |i| ["k#{i}", "v#{i}"] } }
-      let(:expected) { [['k1', 'v1'], ['k10', 'v10'], ['k11', 'v11']] }
+      let(:expected) { [%w[k1 v1], %w[k10 v10], %w[k11 v11]] }
 
       it 'iterates over each item in the filtered collection' do
         results = subject.hscan_each(key, match: match).map do |k, v|
