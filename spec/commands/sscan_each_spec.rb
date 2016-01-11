@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe '#hscan_each' do
+describe '#sscan_each' do
   subject { MockRedis::Database.new(self) }
 
-  let(:key) { 'mock-redis-test:hscan_each' }
+  let(:key) { 'mock-redis-test:sscan_each' }
 
   before do
     allow(subject).to receive(:smembers).and_return(collection)
