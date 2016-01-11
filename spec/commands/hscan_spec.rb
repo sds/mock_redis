@@ -15,12 +15,13 @@ describe '#hscan' do
     before do
       @redises.hset(key, 'k1', 'v1')
       @redises.hset(key, 'k2', 'v2')
+      @redises.hset(key, 'k3', 'v3')
     end
 
-    let(:expected) { ['0', [['k1', 'v1'], ['k2', 'v2']]] }
+    let(:expected) { ['0', [['k1', 'v1'], ['k2', 'v2'], ['k3', 'v3']]] }
 
     it 'returns a 0 cursor and the collection' do
-      expect(@redises.hscan(key, 0)).to eq(expected)
+      expect(@redises.hscan(key, 0, count: 10)).to eq(expected)
     end
   end
 end

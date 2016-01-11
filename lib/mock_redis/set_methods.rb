@@ -119,10 +119,10 @@ class MockRedis
     end
 
     def sscan_each(key, opts = {}, &block)
-      return to_enum(:sscan_each, key, options) unless block_given?
+      return to_enum(:sscan_each, key, opts) unless block_given?
       cursor = 0
       loop do
-        cursor, keys = sscan(key, cursor, options)
+        cursor, keys = sscan(key, cursor, opts)
         keys.each(&block)
         break if cursor == '0'
       end
