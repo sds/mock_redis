@@ -20,7 +20,7 @@ describe '#scan' do
 
   context 'when keys are found' do
     context 'when count is lower than collection size' do
-      let(:collection) { (count * 2).times.map { |i| "mock:key#{i}" } }
+      let(:collection) { Array.new(count * 2) { |i| "mock:key#{i}" } }
       let(:expected_first) { [count.to_s, collection[0...count]] }
       let(:expected_second) { ['0', collection[count..-1]] }
 
@@ -34,7 +34,7 @@ describe '#scan' do
     end
 
     context 'when count is greater or equal than collection size' do
-      let(:collection) { count.times.map { |i| "mock:key#{i}" } }
+      let(:collection) { Array.new(count) { |i| "mock:key#{i}" } }
       let(:expected) { ['0', collection] }
 
       it 'returns a 0 cursor and the collection' do

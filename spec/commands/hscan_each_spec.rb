@@ -22,7 +22,7 @@ describe '#hscan_each' do
 
   context 'when keys are found' do
     context 'when no match filter is supplied' do
-      let(:collection) { 20.times.map { |i| ["k#{i}", "v#{i}"] } }
+      let(:collection) { Array.new(20) { |i| ["k#{i}", "v#{i}"] } }
 
       it 'iterates over each item in the collection' do
         results = subject.hscan_each(key).map do |k, v|
@@ -34,7 +34,7 @@ describe '#hscan_each' do
 
     context 'when giving a custom match filter' do
       let(:match) { 'k1*' }
-      let(:collection) { 12.times.map { |i| ["k#{i}", "v#{i}"] } }
+      let(:collection) { Array.new(12) { |i| ["k#{i}", "v#{i}"] } }
       let(:expected) { [%w[k1 v1], %w[k10 v10], %w[k11 v11]] }
 
       it 'iterates over each item in the filtered collection' do

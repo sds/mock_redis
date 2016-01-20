@@ -83,9 +83,10 @@ Style/SignalException:
 Style/SingleLineBlockParams:
   Enabled: false
 
-# Disabled since as of RuboCop 0.35.1 it reports false positives for trailing
-# commas in lists with a single item
-Style/TrailingComma:
+Style/TrailingCommaInArguments:
+  Enabled: false
+
+Style/TrailingCommaInLiteral:
   Enabled: false
 
 Style/WhenThen:

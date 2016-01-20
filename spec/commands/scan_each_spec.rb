@@ -19,7 +19,7 @@ describe '#scan_each' do
 
   context 'when keys are found' do
     context 'when no match filter is supplied' do
-      let(:collection) { 20.times.map { |i| "mock:key#{i}" } }
+      let(:collection) { Array.new(20) { |i| "mock:key#{i}" } }
 
       it 'iterates over each item in the collection' do
         expect(subject.scan_each.to_a).to match_array(collection)

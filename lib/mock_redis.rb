@@ -23,7 +23,7 @@ class MockRedis
     :password => nil,
     :db => 0,
     :time_class => Time,
-  }
+  }.freeze
 
   def self.connect(*args)
     new(*args)
@@ -42,7 +42,7 @@ class MockRedis
   def id
     "redis://#{host}:#{port}/#{db}"
   end
-  alias_method :location, :id
+  alias location id
 
   def call(command, &_block)
     send(*command)
@@ -63,7 +63,7 @@ class MockRedis
   def now
     options[:time_class].now
   end
-  alias_method :time, :now
+  alias time now
 
   def time_at(timestamp)
     options[:time_class].at(timestamp)

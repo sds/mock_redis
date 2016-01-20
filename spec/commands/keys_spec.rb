@@ -48,7 +48,7 @@ describe '#keys()' do
         ]
       end
 
-      it "treats \? as a literal ?" do
+      it 'treats \\? as a literal ?' do
         @redises.keys('mock-redis-test:special-key\?').sort.should == [
           'mock-redis-test:special-key?',
         ]
@@ -68,7 +68,7 @@ describe '#keys()' do
         ]
       end
 
-      it "treats \* as a literal *" do
+      it 'treats \\* as a literal *' do
         @redises.keys('mock-redis-test:special-key\*').sort.should == [
           'mock-redis-test:special-key*',
         ]
@@ -101,7 +101,7 @@ describe '#keys()' do
     end
 
     describe 'character classes ([a-c])' do
-      it "specifies a range which matches any lowercase letter from \"a\" to \"c\"" do
+      it 'specifies a range which matches any lowercase letter from "a" to "c"' do
         @redises.keys('mock-redis-test:regexp-key4[a-c]').sort.should == [
           'mock-redis-test:regexp-key4a',
           'mock-redis-test:regexp-key4b',

@@ -136,7 +136,7 @@ class MockRedis
       end
 
       index = index.to_i
-      unless (0...llen(key)).include?(index)
+      unless (0...llen(key)).cover?(index)
         raise Redis::CommandError, 'ERR index out of range'
       end
 

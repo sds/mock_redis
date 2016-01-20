@@ -22,7 +22,7 @@ describe '#zscan_each' do
 
   context 'when keys are found' do
     context 'when no match filter is supplied' do
-      let(:collection) { 20.times.map { |i| ["m#{i}", i] } }
+      let(:collection) { Array.new(20) { |i| ["m#{i}", i] } }
 
       it 'iterates over each item in the collection' do
         results = subject.zscan_each(key).map do |m, s|
@@ -34,7 +34,7 @@ describe '#zscan_each' do
 
     context 'when giving a custom match filter' do
       let(:match) { 'm1*' }
-      let(:collection) { 12.times.map { |i| ["m#{i}", i] } }
+      let(:collection) { Array.new(12) { |i| ["m#{i}", i] } }
       let(:expected) { [['m1', 1], ['m10', 10], ['m11', 11]] }
 
       it 'iterates over each item in the filtered collection' do

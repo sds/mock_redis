@@ -95,7 +95,7 @@ class MockRedis
         if count > 0
           members.sample(count)
         else
-          count.abs.times.map { members[rand(members.length)] }
+          Array.new(count.abs) { members[rand(members.length)] }
         end
       else
         members[rand(members.length)]
@@ -154,7 +154,7 @@ class MockRedis
       else
         with_set_at(keys.first) do |set|
           with_sets_at(*(keys[1..-1])) do |*sets|
-            blk.call(*([set] + sets))
+            yield(*([set] + sets))
           end
         end
       end

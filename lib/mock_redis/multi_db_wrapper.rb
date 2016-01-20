@@ -44,7 +44,7 @@ class MockRedis
       else
         case current_db.type(key)
         when 'hash'
-          dest.hmset(key, *(src.hgetall(key).map { |k, v| [k, v] }.flatten))
+          dest.hmset(key, *src.hgetall(key).map { |k, v| [k, v] }.flatten)
         when 'list'
           while value = src.rpop(key)
             dest.lpush(key, value)

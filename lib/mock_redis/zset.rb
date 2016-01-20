@@ -23,11 +23,12 @@ class MockRedis
 
     def add(score, member)
       members.add(member)
-      if score.to_f.to_i == score.to_f
-        scores[member] = score.to_f.to_i
-      else
-        scores[member] = score.to_f
-      end
+      scores[member] =
+        if score.to_f.to_i == score.to_f
+          score.to_f.to_i
+        else
+          score.to_f
+        end
       self
     end
 

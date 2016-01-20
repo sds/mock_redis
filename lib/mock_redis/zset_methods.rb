@@ -220,7 +220,7 @@ class MockRedis
       else
         with_zset_at(keys.first) do |set|
           with_zsets_at(*(keys[1..-1])) do |*sets|
-            blk.call(*([set] + sets))
+            yield(*([set] + sets))
           end
         end
       end
@@ -245,7 +245,7 @@ class MockRedis
     def assert_scorey(value, message = 'ERR value is not a valid float')
       return if value =~ /\(?(\-|\+)inf/
 
-      value = $1 if value.to_s.match(/\((.*)/)
+      value = $1 if value.to_s =~ /\((.*)/
       unless looks_like_float?(value)
         raise Redis::CommandError, message
       end

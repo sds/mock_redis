@@ -15,14 +15,14 @@ class MockRedis
       'tcp_port' => '6379',
       'uptime_in_days' => '0',
       'uptime_in_seconds' => '84215',
-    }
+    }.freeze
 
     CLIENTS_INFO = {
       'blocked_clients' => '0',
       'client_biggest_input_buf' => '0',
       'client_longest_output_list' => '0',
       'connected_clients' => '1',
-    }
+    }.freeze
 
     MEMORY_INFO = {
       'mem_allocator' => 'libc',
@@ -33,7 +33,7 @@ class MockRedis
       'used_memory_peak' => '1005424',
       'used_memory_peak_human' => '981.86K',
       'used_memory_rss' => '1904640',
-    }
+    }.freeze
 
     PERSISTENCE_INFO = {
       'aof_current_rewrite_time_sec' => '-1',
@@ -49,7 +49,7 @@ class MockRedis
       'rdb_last_bgsave_status' => 'ok',
       'rdb_last_bgsave_time_sec' => '-1',
       'rdb_last_save_time' => '1361423635',
-    }
+    }.freeze
 
     STATS_INFO = {
       'evicted_keys' => '0',
@@ -63,23 +63,23 @@ class MockRedis
       'rejected_connections' => '0',
       'total_commands_processed' => '196800',
       'total_connections_received' => '4359',
-    }
+    }.freeze
 
     REPLICATION_INFO = {
       'role' => 'master',
       'connected_slaves' => '0',
-    }
+    }.freeze
 
     CPU_INFO = {
       'used_cpu_sys' => '5.54',
       'used_cpu_sys_childrens' => '0.00',
       'used_cpu_user' => '7.65',
       'used_cpu_user_childrens' => '0.02',
-    }
+    }.freeze
 
     KEYSPACE_INFO = {
       'db0' => 'keys=8,expires=0',
-    }
+    }.freeze
 
     # The Ruby Redis client returns commandstats differently when it's called as
     # "INFO commandstats".
@@ -102,7 +102,7 @@ class MockRedis
       'slowlog' => { 'calls' => '136', 'usec' => '16815', 'usec_per_call' => '123.64' },
       'smembers' => { 'calls' => '58', 'usec' => '231', 'usec_per_call' => '3.98' },
       'sunionstore' => { 'calls' => '4185027', 'usec' => '11762454022', 'usec_per_call' => '2810.60' },
-    }
+    }.freeze
 
     COMMAND_STATS_COMBINED_INFO = {
       'cmdstat_auth' => 'calls=572506,usec=2353182,usec_per_call=4.11',
@@ -122,7 +122,7 @@ class MockRedis
       'cmdstat_slowlog' => 'calls=136,usec=16815,usec_per_call=123.64',
       'cmdstat_smembers' => 'calls=58,usec=231,usec_per_call=3.98',
       'cmdstat_sunionstore' => 'calls=4185027,usec=11762454022,usec_per_call=2810.60',
-    }
+    }.freeze
     # rubocop:enable Metrics/LineLength
 
     DEFAULT_INFO = [
