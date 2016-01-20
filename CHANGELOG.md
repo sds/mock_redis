@@ -3,6 +3,8 @@
 ### master (unreleased)
 
 * Add stub implementations for `script`/`eval`/`evalsha` commands
+* Add implementations for `SCAN` family (`sscan`/`hscan`/`zscan`)
+  family of commands
 
 ### 0.15.4
 
