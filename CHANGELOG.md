@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.16.0
 
 * Add stub implementations for `script`/`eval`/`evalsha` commands
 * Add implementations for `SCAN` family (`sscan`/`hscan`/`zscan`)
