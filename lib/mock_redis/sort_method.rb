@@ -36,7 +36,7 @@ class MockRedis
         weight  = by ? lookup_from_pattern(by, element) : element
         value   = element
 
-        if get_patterns.length > 0
+        unless get_patterns.empty?
           value = get_patterns.map do |pattern|
             pattern == '#' ? element : lookup_from_pattern(pattern, element)
           end
