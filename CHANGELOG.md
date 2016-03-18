@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.16.1
 
 * Relax `rake` gem dependency to allow 11.x.x versions
 
