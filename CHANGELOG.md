@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Relax `rake` gem dependency to allow 11.x.x versions
+
 ### 0.16.0
 
 * Add stub implementations for `script`/`eval`/`evalsha` commands
