@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Upgrade minimum `redis` gem version to 3.3.0+
+
 ### 0.16.1
 
 * Relax `rake` gem dependency to allow 11.x.x versions
