@@ -8,26 +8,83 @@ class MockRedis
     include UtilityMethods
 
     def zadd(key, *args)
-      if args.size == 1 && args[0].is_a?(Array)
-        args = args.first
-        assert_has_args(args, 'zadd')
+      zadd_options = {}
+      zadd_options = args.pop if args.last.is_a?(Hash)
 
-        args = args.each_slice(2).to_a unless args.first.is_a?(Array)
-        retval = args.map(&:last).map { |member| !!zscore(key, member.to_s) }.count(false)
-        with_zset_at(key) do |z|
-          args.each { |score, member| z.add(score, member.to_s) }
-        end
+      if zadd_options && zadd_options.include?(:nx) && zadd_options.include?(:xx)
+        raise Redis::CommandError, 'ERR XX and NX options at the same time are not compatible'
+      end
+
+      if args.size == 1 && args[0].is_a?(Array)
+        zadd_multiple_members(key, args.first, zadd_options)
       elsif args.size == 2
         score, member = args
-        assert_scorey(score) unless score =~ /(\+|\-)inf/
-        retval = !zscore(key, member)
-        with_zset_at(key) { |z| z.add(score, member.to_s) }
+        zadd_one_member(key, score, member, zadd_options)
       else
         raise Redis::CommandError, 'ERR wrong number of arguments'
       end
-
-      retval
     end
+
+    def zadd_one_member(key, score, member, zadd_options = {})
+      assert_scorey(score) unless score =~ /(\+|\-)inf/
+
+      with_zset_at(key) do |zset|
+        if zadd_options[:incr]
+          if zadd_options[:xx]
+            member_present = zset.include?(member)
+            return member_present ? zincrby(key, score, member) : nil
+          end
+
+          if zadd_options[:nx]
+            member_present = zset.include?(member)
+            return member_present ? nil : zincrby(key, score, member)
+          end
+
+          zincrby(key, score, member)
+        elsif zadd_options[:xx]
+          zset.add(score, member.to_s) if zset.include?(member)
+          false
+        elsif zadd_options[:nx]
+          !zset.include?(member) && !!zset.add(score, member.to_s)
+        else
+          retval = !zscore(key, member)
+          zset.add(score, member.to_s)
+          retval
+        end
+      end
+    end
+
+    private :zadd_one_member
+
+    def zadd_multiple_members(key, args, zadd_options = {})
+      assert_has_args(args, 'zadd')
+
+      args = args.each_slice(2).to_a unless args.first.is_a?(Array)
+      with_zset_at(key) do |zset|
+        if zadd_options[:incr]
+          raise Redis::CommandError, 'ERR INCR option supports a single increment-element pair'
+        elsif zadd_options[:xx]
+          args.each { |score, member| zset.include?(member) && zset.add(score, member.to_s) }
+          0
+        elsif zadd_options[:nx]
+          args.reduce(0) do |retval, (score, member)|
+            unless zset.include?(member)
+              zset.add(score, member.to_s)
+              retval += 1
+            end
+            retval
+          end
+        else
+          args.reduce(0) do |retval, (score, member)|
+            retval += 1 unless zset.include?(member)
+            zset.add(score, member.to_s)
+            retval
+          end
+        end
+      end
+    end
+
+    private :zadd_multiple_members
 
     def zcard(key)
       with_zset_at(key, &:size)
@@ -233,7 +290,7 @@ class MockRedis
     def assert_zsety(key)
       unless zsety?(key)
         raise Redis::CommandError,
-        'WRONGTYPE Operation against a key holding the wrong kind of value'
+          'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
     end
 
