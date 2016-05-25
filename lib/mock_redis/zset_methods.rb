@@ -119,8 +119,10 @@ class MockRedis
         to_response(
           apply_limit(
             zset.in_range(min, max).reverse,
-            options[:limit]),
-          options)
+            options[:limit]
+          ),
+          options
+        )
       end
     end
 

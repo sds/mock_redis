@@ -36,7 +36,11 @@ class MockRedis
       TransactionWrapper.new(
         ExpireWrapper.new(
           MultiDbWrapper.new(
-            Database.new(self, *args)))))
+            Database.new(self, *args)
+          )
+        )
+      )
+    )
   end
 
   def id

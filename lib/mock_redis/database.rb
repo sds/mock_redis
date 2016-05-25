@@ -291,7 +291,8 @@ class MockRedis
         "^#{pattern}$".
         gsub(/([+|()])/, '\\\\\1').
         gsub(/([^\\])\?/, '\\1.').
-        gsub(/([^\\])\*/, '\\1.*'))
+        gsub(/([^\\])\*/, '\\1.*')
+      )
     end
 
     def remove_expiration(key)

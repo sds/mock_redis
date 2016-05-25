@@ -8,7 +8,8 @@ describe '#del(key [, key, ...])' do
     @redises.del(
       'mock-redis-test:1',
       'mock-redis-test:2',
-      'mock-redis-test:other').should == 2
+      'mock-redis-test:other'
+    ).should == 2
   end
 
   it 'actually removes the key' do
