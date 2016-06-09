@@ -4,6 +4,11 @@ sudo: false
 
 cache: bundler
 
+addons:
+  apt:
+    packages:
+      - redis-server
+
 services:
   - redis-server
 
@@ -20,6 +25,7 @@ before_script:
   - git config --local user.name "Travis CI"
 
 script:
+  - redis-cli --version
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
