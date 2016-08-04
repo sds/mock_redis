@@ -4,6 +4,7 @@
 
 * Upgrade minimum `redis` gem version to 3.3.0+
 * Add support for XX, NX and INCR parameters of `ZADD`
+* Drop support for Ruby 1.9.3/JRuby 1.7.x
 
 ### 0.16.1
 

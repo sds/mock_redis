@@ -13,12 +13,11 @@ services:
   - redis-server
 
 rvm:
-  - 1.9.3
   - 2.0
   - 2.1
   - 2.2
   - 2.3.1
-  - jruby-19mode
+  - jruby-9.1.2.0
 
 before_script:
   - git config --local user.email "travis@travis.ci"
