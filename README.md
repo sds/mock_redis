@@ -94,8 +94,7 @@ please submit a pull request with your (tested!) implementation.
 ## Compatibility
 
 As of version `0.8.2`, Ruby 2.0.0 and above are supported. For
-older versions of Ruby, use `0.8.1` or older. JRuby 9000 is also
-supported.
+older versions of Ruby, use `0.8.1` or older.
 
 ## Running the Tests
 
