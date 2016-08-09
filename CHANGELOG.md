@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.17.0
 
 * Upgrade minimum `redis` gem version to 3.3.0+
 * Add support for XX, NX and INCR parameters of `ZADD`
