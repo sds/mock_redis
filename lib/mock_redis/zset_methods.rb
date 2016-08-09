@@ -140,9 +140,13 @@ class MockRedis
         retval = with_zset_at(key) { |z| !!z.delete?(args.first.to_s) }
       else
         args = args.first
-        retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
-        with_zset_at(key) do |z|
-          args.each { |member| z.delete?(member) }
+        if args.empty?
+          raise Redis::CommandError, "ERR wrong number of arguments for 'zrem' command"
+        else
+          retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
+          with_zset_at(key) do |z|
+            args.each { |member| z.delete?(member) }
+          end
         end
       end
 

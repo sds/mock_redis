@@ -33,5 +33,11 @@ describe '#zrem(key, member)' do
     @redises.zrange(@key, 0, -1).should be_empty
   end
 
+  it 'raises an error if member is an empty array' do
+    lambda do
+      @redises.zrem(@key, [])
+    end.should raise_error(Redis::CommandError)
+  end
+
   it_should_behave_like 'a zset-only command'
 end
