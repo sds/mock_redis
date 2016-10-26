@@ -88,6 +88,7 @@ class MockRedis
     end
 
     def hmset(key, *kvpairs)
+      kvpairs.flatten!
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
         raise Redis::CommandError, 'ERR wrong number of arguments for HMSET'
