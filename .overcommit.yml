@@ -14,11 +14,6 @@ PreCommit:
     enabled: true
     command: ['bundle', 'exec', 'rubocop']
 
-  TravisLint:
-    enabled: true
-    command: ['bundle', 'exec', 'travis']
-    flags: ['lint', '--skip-version-check']
-
   TrailingWhitespace:
     enabled: true
 
