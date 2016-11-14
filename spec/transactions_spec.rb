@@ -59,9 +59,9 @@ describe 'transactions (multi/exec/discard)' do
     it 'allows pipelined calls within multi blocks' do
       @redises.set('counter', 5)
       @redises.multi do |r|
-        r.pipelined do
-          r.set('test', 1)
-          r.incr('counter')
+        r.pipelined do |pr|
+          pr.set('test', 1)
+          pr.incr('counter')
         end
       end
       @redises.get('counter').should == '6'

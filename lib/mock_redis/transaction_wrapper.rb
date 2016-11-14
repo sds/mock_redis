@@ -88,7 +88,7 @@ class MockRedis
     end
 
     def pipelined
-      yield if block_given?
+      yield(self) if block_given?
     end
 
     def unwatch
