@@ -17,7 +17,7 @@ describe 'transactions (multi/exec/discard)' do
       end.should raise_error(Redis::CommandError)
     end
 
-    it 'cleans state of tansaction wrapper if exception occurs during transaction' do
+    it 'cleans state of transaction wrapper if exception occurs during transaction' do
       lambda do
         @redises.mock.multi do |_r|
           raise "i'm a command that fails"
@@ -54,6 +54,18 @@ describe 'transactions (multi/exec/discard)' do
           r.multi {}
         end.should raise_error(Redis::CommandError)
       end
+    end
+
+    it 'allows pipelined calls within multi blocks' do
+      @redises.set('counter', 5)
+      @redises.multi do |r|
+        r.pipelined do
+          r.set('test', 1)
+          r.incr('counter')
+        end
+      end
+      @redises.get('counter').should == '6'
+      @redises.get('test').should == '1'
     end
   end
 
