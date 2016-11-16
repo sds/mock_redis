@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix `pipelined` calls within `multi` blocks
+
 ### 0.17.0
 
 * Upgrade minimum `redis` gem version to 3.3.0+
