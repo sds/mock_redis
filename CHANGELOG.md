@@ -2,6 +2,7 @@
 
 ### master (unreleased)
 
+* Flatten args list passed to `hmset`
 * Fix `pipelined` calls within `multi` blocks
 
 ### 0.17.0
