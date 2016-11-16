@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.17.1
 
 * Flatten args list passed to `hmset`
 * Fix `pipelined` calls within `multi` blocks
