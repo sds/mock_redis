@@ -1,5 +1,11 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+### 0.17.2
+
+* Allow negative out-of-bounds start and stop in `zrange`
+
 ### 0.17.1
 
 * Flatten args list passed to `hmset`
