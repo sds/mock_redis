@@ -119,7 +119,7 @@ class MockRedis
     def zrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
         start = [start.to_i, -z.sorted.size].max
-        stop = [stop.to_i, -z.sorted.size].max
+        stop = stop.to_i
         to_response(z.sorted[start..stop] || [], options)
       end
     end
