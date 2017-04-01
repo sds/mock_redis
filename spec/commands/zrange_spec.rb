@@ -58,6 +58,10 @@ describe '#zrange(key, start, stop [, :with_scores => true])' do
     @redises.zrange(@key, 1, -5).should == []
   end
 
+  it 'returns empty list when start is 0 with negative end out of bounds' do
+    @redises.zrange(@key, 0, -5).should == []
+  end
+
   it 'returns correct subset when start is in bounds with negative end in bounds' do
     @redises.zrange(@key, 1, -1).should == %w[Adams Jefferson Madison]
   end
