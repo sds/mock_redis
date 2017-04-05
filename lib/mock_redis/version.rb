@@ -2,5 +2,5 @@
 
 # Defines the gem version.
 class MockRedis
-  VERSION = '0.17.2'.freeze
+  VERSION = '0.17.3'
 end

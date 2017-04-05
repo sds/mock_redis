@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.17.3
 
 * Fix `zrange` behavior with negative stop argument
 
