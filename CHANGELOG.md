@@ -2,6 +2,8 @@
 
 ### master (unreleased)
 
+* Fix `zrange` behavior with negative stop argument
+
 ### 0.17.2
 
 * Allow negative out-of-bounds start and stop in `zrange`
