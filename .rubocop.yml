@@ -9,6 +9,9 @@ Lint/Void:
 Metrics/AbcSize:
   Enabled: false
 
+Metrics/BlockLength:
+  Enabled: false
+
 Metrics/CyclomaticComplexity:
   Enabled: false
 
@@ -88,6 +91,9 @@ Style/SignalException:
   Enabled: false
 
 Style/SingleLineBlockParams:
+  Enabled: false
+
+Style/SymbolArray:
   Enabled: false
 
 Style/TrailingCommaInArguments:

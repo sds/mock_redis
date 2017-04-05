@@ -229,14 +229,11 @@ class MockRedis
       end
     end
 
-    def script(subcommand, *args)
-    end
+    def script(subcommand, *args); end
 
-    def evalsha(*args)
-    end
+    def evalsha(*args); end
 
-    def eval(*args)
-    end
+    def eval(*args); end
 
     private
 
