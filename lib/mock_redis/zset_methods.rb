@@ -308,7 +308,7 @@ class MockRedis
     end
 
     def assert_scorey(value, message = 'ERR value is not a valid float')
-      return if value =~ /\(?(\-|\+)inf/
+      return if value =~ /(\-|\+)?inf/
 
       value = $1 if value.to_s =~ /\((.*)/
       unless looks_like_float?(value)
