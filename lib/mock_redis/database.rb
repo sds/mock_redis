@@ -176,8 +176,6 @@ class MockRedis
     def renamenx(key, newkey)
       if !data.include?(key)
         raise Redis::CommandError, 'ERR no such key'
-      elsif key == newkey
-        raise Redis::CommandError, 'ERR source and destination objects are the same'
       end
       if exists(newkey)
         false
