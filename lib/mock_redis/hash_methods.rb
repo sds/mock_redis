@@ -126,8 +126,9 @@ class MockRedis
     end
 
     def hset(key, field, value)
+      exists = hexists(key, field)
       with_hash_at(key) { |h| h[field.to_s] = value.to_s }
-      true
+      !exists
     end
 
     def hsetnx(key, field, value)
