@@ -160,7 +160,7 @@ class MockRedis
     end
 
     def rename(key, newkey)
-      if !data.include?(key)
+      unless data.include?(key)
         raise Redis::CommandError, 'ERR no such key'
       end
 
@@ -176,9 +176,10 @@ class MockRedis
     end
 
     def renamenx(key, newkey)
-      if !data.include?(key)
+      unless data.include?(key)
         raise Redis::CommandError, 'ERR no such key'
       end
+
       if exists(newkey)
         false
       else
