@@ -91,7 +91,7 @@ class MockRedis
 
     def lpushx(key, value)
       value = [value] unless value.is_a?(Array)
-      if value.length != 1
+      if value.empty?
         raise Redis::CommandError, "ERR wrong number of arguments for 'lpushx' command"
       end
       assert_listy(key)
@@ -170,7 +170,7 @@ class MockRedis
 
     def rpushx(key, value)
       value = [value] unless value.is_a?(Array)
-      if value.length != 1
+      if value.empty?
         raise Redis::CommandError, "ERR wrong number of arguments for 'rpushx' command"
       end
       assert_listy(key)
