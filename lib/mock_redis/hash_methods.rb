@@ -51,7 +51,7 @@ class MockRedis
       with_hash_at(key) do |hash|
         field = field.to_s
         unless can_incr_float?(data[key][field])
-          raise Redis::CommandError, 'ERR hash value is not a valid float'
+          raise Redis::CommandError, 'ERR hash value is not a float'
         end
 
         unless looks_like_float?(increment.to_s)
@@ -126,16 +126,16 @@ class MockRedis
     end
 
     def hset(key, field, value)
-      with_hash_at(key) { |h| h[field.to_s] = value.to_s }
-      true
+      changed = hexists(key, field)
+      with_hash_at(key){ |h| h[field.to_s] = value.to_s }
+      !changed
     end
 
     def hsetnx(key, field, value)
-      if hget(key, field)
+      if hexists(key, field)
         false
       else
         hset(key, field, value)
-        true
       end
     end
 

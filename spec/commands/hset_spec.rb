@@ -5,8 +5,19 @@ describe '#hset(key, field)' do
     @key = 'mock-redis-test:hset'
   end
 
-  it 'returns true' do
+  it 'returns true if there is no such field' do
     @redises.hset(@key, 'k1', 'v1').should == true
+  end
+
+  it 'updates the value if the field exists' do
+    @redises.hset(@key, 'k1', 'v1')
+    @redises.hset(@key, 'k1', 'v2')
+    @redises.hget(@key, 'k1').should == 'v2'
+  end
+
+  it 'returns false if the key exists' do
+    @redises.hset(@key, 'k1', 'v1')
+    @redises.hset(@key, 'k1', 'v1').should == false
   end
 
   it 'creates a hash there is no such field' do

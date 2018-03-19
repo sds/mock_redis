@@ -11,7 +11,7 @@ describe '#lpushx(key, value)' do
   end
 
   it 'does nothing when run against a nonexistent key' do
-    @redises.lpushx(@key, 'value')
+    @redises.lpushx(@key, 'value').should == 0
     @redises.get(@key).should be_nil
   end
 
@@ -35,10 +35,10 @@ describe '#lpushx(key, value)' do
     end.should raise_error(Redis::CommandError)
   end
 
-  it 'raises an error if an array of more than one item is given' do
-    lambda do
-      @redises.lpushx(@key, [1, 2])
-    end.should raise_error(Redis::CommandError)
+  it 'stores multiple values if an array of more than one item is given' do
+    @redises.lpush(@key, 'X')
+    @redises.lpushx(@key, [1, 2]).should == 3
+    @redises.lrange(@key, 0, -1).should == ['2', '1', 'X']
   end
 
   it_should_behave_like 'a list-only command'

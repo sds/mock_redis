@@ -36,9 +36,9 @@ describe '#rpushx(key, value)' do
   end
 
   it 'raises an error if an array of more than one item is given' do
-    lambda do
-      @redises.rpushx(@key, [1, 2])
-    end.should raise_error(Redis::CommandError)
+    @redises.rpush(@key, 'X')
+    @redises.rpushx(@key, [1, 2]).should == 3
+    @redises.lrange(@key, 0, -1).should == ['X', '1', '2']
   end
 
   it_should_behave_like 'a list-only command'
