@@ -16,7 +16,9 @@ describe '#sinter(key [, key, ...])' do
   end
 
   it 'treats missing keys as empty sets' do
-    @redises.sinter(@destination, 'mock-redis-test:nonesuch').should == []
+    @redises.sinter(@numbers, 'mock-redis-test:nonesuch').should == []
+    @redises.sinter('mock-redis-test:nonesuch', @numbers).should == []
+    @redises.sinter('mock-redis-test:nonesuch', 'mock-redis-test:alsonone').should == []
   end
 
   it 'raises an error if given 0 sets' do
