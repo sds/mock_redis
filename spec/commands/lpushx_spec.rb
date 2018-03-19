@@ -39,7 +39,7 @@ describe '#lpushx(key, value)' do
   it 'stores multiple items if an array of more than one item is given' do
     @redises.lpush(@key, 'X')
     @redises.lpushx(@key, [1, 2]).should == 3
-    @redises.lrange(@key, 0, -1).should == %w[ 2 1 X ]
+    @redises.lrange(@key, 0, -1).should == %w[2 1 X]
   end
 
   it_should_behave_like 'a list-only command'
