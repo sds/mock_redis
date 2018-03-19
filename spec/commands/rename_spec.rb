@@ -8,7 +8,7 @@ describe '#rename(key, newkey)' do
     @redises.set(@key, 'oof')
   end
 
-  it "responds with 'OK'" do
+  it 'responds with "OK"' do
     @redises.rename(@key, @newkey).should == 'OK'
   end
 
@@ -24,10 +24,8 @@ describe '#rename(key, newkey)' do
     end.should raise_error(Redis::CommandError)
   end
 
-  it 'raises an error when key == newkey' do
-    lambda do
-      @redises.rename(@key, @key)
-    end.should raise_error(Redis::CommandError)
+  it 'responds with "OK" when key == newkey' do
+    @redises.rename(@key, @key).should == 'OK'
   end
 
   it 'overwrites any existing value at newkey' do
