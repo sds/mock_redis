@@ -9,12 +9,12 @@ describe '#hset(key, field)' do
     @redises.hset(@key, 'k1', 'v1').should == true
   end
 
-  it 'return true if the key exists but the field does not' do
+  it 'returns true if the key exists but the field does not' do
     @redises.hset(@key, 'k1', 'v1')
     @redises.hset(@key, 'k2', 'v2').should == true
   end
 
-  it 'return false if the field already exists' do
+  it 'returns false if the field already exists' do
     @redises.hset(@key, 'k1', 'v1')
     @redises.hset(@key, 'k1', 'v1').should == false
   end
