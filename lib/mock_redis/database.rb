@@ -162,14 +162,16 @@ class MockRedis
     def rename(key, newkey)
       if !data.include?(key)
         raise Redis::CommandError, 'ERR no such key'
-      elsif key == newkey
-        raise Redis::CommandError, 'ERR source and destination objects are the same'
       end
-      data[newkey] = data.delete(key)
-      if has_expiration?(key)
-        set_expiration(newkey, expiration(key))
-        remove_expiration(key)
+
+      if key != newkey
+        data[newkey] = data.delete(key)
+        if has_expiration?(key)
+          set_expiration(newkey, expiration(key))
+          remove_expiration(key)
+        end
       end
+
       'OK'
     end
 
