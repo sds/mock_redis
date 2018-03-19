@@ -51,7 +51,7 @@ class MockRedis
       with_hash_at(key) do |hash|
         field = field.to_s
         unless can_incr_float?(data[key][field])
-          raise Redis::CommandError, 'ERR hash value is not a valid float'
+          raise Redis::CommandError, 'ERR hash value is not a float'
         end
 
         unless looks_like_float?(increment.to_s)
