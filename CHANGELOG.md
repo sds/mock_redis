@@ -1,5 +1,12 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix `hset` return value to return false when the field exists in the hash
+* Fix message on exception raised from hincrbyfloat to match Redis 4
+* Fix `lpushx`/`rpushx` to correctly accept an array as the value
+* Fix rename to allow `rename(k1, k1)`
+
 ### 0.17.3
 
 * Fix `zrange` behavior with negative stop argument
