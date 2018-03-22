@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.18.0
 
 * Fix `hset` return value to return false when the field exists in the hash
 * Fix message on exception raised from hincrbyfloat to match Redis 4
