@@ -38,5 +38,38 @@ class MockRedis
 
       [next_cursor, filtered_values]
     end
+
+    def twos_complement_encode(n, size)
+      if n < 0
+        str = (n + 1).abs.to_s(2)
+
+        binary = left_pad(str, size - 1).chars.map { |c| c == "0" ? 1 : 0 }
+        binary.unshift(1)
+      else
+        binary = left_pad(n.abs.to_s(2), size - 1).chars.map(&:to_i)
+        binary.unshift(0)
+      end
+
+      binary
+    end
+
+    def twos_complement_decode(array)
+      total = 0
+
+      array.each.with_index do |bit, index|
+        total += 2 ** (array.length - index - 1) if bit == 1
+        total = -total if index == 0
+      end
+
+      total
+    end
+
+    def left_pad(str, size)
+      while str.length < size do
+        str = "0" + str
+      end
+
+      str
+    end
   end
 end
