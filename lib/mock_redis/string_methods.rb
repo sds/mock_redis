@@ -3,12 +3,68 @@ require 'mock_redis/assertions'
 class MockRedis
   module StringMethods
     include Assertions
+    include UtilityMethods
 
     def append(key, value)
       assert_stringy(key)
       data[key] ||= ''
       data[key] << value
       data[key].length
+    end
+
+    def bitfield(*args)
+      if args.length < 4
+        raise Redis::CommandError, 'ERR wrong number of arguments for BITFIELD'
+      end
+
+      key = args.shift
+      output = []
+
+      while args.length > 0 do
+        command = args.shift.to_s
+        type, offset = args.shift(2)
+
+        is_signed, type_size = type.slice!(0) == "i", type.to_i
+
+        if offset.to_s[0] == "#"
+          offset = offset[1..-1].to_i * type_size
+        end
+
+        bits = []
+
+        type_size.times do |i|
+          bits.push(getbit(key, offset + i))
+        end
+
+        if is_signed
+          val = twos_complement_decode(bits)
+        else
+          val = bits.join("").to_i(2)
+        end
+
+        output.push(val) unless command == "incrby"
+
+        case command
+        when "incrby", "set"
+          new_val = args.shift.to_i
+          new_val += val if command == "incrby"
+
+          if is_signed
+            val_array = twos_complement_encode(new_val, type_size)
+          else
+            str = left_pad(new_val.to_i.abs.to_s(2), type_size)
+            val_array = str.split('').map(&:to_i)
+          end
+
+          val_array.each_with_index do |bit, i|
+            setbit(key, offset + i, bit)
+          end
+
+          output.push(new_val) if command == "incrby"
+        end
+      end
+
+      output
     end
 
     def decr(key)
@@ -285,5 +341,6 @@ class MockRedis
         raise Redis::CommandError, message
       end
     end
+
   end
 end
