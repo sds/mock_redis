@@ -19,48 +19,82 @@ class MockRedis
 
       key = args.shift
       output = []
+      overflow_method = "wrap"
 
       while args.length > 0 do
         command = args.shift.to_s
-        type, offset = args.shift(2)
 
-        is_signed, type_size = type.slice!(0) == "i", type.to_i
+        unless command == "overflow"
+          type, offset = args.shift(2)
 
-        if offset.to_s[0] == "#"
-          offset = offset[1..-1].to_i * type_size
-        end
+          is_signed, type_size = type.slice(0) == "i", type[1..-1].to_i
 
-        bits = []
+          if offset.to_s[0] == "#"
+            offset = offset[1..-1].to_i * type_size
+          end
 
-        type_size.times do |i|
-          bits.push(getbit(key, offset + i))
-        end
+          bits = []
 
-        if is_signed
-          val = twos_complement_decode(bits)
-        else
-          val = bits.join("").to_i(2)
-        end
-
-        output.push(val) unless command == "incrby"
-
-        case command
-        when "incrby", "set"
-          new_val = args.shift.to_i
-          new_val += val if command == "incrby"
+          type_size.times do |i|
+            bits.push(getbit(key, offset + i))
+          end
 
           if is_signed
-            val_array = twos_complement_encode(new_val, type_size)
+            val = twos_complement_decode(bits)
           else
-            str = left_pad(new_val.to_i.abs.to_s(2), type_size)
-            val_array = str.split('').map(&:to_i)
+            val = bits.join("").to_i(2)
+          end
+        end
+
+        case command
+        when "get"
+          output.push(val)
+        when "overflow"
+          new_overflow_method = args.shift.to_s.downcase
+
+          unless ["wrap", "sat", "fail"].include? new_overflow_method
+            raise Redis::CommandError, 'ERR Invalid OVERFLOW type specified'
           end
 
-          val_array.each_with_index do |bit, i|
-            setbit(key, offset + i, bit)
+          overflow_method = new_overflow_method
+        when "incrby"
+          new_val = val + args.shift.to_i
+
+          max = is_signed ? (2 ** (type_size - 1)) - 1 : (2 ** type_size) - 1
+          min = is_signed ? (-2 ** (type_size - 1)) : 0 
+          size = 2 ** type_size
+
+          unless (min..max).include?(new_val)
+            case overflow_method
+            when "fail"
+              new_val = nil
+            when "sat"
+              new_val = new_val > max ? max : min
+            when "wrap"
+              if is_signed
+                if new_val > max
+                  remainder = new_val - (max  + 1)
+                  new_val = min + remainder.abs
+                else
+                  remainder = new_val - (min - 1)
+                  new_val = max - remainder.abs
+                end
+              else
+                if new_val > max
+                  new_val = new_val % size
+                else
+                  new_val = size - new_val.abs
+                end
+              end
+            end
           end
 
-          output.push(new_val) if command == "incrby"
+          set_value(key, new_val, is_signed, type_size, offset) if new_val
+          output.push(new_val)
+        when "set"
+          output.push(val)
+
+          set_value(key, args.shift.to_i, is_signed, type_size, offset)
         end
       end
 
@@ -339,6 +373,19 @@ class MockRedis
         message = 'WRONGTYPE Operation against a key holding the wrong kind of value')
       unless stringy?(key)
         raise Redis::CommandError, message
+      end
+    end
+
+    def set_value(key, value, is_signed, type_size, offset)
+      if is_signed 
+        val_array = twos_complement_encode(value, type_size)
+      else
+        str = left_pad(value.to_i.abs.to_s(2), type_size)
+        val_array = str.split('').map(&:to_i)
+      end
+
+      val_array.each_with_index do |bit, i|
+        setbit(key, offset + i, bit)
       end
     end
 

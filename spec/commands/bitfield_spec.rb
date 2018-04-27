@@ -1,10 +1,15 @@
 require 'spec_helper'
 
 describe '#bitfield(*args)' do
-  before do
+  before :each do
     @key = "mock-redis-test:bitfield"
-    @str = [78, 104, -59].pack("C*")
-    @redises.set(@key, @str)
+    @redises.set(@key, "")
+
+    @redises.bitfield(@key, :set, "i8", 0, 78)
+    @redises.bitfield(@key, :set, "i8", 8, 104)
+    @redises.bitfield(@key, :set, "i8", 16, -59)
+    @redises.bitfield(@key, :set, "u8", 24, 78)
+    @redises.bitfield(@key, :set, "u8", 32, 84)
   end
 
   context "with a :get command" do
@@ -55,6 +60,85 @@ describe '#bitfield(*args)' do
       @redises.bitfield(@key, :incrby, "i8", 0, 1).should == [79]
       @redises.bitfield(@key, :incrby, "i8", 8, -1).should == [103]
       @redises.bitfield(@key, :incrby, "i8", 16, 5).should == [-54]
+    end
+
+    context "with an overflow of wrap (default)" do
+      context "for a signed integer" do
+        it "wraps the overflow to the minimum and increments from there" do
+          @redises.bitfield(@key, :get, "i8", 24).should == [78]
+          @redises.bitfield(@key, :overflow, :wrap,
+                                  :incrby, "i8", 0, 200).should == [22]
+        end
+
+         it "wraps the underflow to the maximum value and decrements from there" do
+          @redises.bitfield(@key, :overflow, :wrap,
+                                  :incrby, "i8", 16, -200).should == [-3]
+         end
+      end
+
+      context "for an unsigned integer" do
+        it "wraps the overflow back to zero and increments from there" do
+          @redises.bitfield(@key, :get, "u8", 24).should == [78]
+          @redises.bitfield(@key, :overflow, :wrap,
+                                  :incrby, "u8", 24, 233).should == [55]
+        end
+
+        it "wraps the underflow to the maximum value and decrements from there" do
+          @redises.bitfield(@key, :get, "u8", 32).should == [84]
+          @redises.bitfield(@key, :overflow, :wrap,
+                                  :incrby, "u8", 32, -233).should == [107]
+        end
+      end
+    end
+
+    context "with an overflow of sat" do
+      it "sets the overflowed value to the maximum" do
+        @redises.bitfield(@key, :overflow, :sat,
+                                :incrby, "i8", 0, 256).should == [127]
+      end
+
+      it "sets the underflowed value to the minimum" do
+        @redises.bitfield(@key, :overflow, :sat,
+                                :incrby, "i8", 16, -256).should == [-128]
+      end
+    end
+
+    context "with an overflow of fail" do
+      it "raises a redis error on an out of range value" do
+        @redises.bitfield(@key, :overflow, :fail,
+                                :incrby, "i8", 0, 256).should == [nil]
+
+        @redises.bitfield(@key, :overflow, :fail,
+                                :incrby, "i8", 16, -256).should == [nil]
+      end
+
+      it "retains the original value after a failed increment" do
+        @redises.bitfield(@key, :get, "i8", 0).should == [78]
+        @redises.bitfield(@key, :overflow, :fail,
+                                :incrby, "i8", 0, 256).should == [nil]
+        @redises.bitfield(@key, :get, "i8", 0).should == [78]
+      end
+    end
+
+    context "with multiple overflow commands in one transaction" do
+      it "handles the overflow values correctly" do
+        @redises.bitfield(@key, :overflow, :sat,
+                                :incrby, "i8", 0, 256,
+                                :incrby, "i8", 8, -256,
+                                :overflow, :wrap,
+                                :incrby, "i8", 0, 200,
+                                :incrby, "i8", 16, -200,
+                                :overflow, :fail,
+                                :incrby, "i8", 0, 256,
+                                :incrby, "i8", 16, -256).should == [127, -128, 71, -3, nil, nil]
+      end
+    end
+
+    context "with an unsupported overflow value" do
+      it "raises an error" do
+        expect { @redises.bitfield(@key, :overflow, :foo,
+                                          :incrby, "i8", 0, 256) }.to raise_error(Redis::CommandError)
+      end
     end
   end
 
