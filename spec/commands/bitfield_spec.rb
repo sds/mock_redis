@@ -30,6 +30,15 @@ describe '#bitfield(*args)' do
                               :get, "i8", "#1", 
                               :get, "i8", "#2").should == [78, 104, -59]
     end
+
+    it "shows an error with an invalid type" do
+      expect { @redises.bitfield(@key, :get, "u64", 0) }.to raise_error
+      expect { @redises.bitfield(@key, :get, "i128", 0) }.to raise_error(Redis::CommandError)
+    end
+
+    it "returns a value with an i64 type" do
+      expect { @redises.bitfield(@key, :get, "i64", 0) }.to_not raise_error(Redis::CommandError)
+    end
   end
 
   context "with a :set command" do

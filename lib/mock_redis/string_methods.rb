@@ -24,32 +24,7 @@ class MockRedis
       while args.length > 0 do
         command = args.shift.to_s
 
-        unless command == "overflow"
-          type, offset = args.shift(2)
-
-          is_signed, type_size = type.slice(0) == "i", type[1..-1].to_i
-
-          if offset.to_s[0] == "#"
-            offset = offset[1..-1].to_i * type_size
-          end
-
-          bits = []
-
-          type_size.times do |i|
-            bits.push(getbit(key, offset + i))
-          end
-
-          if is_signed
-            val = twos_complement_decode(bits)
-          else
-            val = bits.join("").to_i(2)
-          end
-        end
-
-        case command
-        when "get"
-          output.push(val)
-        when "overflow"
+        if command == "overflow"
           new_overflow_method = args.shift.to_s.downcase
 
           unless ["wrap", "sat", "fail"].include? new_overflow_method
@@ -57,6 +32,40 @@ class MockRedis
           end
 
           overflow_method = new_overflow_method
+          next
+        end
+
+        type, offset = args.shift(2)
+
+        is_signed, type_size = type.slice(0) == "i", type[1..-1].to_i
+
+        if (type_size > 64 && is_signed) || (type_size >= 64 && !is_signed)
+          raise Redis::CommandError, "ERR Invalid bitfield type. Use something like i16 u8. Note that u64 is not supported but i64 is."
+        end
+
+        if offset.to_s[0] == "#"
+          offset = offset[1..-1].to_i * type_size
+        end
+
+        bits = []
+
+        type_size.times do |i|
+          bits.push(getbit(key, offset + i))
+        end
+
+        if is_signed
+          val = twos_complement_decode(bits)
+        else
+          val = bits.join("").to_i(2)
+        end
+
+        case command
+        when "get"
+          output.push(val)
+        when "set"
+          output.push(val)
+
+          set_value(key, args.shift.to_i, is_signed, type_size, offset)
         when "incrby"
           new_val = val + args.shift.to_i
 
@@ -91,10 +100,6 @@ class MockRedis
 
           set_value(key, new_val, is_signed, type_size, offset) if new_val
           output.push(new_val)
-        when "set"
-          output.push(val)
-
-          set_value(key, args.shift.to_i, is_signed, type_size, offset)
         end
       end
 
