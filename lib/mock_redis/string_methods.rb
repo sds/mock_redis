@@ -19,15 +19,15 @@ class MockRedis
 
       key = args.shift
       output = []
-      overflow_method = "wrap"
+      overflow_method = 'wrap'
 
-      while args.length > 0 do
+      until args.empty?
         command = args.shift.to_s
 
-        if command == "overflow"
+        if command == 'overflow'
           new_overflow_method = args.shift.to_s.downcase
 
-          unless ["wrap", "sat", "fail"].include? new_overflow_method
+          unless %w[wrap sat fail].include? new_overflow_method
             raise Redis::CommandError, 'ERR Invalid OVERFLOW type specified'
           end
 
@@ -37,13 +37,16 @@ class MockRedis
 
         type, offset = args.shift(2)
 
-        is_signed, type_size = type.slice(0) == "i", type[1..-1].to_i
+        is_signed = type.slice(0) == 'i'
+        type_size = type[1..-1].to_i
 
         if (type_size > 64 && is_signed) || (type_size >= 64 && !is_signed)
-          raise Redis::CommandError, "ERR Invalid bitfield type. Use something like i16 u8. Note that u64 is not supported but i64 is."
+          raise Redis::CommandError,
+            'ERR Invalid bitfield type. Use something like i16 u8. ' \
+            'Note that u64 is not supported but i64 is.'
         end
 
-        if offset.to_s[0] == "#"
+        if offset.to_s[0] == '#'
           offset = offset[1..-1].to_i * type_size
         end
 
@@ -53,52 +56,19 @@ class MockRedis
           bits.push(getbit(key, offset + i))
         end
 
-        if is_signed
-          val = twos_complement_decode(bits)
-        else
-          val = bits.join("").to_i(2)
-        end
+        val = is_signed ? twos_complement_decode(bits) : bits.join('').to_i(2)
 
         case command
-        when "get"
+        when 'get'
           output.push(val)
-        when "set"
+        when 'set'
           output.push(val)
 
-          set_value(key, args.shift.to_i, is_signed, type_size, offset)
-        when "incrby"
-          new_val = val + args.shift.to_i
+          set_bitfield(key, args.shift.to_i, is_signed, type_size, offset)
+        when 'incrby'
+          new_val = incr_bitfield(val, args.shift.to_i, is_signed, type_size, overflow_method)
 
-          max = is_signed ? (2 ** (type_size - 1)) - 1 : (2 ** type_size) - 1
-          min = is_signed ? (-2 ** (type_size - 1)) : 0 
-          size = 2 ** type_size
-
-          unless (min..max).include?(new_val)
-            case overflow_method
-            when "fail"
-              new_val = nil
-            when "sat"
-              new_val = new_val > max ? max : min
-            when "wrap"
-              if is_signed
-                if new_val > max
-                  remainder = new_val - (max  + 1)
-                  new_val = min + remainder.abs
-                else
-                  remainder = new_val - (min - 1)
-                  new_val = max - remainder.abs
-                end
-              else
-                if new_val > max
-                  new_val = new_val % size
-                else
-                  new_val = size - new_val.abs
-                end
-              end
-            end
-          end
-
-          set_value(key, new_val, is_signed, type_size, offset) if new_val
+          set_bitfield(key, new_val, is_signed, type_size, offset) if new_val
           output.push(new_val)
         end
       end
@@ -381,8 +351,8 @@ class MockRedis
       end
     end
 
-    def set_value(key, value, is_signed, type_size, offset)
-      if is_signed 
+    def set_bitfield(key, value, is_signed, type_size, offset)
+      if is_signed
         val_array = twos_complement_encode(value, type_size)
       else
         str = left_pad(value.to_i.abs.to_s(2), type_size)
@@ -394,5 +364,35 @@ class MockRedis
       end
     end
 
+    def incr_bitfield(val, incrby, is_signed, type_size, overflow_method)
+      new_val = val + incrby
+
+      max = is_signed ? (2**(type_size - 1)) - 1 : (2**type_size) - 1
+      min = is_signed ? (-2**(type_size - 1)) : 0
+      size = 2**type_size
+
+      return new_val if (min..max).cover?(new_val)
+
+      case overflow_method
+      when 'fail'
+        new_val = nil
+      when 'sat'
+        new_val = new_val > max ? max : min
+      when 'wrap'
+        if is_signed
+          if new_val > max
+            remainder = new_val - (max + 1)
+            new_val = min + remainder.abs
+          else
+            remainder = new_val - (min - 1)
+            new_val = max - remainder.abs
+          end
+        else
+          new_val = new_val > max ? new_val % size : size - new_val.abs
+        end
+      end
+
+      new_val
+    end
   end
 end
