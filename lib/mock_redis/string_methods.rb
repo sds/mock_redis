@@ -3,12 +3,77 @@ require 'mock_redis/assertions'
 class MockRedis
   module StringMethods
     include Assertions
+    include UtilityMethods
 
     def append(key, value)
       assert_stringy(key)
       data[key] ||= ''
       data[key] << value
       data[key].length
+    end
+
+    def bitfield(*args)
+      if args.length < 4
+        raise Redis::CommandError, 'ERR wrong number of arguments for BITFIELD'
+      end
+
+      key = args.shift
+      output = []
+      overflow_method = 'wrap'
+
+      until args.empty?
+        command = args.shift.to_s
+
+        if command == 'overflow'
+          new_overflow_method = args.shift.to_s.downcase
+
+          unless %w[wrap sat fail].include? new_overflow_method
+            raise Redis::CommandError, 'ERR Invalid OVERFLOW type specified'
+          end
+
+          overflow_method = new_overflow_method
+          next
+        end
+
+        type, offset = args.shift(2)
+
+        is_signed = type.slice(0) == 'i'
+        type_size = type[1..-1].to_i
+
+        if (type_size > 64 && is_signed) || (type_size >= 64 && !is_signed)
+          raise Redis::CommandError,
+            'ERR Invalid bitfield type. Use something like i16 u8. ' \
+            'Note that u64 is not supported but i64 is.'
+        end
+
+        if offset.to_s[0] == '#'
+          offset = offset[1..-1].to_i * type_size
+        end
+
+        bits = []
+
+        type_size.times do |i|
+          bits.push(getbit(key, offset + i))
+        end
+
+        val = is_signed ? twos_complement_decode(bits) : bits.join('').to_i(2)
+
+        case command
+        when 'get'
+          output.push(val)
+        when 'set'
+          output.push(val)
+
+          set_bitfield(key, args.shift.to_i, is_signed, type_size, offset)
+        when 'incrby'
+          new_val = incr_bitfield(val, args.shift.to_i, is_signed, type_size, overflow_method)
+
+          set_bitfield(key, new_val, is_signed, type_size, offset) if new_val
+          output.push(new_val)
+        end
+      end
+
+      output
     end
 
     def decr(key)
@@ -284,6 +349,50 @@ class MockRedis
       unless stringy?(key)
         raise Redis::CommandError, message
       end
+    end
+
+    def set_bitfield(key, value, is_signed, type_size, offset)
+      if is_signed
+        val_array = twos_complement_encode(value, type_size)
+      else
+        str = left_pad(value.to_i.abs.to_s(2), type_size)
+        val_array = str.split('').map(&:to_i)
+      end
+
+      val_array.each_with_index do |bit, i|
+        setbit(key, offset + i, bit)
+      end
+    end
+
+    def incr_bitfield(val, incrby, is_signed, type_size, overflow_method)
+      new_val = val + incrby
+
+      max = is_signed ? (2**(type_size - 1)) - 1 : (2**type_size) - 1
+      min = is_signed ? (-2**(type_size - 1)) : 0
+      size = 2**type_size
+
+      return new_val if (min..max).cover?(new_val)
+
+      case overflow_method
+      when 'fail'
+        new_val = nil
+      when 'sat'
+        new_val = new_val > max ? max : min
+      when 'wrap'
+        if is_signed
+          if new_val > max
+            remainder = new_val - (max + 1)
+            new_val = min + remainder.abs
+          else
+            remainder = new_val - (min - 1)
+            new_val = max - remainder.abs
+          end
+        else
+          new_val = new_val > max ? new_val % size : size - new_val.abs
+        end
+      end
+
+      new_val
     end
   end
 end
