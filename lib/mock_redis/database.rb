@@ -9,6 +9,7 @@ require 'mock_redis/sort_method'
 require 'mock_redis/indifferent_hash'
 require 'mock_redis/info_method'
 require 'mock_redis/utility_methods'
+require 'mock_redis/geospatial_methods'
 
 class MockRedis
   class Database
@@ -20,6 +21,7 @@ class MockRedis
     include SortMethod
     include InfoMethod
     include UtilityMethods
+    include GeospatialMethods
 
     attr_reader :data, :expire_times
 
