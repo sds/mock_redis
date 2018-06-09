@@ -22,16 +22,21 @@ class MockRedis
     end
 
     def add id
-      t, i = if id == '*'
-               [ DateTime.now.strftime('%Q').to_i, 0 ]
-             else
-               id.split('-').map(&:to_i)
-             end
-      i = 0 if i.nil?
-      if t <= @last_timestamp && i <= @last_i
-        raise Redis::CommandError,
-              'ERR The ID specified in XADD is equal or smaller than the ' \
-              'target stream top item'
+      t = i = 0
+      if id == '*'
+        t = DateTime.now.strftime('%Q').to_i
+        if t < @last_timestamp
+          t = @last_timestamp
+          i = @last_i + 1
+        end
+      else
+        t, i = id.split('-').map(&:to_i)
+        i = 0 if i.nil?
+        if t <= @last_timestamp && i <= @last_i
+          raise Redis::CommandError,
+                'ERR The ID specified in XADD is equal or smaller than the ' \
+                'target stream top item'
+        end
       end
       @last_timestamp = t
       @last_i = i
