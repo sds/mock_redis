@@ -1,6 +1,6 @@
 require 'mock_redis/assertions'
 require 'mock_redis/utility_methods'
-require 'mock_redis/streams'
+require 'mock_redis/stream'
 
 class MockRedis
   module StreamsMethods
