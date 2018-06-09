@@ -25,7 +25,7 @@ class MockRedis
       t = i = 0
       if id == '*'
         t = DateTime.now.strftime('%Q').to_i
-        if t < @last_timestamp
+        if t <= @last_timestamp
           t = @last_timestamp
           i = @last_i + 1
         end
