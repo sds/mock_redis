@@ -31,9 +31,8 @@ class MockRedis
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
       members
-        .select do |m|
-          (start_id <= m[0]) && (finish_id >= m[0])
-        end.map { |m| [m[0].to_s, m[1]] }
+        .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
+        .map { |m| [m[0].to_s, m[1]] }
     end
 
     def each
