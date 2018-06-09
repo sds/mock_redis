@@ -21,19 +21,19 @@ class MockRedis
       @last_id.to_s
     end
 
-    def add id, values
+    def add(id, values)
       @last_id = MockRedis::Stream::Id.new(id, min: @last_id)
-      members.add [ @last_id, values ]
+      members.add [@last_id, values]
       @last_id.to_s
     end
 
-    def range start, finish
+    def range(start, finish)
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish)
       members
-        .select { |m|
+        .select do |m|
           (start_id <= m[0]) && (finish_id >= m[0])
-        }.map { |m| [m[0].to_s, m[1]] }
+        end.map { |m| [m[0].to_s, m[1]] }
     end
 
     def each

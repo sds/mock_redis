@@ -5,12 +5,12 @@ describe '#xadd(key, id, [field, value, ...])' do
 
   it 'returns an id based on the timestamp' do
     t = Time.now.to_i
-    expect(@redises.xadd(@key, '*', 'key', 'value')).to match /#{t}\d{3}-0/
+    expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/#{t}\d{3}-0/)
   end
 
   it 'increments the sequence number with the same timestamp' do
     @redises.xadd(@key, '*', 'key', 'value')
-    expect(@redises.xadd(@key, '*', 'key', 'value')).to match /\d+-1/
+    expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/\d+-1/)
   end
 
   it 'sets the id if it is given' do
@@ -31,7 +31,7 @@ describe '#xadd(key, id, [field, value, ...])' do
   it 'caters for the current time being before the last time' do
     t = DateTime.now.strftime('%Q').to_i + 2000
     @redises.xadd(@key, "#{t}-0", 'key', 'value')
-    expect(@redises.xadd(@key, '*', 'key', 'value')).to match /#{t}-1/
+    expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/#{t}-1/)
   end
 
   it 'appends a sequence number if it is missing' do

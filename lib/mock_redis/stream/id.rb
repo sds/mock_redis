@@ -5,7 +5,7 @@ class MockRedis
 
       attr_accessor :timestamp, :sequence
 
-      def initialize id, min: nil
+      def initialize(id, min: nil)
         case id
         when '*'
           @timestamp = DateTime.now.strftime('%Q').to_i
@@ -33,9 +33,9 @@ class MockRedis
         "#{@timestamp}-#{@sequence}"
       end
 
-      def <=> other
+      def <=>(other)
         return 1 if other.nil?
-        return (@sequence <=> other.sequence) if @timestamp == other.timestamp
+        return @sequence <=> other.sequence if @timestamp == other.timestamp
         @timestamp <=> other.timestamp
       end
     end
