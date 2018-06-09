@@ -21,7 +21,7 @@ class MockRedis
       "#{@last_timestamp}-#{@last_i}"
     end
 
-    def add id
+    def add id, values
       t = i = 0
       if id == '*'
         t = DateTime.now.strftime('%Q').to_i
@@ -40,7 +40,15 @@ class MockRedis
       end
       @last_timestamp = t
       @last_i = i
-      members.add last_id
+      members.add [ last_id, values ]
+    end
+
+    def range start, finish
+      members
+        .select { |m|
+          (start == '-' || start.to_i <= m[0].split('-')[0].to_i) &&
+            (finish == '+' || finish.to_i >= m[0].split('-')[0].to_i)
+        }.to_a
     end
 
     def each

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe '#xlen(key)' do
-  before { @key = 'mock-redis-test:xadd' }
+  before { @key = 'mock-redis-test:xlen' }
 
   it 'returns the number of items in the stream' do
     expect(@redises.xlen(@key)).to eq 0
