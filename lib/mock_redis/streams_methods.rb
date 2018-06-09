@@ -9,7 +9,7 @@ class MockRedis
 
     def xadd(key, id, *args)
       with_streams_at(key) do |stream|
-        stream.add id
+        stream.add id, args
         return stream.last_id
       end
     end
@@ -17,6 +17,12 @@ class MockRedis
     def xlen(key)
       with_streams_at(key) do |stream|
         return stream.count
+      end
+    end
+
+    def xrange(key, start, finish)
+      with_streams_at(key) do |stream|
+        return stream.range(start, finish)
       end
     end
 
