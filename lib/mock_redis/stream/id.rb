@@ -5,7 +5,7 @@ class MockRedis
 
       attr_accessor :timestamp, :sequence
 
-      def initialize(id, min: nil)
+      def initialize(id, min: nil, sequence: 0)
         case id
         when '*'
           @timestamp = DateTime.now.strftime('%Q').to_i
@@ -15,12 +15,12 @@ class MockRedis
             @sequence = min.sequence + 1
           end
         when '-'
-          @timestamp = @sequenct = 0
+          @timestamp = @sequence = 0
         when '+'
-          @timestamp = @sequenct = Float::INFINITY
+          @timestamp = @sequence = Float::INFINITY
         else
           @timestamp, @sequence = id.split('-').map(&:to_i)
-          @sequence = 0 if @sequence.nil?
+          @sequence = sequence if @sequence.nil?
           if self <= min
             raise Redis::CommandError,
                   'ERR The ID specified in XADD is equal or smaller than ' \
