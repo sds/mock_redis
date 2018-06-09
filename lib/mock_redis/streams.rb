@@ -1,5 +1,6 @@
 require 'forwardable'
 require 'set'
+require 'date'
 
 class MockRedis
   class Streams
@@ -34,6 +35,7 @@ class MockRedis
       end
       @last_timestamp = t
       @last_i = i
+      members.add last_id
     end
 
     def each
