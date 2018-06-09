@@ -8,10 +8,15 @@ class MockRedis
     include UtilityMethods
 
     def xadd(key, id, *args)
-      return_id = nil
       with_streams_at(key) do |stream|
         stream.add id
         return stream.last_id
+      end
+    end
+
+    def xlen(key)
+      with_streams_at(key) do |stream|
+        return stream.count
       end
     end
 
