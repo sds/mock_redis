@@ -23,7 +23,7 @@ class MockRedis
     include InfoMethod
     include UtilityMethods
     include GeospatialMethods
-    include StreamsMethods
+    include StreamMethods
 
     attr_reader :data, :expire_times
 

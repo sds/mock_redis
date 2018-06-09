@@ -4,7 +4,7 @@ require 'date'
 require 'mock_redis/stream/id'
 
 class MockRedis
-  class Streams
+  class Stream
     include Enumerable
     extend Forwardable
 
