@@ -1,4 +1,3 @@
-require 'date'
 require 'mock_redis/assertions'
 require 'mock_redis/utility_methods'
 require 'mock_redis/streams'
@@ -9,6 +8,7 @@ class MockRedis
     include UtilityMethods
 
     def xadd(key, id, *args)
+      return_id = nil
       with_streams_at(key) do |stream|
         stream.add id
         return stream.last_id
