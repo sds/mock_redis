@@ -23,7 +23,7 @@ class MockRedis
 
     def add(id, values)
       @last_id = MockRedis::Stream::Id.new(id, min: @last_id)
-      members.add [@last_id, values]
+      members.add [@last_id, values.map(&:to_s)]
       @last_id.to_s
     end
 

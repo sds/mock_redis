@@ -8,6 +8,12 @@ describe '#xadd(key, id, [field, value, ...])' do
     expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/#{t}\d{3}-0/)
   end
 
+  it 'adds data with symbols' do
+    @redises.xadd(@key, '*', :symbol_key, :symbol_value)
+    expect(@redises.xrange(@key, '-', '+').last[1])
+      .to eq(%w[symbol_key symbol_value])
+  end
+
   it 'increments the sequence number with the same timestamp' do
     @redises.xadd(@key, '*', 'key', 'value')
     expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/\d+-1/)
