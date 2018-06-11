@@ -27,12 +27,16 @@ class MockRedis
       @last_id.to_s
     end
 
-    def range(start, finish)
+    def range(start, finish, *options)
+      opts = {}
+      options.each_slice(2).map { |pair| opts[pair[0].downcase] = pair[1].to_i }
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
-      members
-        .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
-        .map { |m| [m[0].to_s, m[1]] }
+      items = members
+              .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
+              .map { |m| [m[0].to_s, m[1]] }
+      return items.first(opts['count'].to_i) if opts.key?('count')
+      items
     end
 
     def each

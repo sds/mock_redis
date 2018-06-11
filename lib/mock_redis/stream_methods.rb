@@ -20,9 +20,9 @@ class MockRedis
       end
     end
 
-    def xrange(key, start, finish)
+    def xrange(key, start, finish, *options)
       with_stream_at(key) do |stream|
-        return stream.range(start, finish)
+        return stream.range(start, finish, *options)
       end
     end
 

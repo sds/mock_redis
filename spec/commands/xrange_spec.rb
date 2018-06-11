@@ -103,5 +103,20 @@ describe '#xrange(key, start, end)' do
         ]
       )
     end
+
+    it 'returns a limited number of items' do
+      expect(@redises.xrange(@key, '-', '+', 'COUNT', '2')).to eq(
+        [
+          ['1234567891234-0', %w[key1 value1]],
+          ['1234567891245-0', %w[key2 value2]]
+        ]
+      )
+      expect(@redises.xrange(@key, '-', '+', 'count', '2')).to eq(
+        [
+          ['1234567891234-0', %w[key1 value1]],
+          ['1234567891245-0', %w[key2 value2]]
+        ]
+      )
+    end
   end
 end
