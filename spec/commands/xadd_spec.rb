@@ -24,6 +24,11 @@ describe '#xadd(key, id, [field, value, ...])' do
       .to eq '1234567891234-2'
   end
 
+  it 'accepts is as an integer' do
+    expect(@redises.xadd(@key, 1_234_567_891_234, 'key', 'value'))
+      .to eq '1234567891234-0'
+  end
+
   it 'sets an id based on the timestamp if the given id is before the last' do
     @redises.xadd(@key, '1234567891234-0', 'key', 'value')
     expect { @redises.xadd(@key, '1234567891233-0', 'key', 'value') }
@@ -43,5 +48,29 @@ describe '#xadd(key, id, [field, value, ...])' do
   it 'appends a sequence number if it is missing' do
     expect(@redises.xadd(@key, '1234567891234', 'key', 'value'))
       .to eq '1234567891234-0'
+  end
+
+  it 'raises wrong number of arguments error with missing values' do
+    expect { @redises.xadd(@key, '*') }
+      .to raise_error(
+        Redis::CommandError,
+        "ERR wrong number of arguments for 'xadd' command"
+      )
+  end
+
+  it 'raises wrong number of arguments error with odd number of values' do
+    expect { @redises.xadd(@key, '*', 'key', 'value', 'key') }
+      .to raise_error(
+        Redis::CommandError,
+        'ERR wrong number of arguments for XADD'
+      )
+  end
+
+  it 'raises an invalid stream id error' do
+    expect { @redises.xadd(@key, 'X', 'key', 'value') }
+      .to raise_error(
+        Redis::CommandError,
+        'ERR Invalid stream ID specified as stream command argument'
+      )
   end
 end

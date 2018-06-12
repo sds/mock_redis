@@ -19,7 +19,17 @@ class MockRedis
         when '+'
           @timestamp = @sequence = Float::INFINITY
         else
-          @timestamp, @sequence = id.split('-').map(&:to_i)
+          if id.is_a? String
+            (_, @timestamp, @sequence) = id.match(/^(\d+)-?(\d+)?$/)
+                                           .to_a
+                                           .map(&:to_i)
+            if @timestamp.nil?
+              raise Redis::CommandError,
+                    'ERR Invalid stream ID specified as stream command argument'
+            end
+          else
+            @timestamp = id
+          end
           @sequence = sequence if @sequence.nil?
           if self <= min
             raise Redis::CommandError,
