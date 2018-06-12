@@ -3,7 +3,7 @@ require 'set'
 require 'date'
 require 'mock_redis/stream/id'
 
-# TODO:
+# TODO: Implement the following commands
 #
 #   * xrange (see https://github.com/antirez/redis/issues/5006)
 #   * xread

@@ -7,7 +7,15 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
-    def xadd(key, id, *args)
+    def xadd(key = nil, id = nil, *args)
+      if args.count == 0
+        raise Redis::CommandError,
+              "ERR wrong number of arguments for 'xadd' command"
+      end
+      if args.count.odd?
+        raise Redis::CommandError,
+              'ERR wrong number of arguments for XADD'
+      end
       with_stream_at(key) do |stream|
         stream.add id, args
         return stream.last_id
