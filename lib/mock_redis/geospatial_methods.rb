@@ -10,17 +10,39 @@ class MockRedis
       points = parse_points(args)
 
       scored_points = points.map do |point|
-        score = encode(point[:lng], point[:lat])
+        score = encode(point[:lng], point[:lat], LNG_RANGE, LAT_RANGE)
         [score.to_s, point[:key]]
       end
 
       zadd(key, scored_points)
     end
 
-    def geopos(key, *args)
+    def geohash(key, *members)
       return [] if zcard(key).zero?
 
-      args.map do |member|
+      lng_range = (-180..180)
+      lat_range = (-90..90)
+      geoalphabet= '0123456789bcdefghjkmnpqrstuvwxyz'
+
+      members.map do |member|
+        score = zscore(key, member)&.to_i
+        next nil unless score
+        lng, lat = decode(score)
+        bits = encode(lng, lat, lng_range, lat_range)
+        hash = ''
+        11.times do |i|
+          shift = (52 - ((i + 1) * 5))
+          idx = shift > 0 ? (bits >> shift) & 0x1f : 0
+          hash << geoalphabet[idx]
+        end
+        hash
+      end
+    end
+
+    def geopos(key, *members)
+      return [] if zcard(key).zero?
+
+      members.map do |member|
         score = zscore(key, member)&.to_i
         next nil unless score
         lng, lat = decode(score)
@@ -62,9 +84,9 @@ class MockRedis
     end
 
     # Returns ZSET score for passed coordinates
-    def encode(lng, lat)
-      lat_offset = (lat - LAT_RANGE.min) / (LAT_RANGE.max - LAT_RANGE.min)
-      lng_offset = (lng - LNG_RANGE.min) / (LNG_RANGE.max - LNG_RANGE.min)
+    def encode(lng, lat, lng_range, lat_range)
+      lat_offset = (lat - lat_range.min) / (lat_range.max - lat_range.min)
+      lng_offset = (lng - lng_range.min) / (lng_range.max - lng_range.min)
 
       lat_offset *= (1 << STEP)
       lng_offset *= (1 << STEP)
