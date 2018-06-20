@@ -5,6 +5,14 @@ class MockRedis
     LNG_RANGE = (-180..180)
     LAT_RANGE = (-85.05112878..85.05112878)
     STEP = 26
+    UNITS = {
+      m: 1,
+      km: 1000,
+      ft: 0.3048,
+      mi: 1609.34
+    }.freeze
+    D_R = Math::PI / 180.0
+    EARTH_RADIUS_IN_METERS = 6372797.560856
 
     def geoadd(key, *args)
       points = parse_points(args)
@@ -15,6 +23,31 @@ class MockRedis
       end
 
       zadd(key, scored_points)
+    end
+
+    def geodist(key, *args)
+      if args.length < 2
+        raise Redis::CommandError,
+          "ERR wrong number of arguments for 'geodist' command"
+      end
+
+      raise Redis::CommandError, 'ERR syntax error' if args.length > 3
+
+      to_meter = 1
+      to_meter = parse_unit(args[2]) if args.length == 3
+
+      return '' if zcard(key).zero?
+
+      score1 = zscore(key, args[0])&.to_i
+      score2 = zscore(key, args[1])&.to_i
+
+      return nil if score1.nil? || score2.nil?
+
+      lng1, lat1 = decode(score1)
+      lng2, lat2 = decode(score2)
+
+      distance = geohash_distance(lng1, lat1, lng2, lat2) / to_meter
+      format('%.4f', distance)
     end
 
     def geohash(key, *members)
@@ -174,6 +207,27 @@ class MockRedis
       l += 1 while coord[-l] == '0'
       coord = coord[0..-l]
       coord[-1] == '.' ? coord[0..-2] : coord
+    end
+
+    def parse_unit(unit)
+      unit = unit.to_sym
+      return UNITS[unit] if UNITS[unit]
+
+      raise Redis::CommandError,
+        'ERR unsupported unit provided. please use m, km, ft, mi'
+    end
+
+    def geohash_distance(lng1d, lat1d, lng2d, lat2d)
+      lat1r = lat1d * D_R
+      lng1r = lng1d * D_R
+      lat2r = lat2d * D_R
+      lng2r = lng2d * D_R
+
+      u = Math.sin((lat2r - lat1r) / 2)
+      v = Math.sin((lng2r - lng1r) / 2)
+
+      2.0 * EARTH_RADIUS_IN_METERS *
+        Math.asin(Math.sqrt(u * u + Math.cos(lat1r) * Math.cos(lat2r) * v * v))
     end
   end
 end
