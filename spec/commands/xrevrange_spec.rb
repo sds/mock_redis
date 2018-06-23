@@ -120,4 +120,36 @@ describe '#xrevrange(key, start, end)' do
       )
     end
   end
+
+  it 'raises wrong number of arguments error' do
+    expect { @redises.xrevrange(@key, '+') }
+      .to raise_error(
+        Redis::CommandError,
+        "ERR wrong number of arguments for 'xrevrange' command"
+      )
+  end
+
+  it 'raises syntax error with missing count number' do
+    expect { @redises.xrevrange(@key, '+', '-', 'count') }
+      .to raise_error(
+        Redis::CommandError,
+        'ERR syntax error'
+      )
+  end
+
+  it 'raises not an integer error with bad count argument' do
+    expect { @redises.xrevrange(@key, '+', '-', 'count', 'X') }
+      .to raise_error(
+        Redis::CommandError,
+        'ERR value is not an integer or out of range'
+      )
+  end
+
+  it 'raises an invalid stream id error' do
+    expect { @redises.xrevrange(@key, 'X', '-') }
+      .to raise_error(
+        Redis::CommandError,
+        'ERR Invalid stream ID specified as stream command argument'
+      )
+  end
 end

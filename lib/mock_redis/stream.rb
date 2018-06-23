@@ -41,9 +41,11 @@ class MockRedis
       @last_id.to_s
     end
 
-    def range(start, finish, reversed, *options)
-      opts = {}
-      options.each_slice(2).map { |pair| opts[pair[0].downcase] = pair[1].to_i }
+    def range(start, finish, reversed, *opts_in)
+      opts = options opts_in, ['count']
+      unless opts['count'].nil? || /^\d*$/.match(opts['count'])
+        raise Redis::CommandError, 'ERR value is not an integer or out of range'
+      end
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
       items = members
@@ -56,6 +58,16 @@ class MockRedis
 
     def each
       members.each { |m| yield m }
+    end
+
+    private
+
+    def options(opts_in, permitted)
+      opts_out = {}
+      raise Redis::CommandError, 'ERR syntax error' unless (opts_in.length % 2).zero?
+      opts_in.each_slice(2).map { |pair| opts_out[pair[0].downcase] = pair[1] }
+      raise Redis::CommandError, 'ERR syntax error' unless (opts_out.keys - permitted).empty?
+      opts_out
     end
   end
 end
