@@ -5,7 +5,8 @@ require 'mock_redis/stream/id'
 
 # TODO: Implement the following commands
 #
-#   * xrange (see https://github.com/antirez/redis/issues/5006)
+#   * xrange
+#   * xrevrange (see https://github.com/antirez/redis/issues/5006)
 #   * xread
 #   * xgroup
 #   * xreadgroup
@@ -42,7 +43,7 @@ class MockRedis
       @last_id.to_s
     end
 
-    def range(start, finish, *options)
+    def range(start, finish, reversed, *options)
       opts = {}
       options.each_slice(2).map { |pair| opts[pair[0].downcase] = pair[1].to_i }
       start_id = MockRedis::Stream::Id.new(start)
@@ -50,6 +51,7 @@ class MockRedis
       items = members
               .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
               .map { |m| [m[0].to_s, m[1]] }
+      items.reverse! if reversed
       return items.first(opts['count'].to_i) if opts.key?('count')
       items
     end
