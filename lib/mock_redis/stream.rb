@@ -5,8 +5,6 @@ require 'mock_redis/stream/id'
 
 # TODO: Implement the following commands
 #
-#   * xrange
-#   * xrevrange (see https://github.com/antirez/redis/issues/5006)
 #   * xread
 #   * xgroup
 #   * xreadgroup
