@@ -22,11 +22,11 @@ class MockRedis
           if id.is_a? String
             (_, @timestamp, @sequence) = id.match(/^(\d+)-?(\d+)?$/)
                                            .to_a
-            @timestamp = @timestamp.to_i
             if @timestamp.nil?
               raise Redis::CommandError,
                     'ERR Invalid stream ID specified as stream command argument'
             end
+            @timestamp = @timestamp.to_i
           else
             @timestamp = id
           end
