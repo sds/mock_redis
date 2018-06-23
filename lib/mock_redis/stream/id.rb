@@ -22,7 +22,7 @@ class MockRedis
           if id.is_a? String
             (_, @timestamp, @sequence) = id.match(/^(\d+)-?(\d+)?$/)
                                            .to_a
-                                           .map(&:to_i)
+            @timestamp = @timestamp.to_i
             if @timestamp.nil?
               raise Redis::CommandError,
                     'ERR Invalid stream ID specified as stream command argument'
@@ -30,7 +30,7 @@ class MockRedis
           else
             @timestamp = id
           end
-          @sequence = sequence if @sequence.nil?
+          @sequence = @sequence.nil? ? sequence : @sequence.to_i
           if self <= min
             raise Redis::CommandError,
                   'ERR The ID specified in XADD is equal or smaller than ' \

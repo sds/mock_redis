@@ -104,6 +104,17 @@ describe '#xrange(key, start, end)' do
       )
     end
 
+    it 'accepts limits as integers' do
+      expect(@redises.xrange(@key, 1_234_567_891_245, 1_234_567_891_278)).to eq(
+        [
+          ['1234567891245-0', %w[key2 value2]],
+          ['1234567891245-1', %w[key3 value3]],
+          ['1234567891278-0', %w[key4 value4]],
+          ['1234567891278-1', %w[key5 value5]]
+        ]
+      )
+    end
+
     it 'returns a limited number of items' do
       expect(@redises.xrange(@key, '-', '+', 'COUNT', '2')).to eq(
         [
