@@ -22,19 +22,31 @@ class MockRedis
       end
     end
 
-    def xlen(key)
+    def xlen(key = nil, *args)
+      if key.nil? || args.count > 0
+        raise Redis::CommandError,
+              "ERR wrong number of arguments for 'xlen' command"
+      end
       with_stream_at(key) do |stream|
         return stream.count
       end
     end
 
-    def xrange(key, start, finish, *options)
+    def xrange(key = nil, start = nil, finish = nil, *options)
+      if finish.nil?
+        raise Redis::CommandError,
+              "ERR wrong number of arguments for 'xrange' command"
+      end
       with_stream_at(key) do |stream|
         return stream.range(start, finish, false, *options)
       end
     end
 
-    def xrevrange(key, finish, start, *options)
+    def xrevrange(key = nil, finish = nil, start = nil, *options)
+      if start.nil?
+        raise Redis::CommandError,
+              "ERR wrong number of arguments for 'xrevrange' command"
+      end
       with_stream_at(key) do |stream|
         return stream.range(start, finish, true, *options)
       end
