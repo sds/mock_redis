@@ -18,6 +18,9 @@ rvm:
   - 2.1
   - 2.2
   - 2.3.1
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
 
 before_script:
   - git config --local user.email "travis@travis.ci"
@@ -27,10 +30,11 @@ before_script:
 install:
   - wget https://github.com/antirez/redis/archive/5.0-rc3.tar.gz -O /tmp/redis-5.0-rc3.tar.gz
   - tar -xvf /tmp/redis-5.0-rc3.tar.gz
-  - pushd redis-5.0-rc3 && make && ./src/redis-server --daemonize yes && popd
+  - pushd redis-5.0-rc3 && make && popd
+  - redis-5.0-rc3/src/redis-server --daemonize yes
 
 script:
-  - redis-cli --version
+  - redis-5.0-rc3/src/redis-cli --version
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
