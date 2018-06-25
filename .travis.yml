@@ -27,11 +27,8 @@ before_script:
   - git config --local user.name "Travis CI"
 
 # Install RC3 of Redis 5
-install:
-  - wget https://github.com/antirez/redis/archive/5.0-rc3.tar.gz -O /tmp/redis-5.0-rc3.tar.gz
-  - tar -xvf /tmp/redis-5.0-rc3.tar.gz
-  - pushd redis-5.0-rc3 && make && popd
-  - redis-5.0-rc3/src/redis-server --daemonize yes
+before_install:
+  - ./start-redis-five.sh
 
 script:
   - redis-5.0-rc3/src/redis-cli --version
