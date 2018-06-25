@@ -4,13 +4,14 @@ sudo: false
 
 cache: bundler
 
-addons:
-  apt:
-    packages:
-      - redis-server
+# Using RC 3 of Redis 5 (see below)
+#addons:
+#  apt:
+#    packages:
+#      - redis-server
 
-services:
-  - redis-server
+#services:
+#  - redis-server
 
 before_install:
   - sudo sed -e 's/^bind.*/bind 127.0.0.1/' /etc/redis/redis.conf > redis.conf
@@ -27,6 +28,12 @@ rvm:
 before_script:
   - git config --local user.email "travis@travis.ci"
   - git config --local user.name "Travis CI"
+
+# Install RC3 of Redis 5
+install:
+  - wget https://github.com/antirez/redis/archive/5.0-rc3.tar.gz -O /tmp/redis-5.0-rc3.tar.gz
+  - tar -xvf /tmp/redis-5.0-rc3.tar.gz
+  - pushd redis-5.0-rc3 && make && ./src/redis-server --daemonize yes && popd
 
 script:
   - redis-cli --version
