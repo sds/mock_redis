@@ -31,7 +31,7 @@ before_script:
 
 # Install RC3 of Redis 5
 before_install:
-  - ./start-redis-five.sh
+  - sh start-redis-five.sh
 
 script:
   - redis-5.0-rc3/src/redis-cli --version
