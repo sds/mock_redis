@@ -42,9 +42,11 @@ describe '#geohash' do
   end
 
   context 'with non-existing key' do
+    before { @redises.del(key) }
+
     it 'returns empty array' do
       results = @redises.geohash(key, 'SF', 'LA')
-      expect(results).to be == []
+      expect(results).to be == [nil, nil]
     end
   end
 end

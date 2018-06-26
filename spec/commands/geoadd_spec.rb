@@ -33,7 +33,7 @@ describe '#geoadd' do
     context 'when coordinates are not in allowed range' do
       let(:coords) { [181, 86] }
       let(:message) do
-        formatted_coords = coords.map { |c| '%.6f' % c }
+        formatted_coords = coords.map { |c| format('%.6f', c) }
         "ERR invalid longitude,latitude pair #{formatted_coords.join(',')}"
       end
 

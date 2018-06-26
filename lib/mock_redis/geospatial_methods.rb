@@ -10,7 +10,7 @@ class MockRedis
       mi: 1609.34
     }.freeze
     D_R = Math::PI / 180.0
-    EARTH_RADIUS_IN_METERS = 6372797.560856
+    EARTH_RADIUS_IN_METERS = 6_372_797.560856
 
     def geoadd(key, *args)
       points = parse_points(args)
@@ -34,33 +34,32 @@ class MockRedis
       to_meter = 1
       to_meter = parse_unit(args[2]) if args.length == 3
 
-      return '' if zcard(key).zero?
+      return nil if zcard(key).zero?
 
       score1 = zscore(key, args[0])
       score2 = zscore(key, args[1])
       return nil if score1.nil? || score2.nil?
-      score1 = score1.to_i
-      score2 = score2.to_i
+      hash1 = { bits: score1.to_i, step: STEP }
+      hash2 = { bits: score2.to_i, step: STEP }
 
-      lng1, lat1 = geohash_decode({ bits: score1, step: STEP })
-      lng2, lat2 = geohash_decode({ bits: score2, step: STEP })
+      lng1, lat1 = geohash_decode(hash1)
+      lng2, lat2 = geohash_decode(hash2)
 
       distance = geohash_distance(lng1, lat1, lng2, lat2) / to_meter
       format('%.4f', distance)
     end
 
     def geohash(key, *members)
-      return [] if zcard(key).zero?
-
       lng_range = (-180..180)
       lat_range = (-90..90)
-      geoalphabet= '0123456789bcdefghjkmnpqrstuvwxyz'
+      geoalphabet = '0123456789bcdefghjkmnpqrstuvwxyz'
 
       members.map do |member|
         score = zscore(key, member)
         next nil unless score
         score = score.to_i
-        lng, lat = geohash_decode({ bits: score, step: STEP })
+        hash = { bits: score, step: STEP }
+        lng, lat = geohash_decode(hash)
         bits = geohash_encode(lng, lat, lng_range, lat_range)[:bits]
         hash = ''
         11.times do |i|
@@ -73,13 +72,11 @@ class MockRedis
     end
 
     def geopos(key, *members)
-      return [] if zcard(key).zero?
-
       members.map do |member|
         score = zscore(key, member)
         next nil unless score
-        score = score.to_i
-        lng, lat = geohash_decode({ bits: score, step: STEP })
+        hash = { bits: score.to_i, step: STEP }
+        lng, lat = geohash_decode(hash)
         lng = format_decoded_coord(lng)
         lat = format_decoded_coord(lat)
         [lng, lat]
