@@ -36,10 +36,11 @@ class MockRedis
 
       return '' if zcard(key).zero?
 
-      score1 = zscore(key, args[0])&.to_i
-      score2 = zscore(key, args[1])&.to_i
-
+      score1 = zscore(key, args[0])
+      score2 = zscore(key, args[1])
       return nil if score1.nil? || score2.nil?
+      score1 = score1.to_i
+      score2 = score2.to_i
 
       lng1, lat1 = geohash_decode({ bits: score1, step: STEP })
       lng2, lat2 = geohash_decode({ bits: score2, step: STEP })
@@ -56,8 +57,9 @@ class MockRedis
       geoalphabet= '0123456789bcdefghjkmnpqrstuvwxyz'
 
       members.map do |member|
-        score = zscore(key, member)&.to_i
+        score = zscore(key, member)
         next nil unless score
+        score = score.to_i
         lng, lat = geohash_decode({ bits: score, step: STEP })
         bits = geohash_encode(lng, lat, lng_range, lat_range)[:bits]
         hash = ''
@@ -74,8 +76,9 @@ class MockRedis
       return [] if zcard(key).zero?
 
       members.map do |member|
-        score = zscore(key, member)&.to_i
+        score = zscore(key, member)
         next nil unless score
+        score = score.to_i
         lng, lat = geohash_decode({ bits: score, step: STEP })
         lng = format_decoded_coord(lng)
         lat = format_decoded_coord(lat)
