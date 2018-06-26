@@ -45,9 +45,11 @@ describe '#geopos' do
   end
 
   context 'with non-existing key' do
+    before { @redises.del(key) }
+
     it 'returns empty array' do
       coords = @redises.geopos(key, 'SF', 'LA')
-      expect(coords).to be == []
+      expect(coords).to be == [nil, nil]
     end
   end
 end

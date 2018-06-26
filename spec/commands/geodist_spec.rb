@@ -71,7 +71,7 @@ describe '#geodist' do
   context 'with non-existing key' do
     it 'returns empty string' do
       dist = @redises.geodist(key, 'SF', 'LA')
-      expect(dist).to be == ''
+      expect(dist).to be_nil
     end
   end
 
