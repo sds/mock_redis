@@ -1,5 +1,3 @@
-require 'pry'
-
 class MockRedis
   module GeospatialMethods
     LNG_RANGE = (-180..180)
@@ -18,7 +16,7 @@ class MockRedis
       points = parse_points(args)
 
       scored_points = points.map do |point|
-        score = encode(point[:lng], point[:lat], LNG_RANGE, LAT_RANGE)
+        score = geohash_encode(point[:lng], point[:lat])[:bits]
         [score.to_s, point[:key]]
       end
 
@@ -43,8 +41,8 @@ class MockRedis
 
       return nil if score1.nil? || score2.nil?
 
-      lng1, lat1 = decode(score1)
-      lng2, lat2 = decode(score2)
+      lng1, lat1 = geohash_decode({ bits: score1, step: STEP })
+      lng2, lat2 = geohash_decode({ bits: score2, step: STEP })
 
       distance = geohash_distance(lng1, lat1, lng2, lat2) / to_meter
       format('%.4f', distance)
@@ -60,8 +58,8 @@ class MockRedis
       members.map do |member|
         score = zscore(key, member)&.to_i
         next nil unless score
-        lng, lat = decode(score)
-        bits = encode(lng, lat, lng_range, lat_range)
+        lng, lat = geohash_decode({ bits: score, step: STEP })
+        bits = geohash_encode(lng, lat, lng_range, lat_range)[:bits]
         hash = ''
         11.times do |i|
           shift = (52 - ((i + 1) * 5))
@@ -78,7 +76,7 @@ class MockRedis
       members.map do |member|
         score = zscore(key, member)&.to_i
         next nil unless score
-        lng, lat = decode(score)
+        lng, lat = geohash_decode({ bits: score, step: STEP })
         lng = format_decoded_coord(lng)
         lat = format_decoded_coord(lat)
         [lng, lat]
@@ -117,14 +115,16 @@ class MockRedis
     end
 
     # Returns ZSET score for passed coordinates
-    def encode(lng, lat, lng_range, lat_range)
+    def geohash_encode(lng, lat, lng_range = LNG_RANGE, lat_range = LAT_RANGE, step = STEP)
       lat_offset = (lat - lat_range.min) / (lat_range.max - lat_range.min)
       lng_offset = (lng - lng_range.min) / (lng_range.max - lng_range.min)
 
-      lat_offset *= (1 << STEP)
-      lng_offset *= (1 << STEP)
+      lat_offset *= (1 << step)
+      lng_offset *= (1 << step)
 
-      interleave(lat_offset.to_i, lng_offset.to_i)
+      bits = interleave(lat_offset.to_i, lng_offset.to_i)
+
+      { bits: bits, step: step }
     end
 
     def interleave(x, y)
@@ -151,25 +151,32 @@ class MockRedis
     end
 
     # Decodes ZSET score to coordinates pair
-    def decode(bits)
+    def geohash_decode(hash, lng_range = LNG_RANGE, lat_range = LAT_RANGE)
+      area = calculate_approximate_area(hash, lng_range, lat_range)
+
+      lng = (area[:lng_min] + area[:lng_max]) / 2
+      lat = (area[:lat_min] + area[:lat_max]) / 2
+
+      [lng, lat]
+    end
+
+    def calculate_approximate_area(hash, lng_range, lat_range)
+      bits = hash[:bits]
+      step = hash[:step]
       hash_sep = deinterleave(bits)
 
-      lat_scale = LAT_RANGE.max - LAT_RANGE.min
-      lng_scale = LNG_RANGE.max - LNG_RANGE.min
+      lat_scale = lat_range.max - lat_range.min
+      lng_scale = lng_range.max - lng_range.min
 
       ilato = hash_sep & 0xFFFFFFFF # cast int64 to int32 to get lat part of deinterleaved hash
       ilngo = hash_sep >> 32        # shift over to get lng part of hash
 
-      # Calculate approximate area
-      lat_min =  LAT_RANGE.min + (ilato * 1.0 / (1 << STEP)) * lat_scale
-      lat_max =  LAT_RANGE.min + ((ilato + 1) * 1.0 / (1 << STEP)) * lat_scale
-      lng_min =  LNG_RANGE.min + (ilngo * 1.0 / (1 << STEP)) * lng_scale
-      lng_max =  LNG_RANGE.min + ((ilngo + 1) * 1.0 / (1 << STEP)) * lng_scale
-
-      lng = (lng_min + lng_max) / 2
-      lat = (lat_min + lat_max) / 2
-
-      [lng, lat]
+      {
+        lat_min: lat_range.min + (ilato * 1.0 / (1 << step)) * lat_scale,
+        lat_max: lat_range.min + ((ilato + 1) * 1.0 / (1 << step)) * lat_scale,
+        lng_min: lng_range.min + (ilngo * 1.0 / (1 << step)) * lng_scale,
+        lng_max: lng_range.min + ((ilngo + 1) * 1.0 / (1 << step)) * lng_scale
+      }
     end
 
     def deinterleave(bits)
@@ -218,16 +225,24 @@ class MockRedis
     end
 
     def geohash_distance(lng1d, lat1d, lng2d, lat2d)
-      lat1r = lat1d * D_R
-      lng1r = lng1d * D_R
-      lat2r = lat2d * D_R
-      lng2r = lng2d * D_R
+      lat1r = deg_rad(lat1d)
+      lng1r = deg_rad(lng1d)
+      lat2r = deg_rad(lat2d)
+      lng2r = deg_rad(lng2d)
 
       u = Math.sin((lat2r - lat1r) / 2)
       v = Math.sin((lng2r - lng1r) / 2)
 
       2.0 * EARTH_RADIUS_IN_METERS *
         Math.asin(Math.sqrt(u * u + Math.cos(lat1r) * Math.cos(lat2r) * v * v))
+    end
+
+    def deg_rad(ang)
+      ang * D_R
+    end
+
+    def rad_deg(ang)
+      ang / D_R
     end
   end
 end
