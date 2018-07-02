@@ -49,7 +49,6 @@ describe '#xrevrange(key, start, end)' do
     end
 
     it 'returns entries with an upper limit' do
-      require 'pry'
       expect(@redises.xrevrange(@key, '1234567891285-0', '-')).to eq(
         [
           ['1234567891278-1', %w[key5 value5]],
