@@ -1,7 +1,14 @@
 require 'spec_helper'
 
 describe '#xlen(key)' do
-  before { @key = 'mock-redis-test:xlen' }
+  before :all do
+    sleep 1 - (Time.now.to_f % 1)
+    @key = 'mock-redis-test:xlen'
+  end
+
+  before :each do
+    @redises._gsub(/\d{3}-\d/, '...-.')
+  end
 
   it 'returns the number of items in the stream' do
     expect(@redises.xlen(@key)).to eq 0

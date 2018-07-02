@@ -10,6 +10,16 @@ class RedisMultiplexer < BlankSlate
   def initialize(*a)
     @mock_redis = MockRedis.new(*a)
     @real_redis = Redis.new(*a)
+    _gsub_clear
+  end
+
+  def _gsub(from, to)
+    @gsub_from = from
+    @gsub_to = to
+  end
+
+  def _gsub_clear
+    @gsub_from = @gsub_to = ''
   end
 
   def method_missing(method, *args, &blk)
@@ -71,6 +81,8 @@ class RedisMultiplexer < BlankSlate
   def equalish?(a, b)
     if a == b
       true
+    elsif a.is_a?(String) && b.is_a?(String)
+      a.gsub(@gsub_from, @gsub_to) == b.gsub(@gsub_from, @gsub_to)
     elsif a.is_a?(Array) && b.is_a?(Array)
       a.collect(&:to_s).sort == b.collect(&:to_s).sort
     elsif a.is_a?(Exception) && b.is_a?(Exception)
