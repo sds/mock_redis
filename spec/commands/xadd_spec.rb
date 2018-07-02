@@ -1,7 +1,14 @@
 require 'spec_helper'
 
 describe '#xadd(key, id, [field, value, ...])' do
-  before { @key = 'mock-redis-test:xadd' }
+  before :all do
+    sleep 1 - (Time.now.to_f % 1)
+    @key = 'mock-redis-test:xadd'
+  end
+
+  before :each do
+    @redises._gsub(/\d{3}-\d/, '...-.')
+  end
 
   it 'returns an id based on the timestamp' do
     t = Time.now.to_i
@@ -15,8 +22,10 @@ describe '#xadd(key, id, [field, value, ...])' do
   end
 
   it 'increments the sequence number with the same timestamp' do
-    @redises.xadd(@key, '*', 'key', 'value')
-    expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/\d+-1/)
+    Timecop.freeze do
+      @redises.xadd(@key, '*', 'key', 'value')
+      expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/\d+-1/)
+    end
   end
 
   it 'sets the id if it is given' do

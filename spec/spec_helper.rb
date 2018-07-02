@@ -12,6 +12,7 @@ require 'rspec/its'
 require 'redis'
 $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, '..', '..', 'lib')))
 require 'mock_redis'
+require 'timecop'
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
 Dir['spec/support/**/*.rb'].each { |x| require x }
@@ -59,5 +60,6 @@ RSpec.configure do |config|
         @redises.send_without_checking(:del, key)
       end
     end
+    @redises._gsub_clear
   end
 end
