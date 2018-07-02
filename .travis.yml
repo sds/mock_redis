@@ -4,26 +4,34 @@ sudo: false
 
 cache: bundler
 
-addons:
-  apt:
-    packages:
-      - redis-server
+# Using RC 3 of Redis 5 (see below)
+#addons:
+#  apt:
+#    packages:
+#      - redis-server
 
-services:
-  - redis-server
+#services:
+#  - redis-server
 
 rvm:
   - 2.0
   - 2.1
   - 2.2
   - 2.3.1
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
 
 before_script:
   - git config --local user.email "travis@travis.ci"
   - git config --local user.name "Travis CI"
 
+# Install RC3 of Redis 5
+before_install:
+  - sh start-redis-five.sh
+
 script:
-  - redis-cli --version
+  - redis-5.0-rc3/src/redis-cli --version
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
