@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Require Ruby 2.2+
+
 ### 0.18.0
 
 * Fix `hset` return value to return false when the field exists in the hash

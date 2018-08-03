@@ -93,8 +93,8 @@ please submit a pull request with your (tested!) implementation.
 
 ## Compatibility
 
-As of version `0.8.2`, Ruby 2.0.0 and above are supported. For
-older versions of Ruby, use `0.8.1` or older.
+As of version `0.19.0`, Ruby 2.2 and above are supported. For
+older versions of Ruby, use `0.18.0` or older.
 
 ## Running the Tests
 
