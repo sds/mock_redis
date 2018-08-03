@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.19.0
 
 * Require Ruby 2.2+
 * Add support for `bitfield` command
