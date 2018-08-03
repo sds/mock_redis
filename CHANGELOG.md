@@ -3,6 +3,9 @@
 ### master (unreleased)
 
 * Require Ruby 2.2+
+* Add support for `bitfield` command
+* Add support for `geoadd`, `geopos`, `geohash`, and `geodist` commands
+* Fix multi-nested pipeline not releasing lock issue
 
 ### 0.18.0
 
