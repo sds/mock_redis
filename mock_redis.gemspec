@@ -1,4 +1,4 @@
-$LOAD_PATH << File.expand_path('../lib', __FILE__)
+$LOAD_PATH << File.expand_path('lib', __dir__)
 require 'mock_redis/version'
 
 Gem::Specification.new do |s|
@@ -11,10 +11,10 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/brigade/mock_redis'
   s.summary     = 'Redis mock that just lives in memory; useful for testing.'
 
-  s.description = <<-EOS.strip.gsub(/\s+/, ' ')
+  s.description = <<-MSG.strip.gsub(/\s+/, ' ')
    Instantiate one with `redis = MockRedis.new` and treat it like you would a
    normal Redis object. It supports all the usual Redis operations.
-  EOS
+  MSG
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- spec/*`.split("\n")

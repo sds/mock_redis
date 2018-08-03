@@ -1,3 +1,14 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.2
+
+Layout/AlignParameters:
+  Enabled: false
+
+Layout/DotPosition:
+  Enabled: false
+
 Lint/AssignmentInCondition:
   Enabled: false
 
@@ -30,16 +41,18 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
-Style/AlignParameters:
+# This hides the has-a versus is-a relationship indicated by the method name
+Naming/PredicateName:
   Enabled: false
 
 Style/Documentation:
   Enabled: false
 
-Style/DotPosition:
+Style/DoubleNegation:
   Enabled: false
 
-Style/DoubleNegation:
+# We have too much code that relies on modifying strings
+Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/GuardClause:
@@ -55,7 +68,10 @@ Style/Lambda:
   Enabled: false
 
 # TODO: Address these at some point
-Style/MethodMissing:
+Style/MethodMissingSuper:
+  Enabled: false
+
+Style/MissingRespondToMissing:
   Enabled: false
 
 Style/MultilineBlockChain:
@@ -80,10 +96,6 @@ Style/PercentLiteralDelimiters:
 Style/PerlBackrefs:
   Enabled: false
 
-# This hides the has-a versus is-a relationship indicated by the method name
-Style/PredicateName:
-  Enabled: false
-
 Style/RescueModifier:
   Enabled: false
 
@@ -99,7 +111,10 @@ Style/SymbolArray:
 Style/TrailingCommaInArguments:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Style/WhenThen:

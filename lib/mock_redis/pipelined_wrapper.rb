@@ -34,14 +34,14 @@ class MockRedis
       @in_pipeline = false
       responses = @pipelined_futures.flat_map do |future|
         begin
-          if future.block
-            result = send(*future.command, &future.block)
-          else
-            result = send(*future.command)
-          end
+          result = if future.block
+                     send(*future.command, &future.block)
+                   else
+                     send(*future.command)
+                   end
           future.store_result(result)
           result
-        rescue => e
+        rescue StandardError => e
           e
         end
       end
