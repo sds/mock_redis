@@ -32,7 +32,7 @@ class MockRedis
       @in_pipeline = true
       yield self
       @in_pipeline = false
-      responses = @pipelined_futures.map do |future|
+      responses = @pipelined_futures.flat_map do |future|
         begin
           if future.block
             result = send(*future.command, &future.block)
