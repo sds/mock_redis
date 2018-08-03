@@ -3,7 +3,6 @@
 [![Gem Version](https://badge.fury.io/rb/mock_redis.svg)](http://badge.fury.io/rb/mock_redis)
 [![Build Status](https://travis-ci.org/brigade/mock_redis.svg)](https://travis-ci.org/brigade/mock_redis)
 [![Coverage Status](https://coveralls.io/repos/brigade/mock_redis/badge.svg)](https://coveralls.io/r/brigade/mock_redis)
-[![Dependency Status](https://gemnasium.com/brigade/mock_redis.svg)](https://gemnasium.com/brigade/mock_redis)
 
 MockRedis provides the same interface as `redis-rb`, but it stores its
 data in memory instead of talking to a Redis server. It is intended
