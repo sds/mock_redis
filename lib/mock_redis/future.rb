@@ -2,10 +2,11 @@ class MockRedis
   class FutureNotReady < RuntimeError; end
 
   class Future
-    attr_reader :command
+    attr_reader :command, :block
 
-    def initialize(command)
+    def initialize(command, block = nil)
       @command = command
+      @block = block
       @result_set = false
     end
 
