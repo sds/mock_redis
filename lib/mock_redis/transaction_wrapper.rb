@@ -59,7 +59,7 @@ class MockRedis
           result = send(*future.command)
           future.store_result(result)
           result
-        rescue => e
+        rescue StandardError => e
           e
         end
       end

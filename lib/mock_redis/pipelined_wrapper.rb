@@ -20,7 +20,7 @@ class MockRedis
 
     def method_missing(method, *args, &block)
       if @in_pipeline
-        future = MockRedis::Future.new([method, *args])
+        future = MockRedis::Future.new([method, *args], block)
         @pipelined_futures << future
         future
       else
@@ -32,12 +32,16 @@ class MockRedis
       @in_pipeline = true
       yield self
       @in_pipeline = false
-      responses = @pipelined_futures.map do |future|
+      responses = @pipelined_futures.flat_map do |future|
         begin
-          result = send(*future.command)
+          result = if future.block
+                     send(*future.command, &future.block)
+                   else
+                     send(*future.command)
+                   end
           future.store_result(result)
           result
-        rescue => e
+        rescue StandardError => e
           e
         end
       end

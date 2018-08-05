@@ -14,12 +14,10 @@ cache: bundler
 #  - redis-server
 
 rvm:
-  - 2.0
-  - 2.1
   - 2.2
-  - 2.3
-  - 2.4
-  - 2.5
+  - 2.3.7
+  - 2.4.4
+  - 2.5.1
 
 before_script:
   - git config --local user.email "travis@travis.ci"

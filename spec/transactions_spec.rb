@@ -67,6 +67,18 @@ describe 'transactions (multi/exec/discard)' do
       @redises.get('counter').should == '6'
       @redises.get('test').should == '1'
     end
+
+    it 'allows multi blocks within pipelined blocks' do
+      @redises.set('counter', 5)
+      @redises.pipelined do |pr|
+        pr.multi do |r|
+          r.set('test', 1)
+          r.incr('counter')
+        end
+      end
+      @redises.get('counter').should == '6'
+      @redises.get('test').should == '1'
+    end
   end
 
   context '#discard' do

@@ -1,5 +1,12 @@
 # MockRedis Changelog
 
+### 0.19.0
+
+* Require Ruby 2.2+
+* Add support for `bitfield` command
+* Add support for `geoadd`, `geopos`, `geohash`, and `geodist` commands
+* Fix multi-nested pipeline not releasing lock issue
+
 ### 0.18.0
 
 * Fix `hset` return value to return false when the field exists in the hash
