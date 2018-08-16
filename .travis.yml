@@ -4,7 +4,7 @@ sudo: false
 
 cache: bundler
 
-# Using RC 3 of Redis 5 (see below)
+# Using RC 4 of Redis 5 (see below)
 #addons:
 #  apt:
 #    packages:
@@ -28,7 +28,7 @@ before_install:
   - sh start-redis-five.sh
 
 script:
-  - redis-5.0-rc3/src/redis-cli --version
+  - redis-5.0-rc4/src/redis-cli --version
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
