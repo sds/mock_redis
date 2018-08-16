@@ -8,7 +8,7 @@ class MockRedis
       def initialize(id, min: nil, sequence: 0)
         case id
         when '*'
-          @timestamp = DateTime.now.strftime('%Q').to_i
+          @timestamp = (Time.now.to_f * 1000).to_i
           @sequence = 0
           if self <= min
             @timestamp = min.timestamp
