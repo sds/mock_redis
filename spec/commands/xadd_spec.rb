@@ -49,7 +49,7 @@ describe '#xadd(key, id, [field, value, ...])' do
   end
 
   it 'caters for the current time being before the last time' do
-    t = DateTime.now.strftime('%Q').to_i + 2000
+    t = (Time.now.to_f * 1000).to_i + 2000
     @redises.xadd(@key, "#{t}-0", 'key', 'value')
     expect(@redises.xadd(@key, '*', 'key', 'value')).to match(/#{t}-1/)
   end
