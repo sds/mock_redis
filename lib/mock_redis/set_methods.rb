@@ -81,11 +81,22 @@ class MockRedis
       end
     end
 
-    def spop(key)
+    def spop(key, count = nil)
       with_set_at(key) do |set|
-        member = set.first
-        set.delete(member)
-        member
+        if count.nil?
+          member = set.first
+          set.delete(member)
+          member
+        else
+          members = []
+          count.times do
+            member = set.first
+            break if member.nil?
+            set.delete(member)
+            members << member
+          end
+          members
+        end
       end
     end
 
