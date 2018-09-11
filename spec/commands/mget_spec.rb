@@ -9,26 +9,45 @@ describe '#mget(key [, key, ...])' do
     @redises.set(@key2, 2)
   end
 
-  it 'returns an array of values' do
-    @redises.mget(@key1, @key2).should == %w[1 2]
+  context 'emulate param array' do
+    it 'returns an array of values' do
+      @redises.mget([@key1, @key2]).should == %w[1 2]
+    end
+
+    it 'returns an array of values' do
+      @redises.mget([@key1, @key2]).should == %w[1 2]
+    end
+
+    it 'returns nil for non-string keys' do
+      list = 'mock-redis-test:mget-list'
+
+      @redises.lpush(list, 'bork bork bork')
+
+      @redises.mget([@key1, @key2, list]).should == ['1', '2', nil]
+    end
   end
 
-  it 'returns nil for missing keys' do
-    @redises.mget(@key1, 'mock-redis-test:not-found', @key2).
-      should == ['1', nil, '2']
-  end
+  context 'emulate params strings' do
+    it 'returns an array of values' do
+      @redises.mget(@key1, @key2).should == %w[1 2]
+    end
 
-  it 'returns nil for non-string keys' do
-    list = 'mock-redis-test:mget-list'
+    it 'returns nil for missing keys' do
+      @redises.mget(@key1, 'mock-redis-test:not-found', @key2).should == ['1', nil, '2']
+    end
 
-    @redises.lpush(list, 'bork bork bork')
+    it 'returns nil for non-string keys' do
+      list = 'mock-redis-test:mget-list'
 
-    @redises.mget(@key1, @key2, list).should == ['1', '2', nil]
-  end
+      @redises.lpush(list, 'bork bork bork')
 
-  it 'raises an error if you pass it 0 arguments' do
-    lambda do
-      @redises.mget
-    end.should raise_error(Redis::CommandError)
+      @redises.mget(@key1, @key2, list).should == ['1', '2', nil]
+    end
+
+    it 'raises an error if you pass it 0 arguments' do
+      lambda do
+        @redises.mget
+      end.should raise_error(Redis::CommandError)
+    end
   end
 end
