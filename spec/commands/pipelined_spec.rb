@@ -65,4 +65,30 @@ describe '#pipelined' do
       results.should == [value1, value2]
     end
   end
+
+  context 'with nested pipelines' do
+    let(:key1)   { 'hello' }
+    let(:key2)   { 'world' }
+    let(:value1) { 'foo' }
+    let(:value2) { 'bar' }
+
+    before do
+      @redises.set key1, value1
+      @redises.set key2, value2
+    end
+
+    it 'returns results of the nested pipelines' do
+      results = @redises.pipelined do |pr1|
+        pr1.pipelined do |pr2|
+          pr2.get key1
+        end
+
+        pr1.pipelined do |pr2|
+          pr2.get key2
+        end
+      end
+
+      results.should == [value1, value2]
+    end
+  end
 end
