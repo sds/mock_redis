@@ -9,7 +9,7 @@ class MockRedis
     def initialize(db)
       @db = db
       @pipelined_futures = []
-      @in_pipeline = false
+      @nesting_level = 0
     end
 
     def initialize_copy(source)
@@ -19,7 +19,7 @@ class MockRedis
     end
 
     def method_missing(method, *args, &block)
-      if @in_pipeline
+      if in_pipeline?
         future = MockRedis::Future.new([method, *args], block)
         @pipelined_futures << future
         future
@@ -29,9 +29,17 @@ class MockRedis
     end
 
     def pipelined(_options = {})
-      @in_pipeline = true
-      yield self
-      @in_pipeline = false
+      begin
+        @nesting_level += 1
+        yield self
+      ensure
+        @nesting_level -= 1
+      end
+
+      if in_pipeline?
+        return
+      end
+
       responses = @pipelined_futures.flat_map do |future|
         begin
           result = if future.block
@@ -52,6 +60,12 @@ class MockRedis
       end
       @pipelined_futures = []
       responses
+    end
+
+    private
+
+    def in_pipeline?
+      @nesting_level > 0
     end
   end
 end
