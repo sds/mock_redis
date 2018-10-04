@@ -40,7 +40,12 @@ class MockRedis
                      send(*future.command)
                    end
           future.store_result(result)
-          result
+
+          if future.block
+            result
+          else
+            [result]
+          end
         rescue StandardError => e
           e
         end
