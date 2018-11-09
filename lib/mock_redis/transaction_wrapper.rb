@@ -11,12 +11,12 @@ class MockRedis
     def initialize(db)
       @db = db
       @transaction_futures = []
-      @in_multi = false
+      @multi_stack = []
       @multi_block_given = false
     end
 
     def method_missing(method, *args, &block)
-      if @in_multi
+      if in_multi?
         future = MockRedis::Future.new([method, *args])
         @transaction_futures << future
 
@@ -38,20 +38,21 @@ class MockRedis
     end
 
     def discard
-      unless @in_multi
+      unless in_multi?
         raise Redis::CommandError, 'ERR DISCARD without MULTI'
       end
-      @in_multi = false
-      @multi_block_given = false
+      pop_multi
+
       @transaction_futures = []
       'OK'
     end
 
     def exec
-      unless @in_multi
+      unless in_multi?
         raise Redis::CommandError, 'ERR EXEC without MULTI'
       end
-      @in_multi = false
+      pop_multi
+      return if in_multi?
       @multi_block_given = false
 
       responses = @transaction_futures.map do |future|
@@ -68,11 +69,20 @@ class MockRedis
       responses
     end
 
+    def in_multi?
+      @multi_stack.any?
+    end
+
+    def push_multi
+      @multi_stack.push(@multi_stack.size + 1)
+    end
+
+    def pop_multi
+      @multi_stack.pop
+    end
+
     def multi
-      if @in_multi
-        raise Redis::CommandError, 'ERR MULTI calls can not be nested'
-      end
-      @in_multi = true
+      push_multi
       if block_given?
         @multi_block_given = true
         begin
