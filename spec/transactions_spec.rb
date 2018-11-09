@@ -10,11 +10,11 @@ describe 'transactions (multi/exec/discard)' do
       @redises.multi.should == 'OK'
     end
 
-    it 'forbids nesting' do
+    it 'does not permit nesting' do
       @redises.multi
       lambda do
         @redises.multi
-      end.should raise_error(Redis::CommandError)
+      end.should raise_error(Redis::CommandError, 'ERR MULTI calls can not be nested')
     end
 
     it 'cleans state of transaction wrapper if exception occurs during transaction' do
@@ -41,18 +41,18 @@ describe 'transactions (multi/exec/discard)' do
         r.set('test', 1)
         r.incr('counter')
       end
-      @redises.get('counter').should == '6'
-      @redises.get('test').should == '1'
+      @redises.get('counter').should eq '6'
+      @redises.get('test').should eq '1'
     end
 
-    it 'forbids nesting via blocks' do
+    it 'permits nesting via blocks' do
       # Have to use only the mock here. redis-rb has a bug in it where
       # nested #multi calls raise NoMethodError because it gets a nil
       # where it's not expecting one.
       @redises.mock.multi do |r|
         lambda do
           r.multi {}
-        end.should raise_error(Redis::CommandError)
+        end.should_not raise_error
       end
     end
 
@@ -64,15 +64,15 @@ describe 'transactions (multi/exec/discard)' do
           pr.incr('counter')
         end
       end
-      @redises.get('counter').should == '6'
-      @redises.get('test').should == '1'
+      @redises.get('counter').should eq '6'
+      @redises.get('test').should eq '1'
     end
   end
 
   context '#discard' do
     it "responds with 'OK' after #multi" do
       @redises.multi
-      @redises.discard.should == 'OK'
+      @redises.discard.should eq 'OK'
     end
 
     it "can't be run outside of #multi/#exec" do
@@ -98,8 +98,8 @@ describe 'transactions (multi/exec/discard)' do
     end
 
     it "makes commands respond with 'QUEUED'" do
-      @redises.set(@string, 'string').should == 'QUEUED'
-      @redises.lpush(@list, 'list').should == 'QUEUED'
+      @redises.set(@string, 'string').should eq 'QUEUED'
+      @redises.lpush(@list, 'list').should eq 'QUEUED'
     end
 
     it "gives you the commands' responses when you call #exec" do
@@ -107,7 +107,7 @@ describe 'transactions (multi/exec/discard)' do
       @redises.lpush(@list, 'list')
       @redises.lpush(@list, 'list')
 
-      @redises.exec.should == ['OK', 1, 2]
+      @redises.exec.should eq ['OK', 1, 2]
     end
 
     it "does not raise exceptions, but rather puts them in #exec's response" do
@@ -116,9 +116,9 @@ describe 'transactions (multi/exec/discard)' do
       @redises.lpush(@list, 'list')
 
       responses = @redises.exec
-      responses[0].should == 'OK'
+      responses[0].should eq 'OK'
       responses[1].should be_a(Redis::CommandError)
-      responses[2].should == 1
+      responses[2].should eq 1
     end
   end
 
@@ -139,9 +139,9 @@ describe 'transactions (multi/exec/discard)' do
         second_lpush_response = mult.lpush(@list, 'list')
       end
 
-      set_response.value.should == 'OK'
-      lpush_response.value.should == 1
-      second_lpush_response.value.should == 2
+      set_response.value.should eq 'OK'
+      lpush_response.value.should eq 1
+      second_lpush_response.value.should eq 2
     end
   end
 end

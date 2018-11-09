@@ -57,7 +57,7 @@ describe '#pipelined' do
     end
 
     it 'returns an array of the array replies' do
-      results = @redises.pipelined do |redis|
+      results = @redises.pipelined do |_redis|
         @redises.lrange(key1, 0, -1)
         @redises.lrange(key2, 0, -1)
       end

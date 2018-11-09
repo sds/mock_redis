@@ -17,13 +17,13 @@ describe '#geohash' do
       end
 
       it 'returns decoded coordinates pairs for each point' do
-        results = @redises.geohash(key, 'SF', 'LA')
+        results = @redises.geohash(key, %w[SF LA])
         expect(results).to be == expected_result
       end
 
       context 'with non-existing points only' do
         it 'returns array filled with nils' do
-          results = @redises.geohash(key, 'FF', 'FA')
+          results = @redises.geohash(key, %w[FF FA])
           expect(results).to be == [nil, nil]
         end
       end
@@ -34,7 +34,7 @@ describe '#geohash' do
         end
 
         it 'returns mixture of nil and coordinates pair' do
-          results = @redises.geohash(key, 'SF', 'FA')
+          results = @redises.geohash(key, %w[SF FA])
           expect(results).to be == expected_result
         end
       end
@@ -45,7 +45,7 @@ describe '#geohash' do
     before { @redises.del(key) }
 
     it 'returns empty array' do
-      results = @redises.geohash(key, 'SF', 'LA')
+      results = @redises.geohash(key, %w[SF LA])
       expect(results).to be == [nil, nil]
     end
   end

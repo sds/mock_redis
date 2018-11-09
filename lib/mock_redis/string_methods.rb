@@ -89,10 +89,6 @@ class MockRedis
       data[key]
     end
 
-    def [](key)
-      get(key)
-    end
-
     def getbit(key, offset)
       assert_stringy(key)
 
@@ -202,6 +198,7 @@ class MockRedis
     end
 
     def set(key, value, options = {})
+      key = key.to_s
       return_true = false
       options = options.dup
       if options.delete(:nx)
@@ -230,10 +227,6 @@ class MockRedis
         expire(key, type.to_sym == :ex ? duration : duration / 1000.0)
       end
       return_true ? true : 'OK'
-    end
-
-    def []=(key, value, options = {})
-      set(key, value, options)
     end
 
     def setbit(key, offset, value)

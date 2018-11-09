@@ -80,13 +80,14 @@ describe '#geodist' do
 
     context 'with less than 3 arguments' do
       [1, 2].each do |count|
-        let(:message) { "ERR wrong number of arguments for 'geodist' command" }
-
         context "with #{count} arguments" do
           it 'raises an error' do
             args = list.slice(0, count)
             expect { @redises.geodist(*args) }
-              .to raise_error(Redis::CommandError, message)
+              .to raise_error(
+                ArgumentError,
+                /wrong number of arguments \((given\s)?#{count}(,\sexpected\s|\sfor\s)3?\.\.4\)$/
+              )
           end
         end
       end
@@ -98,7 +99,10 @@ describe '#geodist' do
       it 'raises an error' do
         args = list.slice(0, 5)
         expect { @redises.geodist(*args) }
-          .to raise_error(Redis::CommandError, message)
+          .to raise_error(
+            ArgumentError,
+            /wrong number of arguments \((given\s)?5(,\sexpected\s|\sfor\s)3?\.\.4\)$/
+          )
       end
     end
   end
