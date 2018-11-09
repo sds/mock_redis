@@ -35,6 +35,7 @@ class MockRedis
       super
       @db = @db.clone
       @transaction_futures = @transaction_futures.clone
+      @multi_stack = @multi_stack.clone
     end
 
     def discard
@@ -82,8 +83,8 @@ class MockRedis
     end
 
     def multi
-      push_multi
       if block_given?
+        push_multi
         @multi_block_given = true
         begin
           yield(self)
@@ -93,6 +94,8 @@ class MockRedis
           raise e
         end
       else
+        raise Redis::CommandError, 'ERR MULTI calls can not be nested' if in_multi?
+        push_multi
         'OK'
       end
     end

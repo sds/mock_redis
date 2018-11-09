@@ -20,13 +20,13 @@ describe '#geopos' do
       end
 
       it 'returns decoded coordinates pairs for each point' do
-        coords = @redises.geopos(key, 'SF', 'LA')
+        coords = @redises.geopos(key, %w[SF LA])
         expect(coords).to be == expected_result
       end
 
       context 'with non-existing points only' do
         it 'returns array filled with nils' do
-          coords = @redises.geopos(key, 'FF', 'FA')
+          coords = @redises.geopos(key, %w[FF FA])
           expect(coords).to be == [nil, nil]
         end
       end
@@ -37,7 +37,7 @@ describe '#geopos' do
         end
 
         it 'returns mixture of nil and coordinates pair' do
-          coords = @redises.geopos(key, 'SF', 'FA')
+          coords = @redises.geopos(key, %w[SF FA])
           expect(coords).to be == expected_result
         end
       end
@@ -48,7 +48,7 @@ describe '#geopos' do
     before { @redises.del(key) }
 
     it 'returns empty array' do
-      coords = @redises.geopos(key, 'SF', 'LA')
+      coords = @redises.geopos(key, %w[SF LA])
       expect(coords).to be == [nil, nil]
     end
   end
