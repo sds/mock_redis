@@ -13,6 +13,12 @@ cache: bundler
 #services:
 #  - redis-server
 
+before_install:
+  - sudo sed -e 's/^bind.*/bind 127.0.0.1/' /etc/redis/redis.conf > redis.conf
+  - sudo mv redis.conf /etc/redis
+  - sudo service redis-server start
+  - echo PING | nc localhost 6379
+
 rvm:
   - 2.2
   - 2.3.7
