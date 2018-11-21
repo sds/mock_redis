@@ -82,9 +82,9 @@ class RedisMultiplexer < BlankSlate
     if a == b
       true
     elsif a.is_a?(String) && b.is_a?(String)
-      a.gsub(@gsub_from, @gsub_to) == b.gsub(@gsub_from, @gsub_to)
+      masked(a) == masked(b)
     elsif a.is_a?(Array) && b.is_a?(Array)
-      a.collect(&:to_s).sort == b.collect(&:to_s).sort
+      a.collect { |c| masked(c.to_s) }.sort == b.collect { |c| masked(c.to_s) }.sort
     elsif a.is_a?(Exception) && b.is_a?(Exception)
       a.class == b.class && a.message == b.message
     elsif a.is_a?(Float) && b.is_a?(Float)
@@ -93,6 +93,10 @@ class RedisMultiplexer < BlankSlate
     else
       false
     end
+  end
+
+  def masked(str)
+    str.gsub(@gsub_from, @gsub_to)
   end
 
   def mock
