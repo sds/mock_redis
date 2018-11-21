@@ -4,14 +4,13 @@ sudo: false
 
 cache: bundler
 
-# Using RC 4 of Redis 5 (see below)
-#addons:
-#  apt:
-#    packages:
-#      - redis-server
+addons:
+  apt:
+    packages:
+      - redis-server
 
-#services:
-#  - redis-server
+services:
+  - redis-server
 
 before_install:
   - sudo sed -e 's/^bind.*/bind 127.0.0.1/' /etc/redis/redis.conf > redis.conf
@@ -29,12 +28,8 @@ before_script:
   - git config --local user.email "travis@travis.ci"
   - git config --local user.name "Travis CI"
 
-# Install RC3 of Redis 5
-before_install:
-  - sh start-redis-five.sh
-
 script:
-  - redis-5.0-rc4/src/redis-cli --version
+  - redis-cli --version
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
