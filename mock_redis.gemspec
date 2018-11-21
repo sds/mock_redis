@@ -27,4 +27,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'redis', '~>4.0.1'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rspec-its', '~> 1.0'
+  s.add_development_dependency 'timecop', '~> 0.9.1'
 end
