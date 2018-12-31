@@ -10,6 +10,8 @@ shared_examples_for 'a zset-only command' do
       @redises.send(method, *args)
     end.should raise_error(RuntimeError)
   end
+
+  it_should_behave_like 'does not remove empty strings on error'
 end
 
 shared_examples_for 'arg 1 is a score' do
