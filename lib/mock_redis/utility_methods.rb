@@ -18,7 +18,7 @@ class MockRedis
     end
 
     def clean_up_empties_at(key)
-      if data[key] && data[key].empty?
+      if data[key] && data[key].empty? && data[key] != ''
         del(key)
       end
     end
