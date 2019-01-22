@@ -15,11 +15,7 @@ class MockRedis
       end
     end
 
-    def xlen(key = nil, *args)
-      if key.nil? || args.count > 0
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xlen' command"
-      end
+    def xlen(key)
       with_stream_at(key) do |stream|
         return stream.count
       end
