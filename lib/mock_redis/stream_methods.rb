@@ -10,7 +10,7 @@ class MockRedis
     def xadd(key, entry, opts = {})
       id = opts[:id] || '*'
       with_stream_at(key) do |stream|
-        stream.add id, entry.to_a
+        stream.add id, entry.to_a.flatten
         return stream.last_id
       end
     end
@@ -25,13 +25,11 @@ class MockRedis
       end
     end
 
-    def xrange(key = nil, start = nil, finish = nil, *options)
-      if finish.nil?
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xrange' command"
-      end
+    def xrange(key, first = '-', last = '+', count: nil)
+      args = [first, last, false]
+      args += [ 'COUNT', count ] if count
       with_stream_at(key) do |stream|
-        return stream.range(start, finish, false, *options)
+        return stream.range(*args)
       end
     end
 

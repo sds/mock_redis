@@ -43,14 +43,11 @@ class MockRedis
 
     def range(start, finish, reversed, *opts_in)
       opts = options opts_in, ['count']
-      unless opts['count'].nil? || /^\d*$/.match(opts['count'])
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
       items = members
               .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
-              .map { |m| [m[0].to_s, m[1]] }
+              .map { |m| [m[0].to_s, Hash[[m[1]]]] }
       items.reverse! if reversed
       return items.first(opts['count'].to_i) if opts.key?('count')
       items

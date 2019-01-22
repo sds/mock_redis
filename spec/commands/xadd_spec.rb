@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xadd(key, id, [field, value, ...])' do
+describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, approximate: true)' do
   before :all do
     sleep 1 - (Time.now.to_f % 1)
     @key = 'mock-redis-test:xadd'
@@ -16,10 +16,9 @@ describe '#xadd(key, id, [field, value, ...])' do
   end
 
   it 'adds data with symbols' do
-    skip 'xrange currently broken'
     @redises.xadd(@key, { symbol_key: :symbol_value} )
     expect(@redises.xrange(@key, '-', '+').last[1])
-      .to eq(%w[symbol_key symbol_value])
+      .to eq({ 'symbol_key' => 'symbol_value' })
   end
 
   it 'increments the sequence number with the same timestamp' do
