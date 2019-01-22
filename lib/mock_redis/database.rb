@@ -305,11 +305,9 @@ class MockRedis
 
     def set_expiration(key, time)
       remove_expiration(key)
-
-      expire_times << [time, key.to_s]
-      expire_times.sort! do |a, b|
-        a.first <=> b.first
-      end
+      found = expire_times.each_with_index.to_a.bsearch { |item, _| item.first >= time }
+      index = found ? found.last : -1
+      expire_times.insert(index, [time, key.to_s])
     end
 
     def zero_pad(string, desired_length)
