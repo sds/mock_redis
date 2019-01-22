@@ -33,13 +33,11 @@ class MockRedis
       end
     end
 
-    def xrevrange(key = nil, finish = nil, start = nil, *options)
-      if start.nil?
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xrevrange' command"
-      end
+    def xrevrange(key, last = '+', first = '-', count: nil)
+      args = [first, last, true]
+      args += [ 'COUNT', count ] if count
       with_stream_at(key) do |stream|
-        return stream.range(start, finish, true, *options)
+        return stream.range(*args)
       end
     end
 
