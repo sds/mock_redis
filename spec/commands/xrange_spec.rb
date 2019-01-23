@@ -15,7 +15,7 @@ describe '#xrange("mystream", first: "0-1", last: "0-3", count: 10)' do
 
   context 'six items on the list' do
     before :each do
-      @redises.xadd(@key, { key1: 'value1'}, id: '1234567891234-0')
+      @redises.xadd(@key, { key1: 'value1' }, id: '1234567891234-0')
       @redises.xadd(@key, { key2: 'value2' }, id: '1234567891245-0')
       @redises.xadd(@key, { key3: 'value3' }, id: '1234567891245-1')
       @redises.xadd(@key, { key4: 'value4' }, id: '1234567891278-0')

@@ -23,7 +23,7 @@ class MockRedis
 
     def xrange(key, first = '-', last = '+', count: nil)
       args = [first, last, false]
-      args += [ 'COUNT', count ] if count
+      args += ['COUNT', count] if count
       with_stream_at(key) do |stream|
         return stream.range(*args)
       end
@@ -31,7 +31,7 @@ class MockRedis
 
     def xrevrange(key, last = '+', first = '-', count: nil)
       args = [first, last, true]
-      args += [ 'COUNT', count ] if count
+      args += ['COUNT', count] if count
       with_stream_at(key) do |stream|
         return stream.range(*args)
       end
