@@ -13,6 +13,12 @@ describe '#xrevrange(key, start, end)' do
       .to eq [['1234567891234-0', { 'key' => 'value' }]]
   end
 
+  it 'finds multiple key/value pairs with a full range' do
+    @redises.xadd(@key, { key1: 'value1', key2: 'value2', key3: 'value3' }, id: '1234567891234-0')
+    expect(@redises.xrevrange(@key, '+', '-'))
+      .to eq [['1234567891234-0', { 'key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3' }]]
+  end
+
   context 'six items on the list' do
     before :each do
       @redises.xadd(@key, { key1: 'value1' }, id: '1234567891234-0')

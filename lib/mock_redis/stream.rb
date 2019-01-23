@@ -47,7 +47,7 @@ class MockRedis
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
       items = members
               .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
-              .map { |m| [m[0].to_s, Hash[[m[1]]]] }
+              .map { |m| [m[0].to_s, Hash[m[1].each_slice(2).map { |k, v| [k, v] }]] }
       items.reverse! if reversed
       return items.first(opts['count'].to_i) if opts.key?('count')
       items
