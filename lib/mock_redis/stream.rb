@@ -37,7 +37,7 @@ class MockRedis
 
     def add(id, values)
       @last_id = MockRedis::Stream::Id.new(id, min: @last_id)
-      members.add [@last_id, values.map(&:to_s)]
+      members.add [@last_id, Hash[values.map { |k, v| [k.to_s, v.to_s] }]]
       @last_id.to_s
     end
 
@@ -47,7 +47,7 @@ class MockRedis
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
       items = members
               .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
-              .map { |m| [m[0].to_s, Hash[m[1].each_slice(2).map { |k, v| [k, v] }]] }
+              .map { |m| [m[0].to_s, m[1]] }
       items.reverse! if reversed
       return items.first(opts['count'].to_i) if opts.key?('count')
       items

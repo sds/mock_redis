@@ -10,7 +10,7 @@ class MockRedis
     def xadd(key, entry, opts = {})
       id = opts[:id] || '*'
       with_stream_at(key) do |stream|
-        stream.add id, entry.to_a.flatten
+        stream.add id, entry
         return stream.last_id
       end
     end
