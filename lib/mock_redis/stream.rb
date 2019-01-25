@@ -41,6 +41,12 @@ class MockRedis
       @last_id.to_s
     end
 
+    def trim(count)
+      deleted = @members.size - count
+      @members = @members.to_a[-count..-1].to_set
+      deleted
+    end
+
     def range(start, finish, reversed, *opts_in)
       opts = options opts_in, ['count']
       start_id = MockRedis::Stream::Id.new(start)

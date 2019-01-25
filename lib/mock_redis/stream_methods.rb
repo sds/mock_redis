@@ -2,6 +2,29 @@ require 'mock_redis/assertions'
 require 'mock_redis/utility_methods'
 require 'mock_redis/stream'
 
+# TODO: Implement the following commands
+#
+#   * xread
+#   * xgroup
+#   * xreadgroup
+#   * xack
+#   * xpending
+#   * xclaim
+#   * xinfo
+#   * xtrim
+#   * xdel
+#
+# TODO: Complete support for
+#
+#   * xtrim
+#       - `approximate: true` argument is currently ignored
+#   * xadd
+#       - `approximate: true` argument (for capped streams) is currently ignored
+#
+# For details of these commands see
+#   * https://redis.io/topics/streams-intro
+#   * https://redis.io/commands#stream
+
 class MockRedis
   module StreamMethods
     include Assertions
@@ -11,7 +34,14 @@ class MockRedis
       id = opts[:id] || '*'
       with_stream_at(key) do |stream|
         stream.add id, entry
+        stream.trim opts[:maxlen] if opts[:maxlen]
         return stream.last_id
+      end
+    end
+
+    def xtrim(key, count)
+      with_stream_at(key) do |stream|
+        stream.trim count
       end
     end
 
