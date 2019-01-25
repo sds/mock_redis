@@ -57,7 +57,7 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
       )
   end
 
-  it 'does not raise exception if id of 0 with positive sequence number is added to an empty stream' do
+  it 'does not raise exception on empty stream with id of 0 and positive sequence number' do
     expect { @redises.xadd('unknown-stream', { key: 'value' }, id: '0-1') }
       .to_not raise_error
   end
