@@ -3,20 +3,6 @@ require 'set'
 require 'date'
 require 'mock_redis/stream/id'
 
-# TODO: Implement the following commands
-#
-#   * xread
-#   * xgroup
-#   * xreadgroup
-#   * xack
-#   * xpending
-#   * xclaim
-#   * xinfo
-#   * xtrim
-#   * xdel
-#
-# For details of these commands see https://redis.io/topics/streams-intro
-
 class MockRedis
   class Stream
     include Enumerable

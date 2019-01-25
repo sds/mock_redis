@@ -31,7 +31,7 @@ class MockRedis
             @timestamp = id
           end
           @sequence = @sequence.nil? ? sequence : @sequence.to_i
-          if self <= min
+          if @timestamp == 0 || self <= min
             raise Redis::CommandError,
                   'ERR The ID specified in XADD is equal or smaller than ' \
                   'the target stream top item'

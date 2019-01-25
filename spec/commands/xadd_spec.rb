@@ -38,7 +38,7 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
       .to eq '1234567891234-0'
   end
 
-  it 'sets an id based on the timestamp if the given id is before the last' do
+  it 'raises exception if id is less that stream top item' do
     @redises.xadd(@key, { key: 'value' }, id: '1234567891234-0')
     expect { @redises.xadd(@key, { key: 'value' }, id: '1234567891233-0') }
       .to raise_error(
@@ -46,6 +46,24 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
         'ERR The ID specified in XADD is equal or smaller than the target ' \
         'stream top item'
       )
+  end
+
+  it 'raises exception if id of 0 is added to an empty stream' do
+    expect { @redises.xadd('unknown-stream', { key: 'value' }, id: '0') }
+      .to raise_error(
+        Redis::CommandError,
+        'ERR The ID specified in XADD is equal or smaller than the target ' \
+        'stream top item'
+      )
+  end
+
+  it 'raises exception if id of 0 with positive sequence number is added to an empty stream' do
+    expect { @redises.xadd('unknown-stream', { key: 'value' }, id: '0-1') }
+      .to raise_error(
+        Redis::CommandError,
+      'ERR The ID specified in XADD is equal or smaller than the target ' \
+      'stream top item'
+    )
   end
 
   it 'caters for the current time being before the last time' do
@@ -86,5 +104,3 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
     )
   end
 end
-
-# Redis::CommandError: ERR The ID specified in XADD is equal or smaller than the target stream top item
