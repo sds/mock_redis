@@ -3,20 +3,6 @@ require 'set'
 require 'date'
 require 'mock_redis/stream/id'
 
-# TODO: Implement the following commands
-#
-#   * xread
-#   * xgroup
-#   * xreadgroup
-#   * xack
-#   * xpending
-#   * xclaim
-#   * xinfo
-#   * xtrim
-#   * xdel
-#
-# For details of these commands see https://redis.io/topics/streams-intro
-
 class MockRedis
   class Stream
     include Enumerable
@@ -37,15 +23,18 @@ class MockRedis
 
     def add(id, values)
       @last_id = MockRedis::Stream::Id.new(id, min: @last_id)
-      members.add [@last_id, values.map(&:to_s)]
+      members.add [@last_id, Hash[values.map { |k, v| [k.to_s, v.to_s] }]]
       @last_id.to_s
+    end
+
+    def trim(count)
+      deleted = @members.size - count
+      @members = @members.to_a[-count..-1].to_set
+      deleted
     end
 
     def range(start, finish, reversed, *opts_in)
       opts = options opts_in, ['count']
-      unless opts['count'].nil? || /^\d*$/.match(opts['count'])
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
       items = members

@@ -2,53 +2,68 @@ require 'mock_redis/assertions'
 require 'mock_redis/utility_methods'
 require 'mock_redis/stream'
 
+# TODO: Implement the following commands
+#
+#   * xread
+#   * xgroup
+#   * xreadgroup
+#   * xack
+#   * xpending
+#   * xclaim
+#   * xinfo
+#   * xtrim
+#   * xdel
+#
+# TODO: Complete support for
+#
+#   * xtrim
+#       - `approximate: true` argument is currently ignored
+#   * xadd
+#       - `approximate: true` argument (for capped streams) is currently ignored
+#
+# For details of these commands see
+#   * https://redis.io/topics/streams-intro
+#   * https://redis.io/commands#stream
+
 class MockRedis
   module StreamMethods
     include Assertions
     include UtilityMethods
 
-    def xadd(key = nil, id = nil, *args)
-      if args.count == 0
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xadd' command"
-      end
-      if args.count.odd?
-        raise Redis::CommandError,
-              'ERR wrong number of arguments for XADD'
-      end
+    def xadd(key, entry, opts = {})
+      id = opts[:id] || '*'
       with_stream_at(key) do |stream|
-        stream.add id, args
+        stream.add id, entry
+        stream.trim opts[:maxlen] if opts[:maxlen]
         return stream.last_id
       end
     end
 
-    def xlen(key = nil, *args)
-      if key.nil? || args.count > 0
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xlen' command"
+    def xtrim(key, count)
+      with_stream_at(key) do |stream|
+        stream.trim count
       end
+    end
+
+    def xlen(key)
       with_stream_at(key) do |stream|
         return stream.count
       end
     end
 
-    def xrange(key = nil, start = nil, finish = nil, *options)
-      if finish.nil?
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xrange' command"
-      end
+    def xrange(key, first = '-', last = '+', count: nil)
+      args = [first, last, false]
+      args += ['COUNT', count] if count
       with_stream_at(key) do |stream|
-        return stream.range(start, finish, false, *options)
+        return stream.range(*args)
       end
     end
 
-    def xrevrange(key = nil, finish = nil, start = nil, *options)
-      if start.nil?
-        raise Redis::CommandError,
-              "ERR wrong number of arguments for 'xrevrange' command"
-      end
+    def xrevrange(key, last = '+', first = '-', count: nil)
+      args = [first, last, true]
+      args += ['COUNT', count] if count
       with_stream_at(key) do |stream|
-        return stream.range(start, finish, true, *options)
+        return stream.range(*args)
       end
     end
 
