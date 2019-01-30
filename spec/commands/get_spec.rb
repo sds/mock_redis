@@ -24,6 +24,7 @@ describe '#get(key)' do
 
     @redises.set(key, 'hello')
     @redises.get(key.to_s).should == 'hello'
+    @redises.get(key).should == 'hello'
   end
 
   it_should_behave_like 'a string-only command'
