@@ -85,6 +85,7 @@ class MockRedis
     end
 
     def get(key)
+      key = key.to_s
       assert_stringy(key)
       data[key]
     end

@@ -49,7 +49,7 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
   end
 
   it 'raises exception if id of 0 is added to an empty stream' do
-    expect { @redises.xadd('unknown-stream', { key: 'value' }, id: '0') }
+    expect { @redises.xadd('mock-redis-test:unknown-stream', { key: 'value' }, id: '0') }
       .to raise_error(
         Redis::CommandError,
         'ERR The ID specified in XADD is equal or smaller than the target ' \
@@ -58,7 +58,7 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
   end
 
   it 'does not raise exception on empty stream with id of 0 and positive sequence number' do
-    expect { @redises.xadd('unknown-stream', { key: 'value' }, id: '0-1') }
+    expect { @redises.xadd('mock-redis-test:unknown-stream', { key: 'value' }, id: '0-1') }
       .to_not raise_error
   end
 
