@@ -168,6 +168,8 @@ class MockRedis
 
     def mset(*kvpairs)
       assert_has_args(kvpairs, 'mset')
+      kvpairs = kvpairs.first if kvpairs.size == 1 && kvpairs.first.is_a?(Enumerable)
+
       if kvpairs.length.odd?
         raise Redis::CommandError, 'ERR wrong number of arguments for MSET'
       end
