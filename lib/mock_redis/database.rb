@@ -75,6 +75,7 @@ class MockRedis
         each { |k| data.delete(k) }.
         length
     end
+    alias unlink del
 
     def echo(msg)
       msg.to_s
