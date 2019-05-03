@@ -3,6 +3,16 @@
 ### master (unreleased)
 
 * Add support for `count` parameter of `spop`
+* Fix `mget` and `mset` to accept array as parameters
+* Fix pipelined array replies
+* Fix nested pipelining
+* Allow nested multi
+* Require Redis gem 4.0.1 or newer
+* Add support for stream commands on Redis 5
+* Keep empty strings on type mismatch
+* Improve performance of `set_expiration`
+* Fix `watch` to allow multiple keys
+* Add `unlink` alias for `del`
 * Drop support for Ruby 2.3 or older
 
 ### 0.19.0
