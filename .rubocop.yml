@@ -3,10 +3,16 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   TargetRubyVersion: 2.2
 
+Layout/AlignArguments:
+  Enabled: false
+
 Layout/AlignParameters:
   Enabled: false
 
 Layout/DotPosition:
+  Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
   Enabled: false
 
 Lint/AssignmentInCondition:
