@@ -3,6 +3,7 @@
 ### master (unreleased)
 
 * Add support for `count` parameter of `spop`
+* Drop support for Ruby 2.3 or older
 
 ### 0.19.0
 

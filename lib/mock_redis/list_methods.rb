@@ -146,13 +146,13 @@ class MockRedis
 
     def ltrim(key, start, stop)
       with_list_at(key) do |list|
-        list.replace(list[[start.to_i, -list.length].max..stop.to_i] || []) if list
+        list&.replace(list[[start.to_i, -list.length].max..stop.to_i] || [])
         'OK'
       end
     end
 
     def rpop(key)
-      with_list_at(key) { |list| list.pop if list }
+      with_list_at(key) { |list| list&.pop }
     end
 
     def rpoplpush(source, destination)

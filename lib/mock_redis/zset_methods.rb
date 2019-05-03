@@ -11,7 +11,7 @@ class MockRedis
       zadd_options = {}
       zadd_options = args.pop if args.last.is_a?(Hash)
 
-      if zadd_options && zadd_options.include?(:nx) && zadd_options.include?(:xx)
+      if zadd_options&.include?(:nx) && zadd_options&.include?(:xx)
         raise Redis::CommandError, 'ERR XX and NX options at the same time are not compatible'
       end
 
@@ -211,7 +211,7 @@ class MockRedis
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member.to_s)
-        score.to_f if score
+        score&.to_f
       end
     end
 
