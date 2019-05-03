@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.20.0
 
 * Add support for `count` parameter of `spop`
 * Fix `mget` and `mset` to accept array as parameters
