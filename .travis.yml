@@ -17,10 +17,9 @@ before_install:
   - echo PING | nc localhost 6379
 
 rvm:
-  - 2.2
-  - 2.3.7
-  - 2.4.4
-  - 2.5.1
+  - 2.4.6
+  - 2.5.5
+  - 2.6.3
 
 before_script:
   - git config --local user.email "travis@travis.ci"
@@ -31,7 +30,3 @@ script:
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
-
-matrix:
-  allow_failures:
-    - rvm: 2.1.0
