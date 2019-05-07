@@ -49,23 +49,21 @@ describe MockRedis do
     end
 
     describe '.now' do
-      let(:now)       { 'Now' }
-      let(:time_stub) { double 'Time', :now => now }
+      let(:time_stub) { double 'Time', :now => Time.new(2019, 1, 2, 3, 4, 6, '+00:00') }
       let(:options)   { { :time_class => time_stub } }
 
       subject { MockRedis.new(options) }
 
-      its(:now) { should == now }
+      its(:now) { should == [1546398246, 0] }
     end
 
     describe '.time' do
-      let(:now)       { 'Now' }
-      let(:time_stub) { double 'Time', :now => now }
+      let(:time_stub) { double 'Time', :now => Time.new(2019, 1, 2, 3, 4, 6, '+00:00') }
       let(:options)   { { :time_class => time_stub } }
 
       subject { MockRedis.new(options) }
 
-      its(:time) { should == now }
+      its(:time) { should == [1546398246, 0] }
     end
 
     describe '.expireat' do

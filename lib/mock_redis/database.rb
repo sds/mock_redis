@@ -86,7 +86,8 @@ class MockRedis
     end
 
     def pexpire(key, ms)
-      now_ms = (@base.now.to_r * 1000).to_i
+      now, miliseconds = @base.now
+      now_ms = (now * 1000) + miliseconds
       pexpireat(key, now_ms + ms.to_i)
     end
 
@@ -140,7 +141,7 @@ class MockRedis
     end
 
     def lastsave
-      @base.now.to_i
+      @base.now.first
     end
 
     def persist(key)
@@ -201,17 +202,21 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        expiration(key).to_i - @base.now.to_i
+        now, _ = @base.now
+        expiration(key).to_i - now
       else
         -1
       end
     end
 
     def pttl(key)
+      now, miliseconds = @base.now
+      now_ms = now * 1000 + miliseconds
+
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        (expiration(key).to_r * 1000).to_i - (@base.now.to_r * 1000).to_i
+        (expiration(key).to_r * 1000).to_i - now_ms
       else
         -1
       end
@@ -321,10 +326,11 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now = @base.now
+      now, miliseconds = @base.now
+      now_ms = now * 1000 + miliseconds
 
       to_delete = expire_times.take_while do |(time, _key)|
-        (time.to_r * 1_000).to_i <= (now.to_r * 1_000).to_i
+        (time.to_r * 1_000).to_i <= now_ms
       end
 
       to_delete.each do |(_time, key)|
