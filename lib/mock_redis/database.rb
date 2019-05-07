@@ -202,7 +202,7 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        now, _ = @base.now
+        now, = @base.now
         expiration(key).to_i - now
       else
         -1
@@ -327,7 +327,7 @@ class MockRedis
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
       now, miliseconds = @base.now
-      now_ms = now * 1000 + miliseconds
+      now_ms = now * 1_000 + miliseconds
 
       to_delete = expire_times.take_while do |(time, _key)|
         (time.to_r * 1_000).to_i <= now_ms

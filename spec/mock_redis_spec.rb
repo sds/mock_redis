@@ -54,7 +54,7 @@ describe MockRedis do
 
       subject { MockRedis.new(options) }
 
-      its(:now) { should == [1546398246, 0] }
+      its(:now) { should == [1_546_398_246, 0] }
     end
 
     describe '.time' do
@@ -63,7 +63,7 @@ describe MockRedis do
 
       subject { MockRedis.new(options) }
 
-      its(:time) { should == [1546398246, 0] }
+      its(:time) { should == [1_546_398_246, 0] }
     end
 
     describe '.expireat' do

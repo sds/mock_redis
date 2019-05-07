@@ -66,7 +66,7 @@ class MockRedis
 
   def now
     current_time = options[:time_class].now
-    miliseconds = (current_time.to_r - current_time.to_i) * 1000
+    miliseconds = (current_time.to_r - current_time.to_i) * 1_000
     [current_time.to_i, miliseconds.to_i]
   end
   alias time now
