@@ -56,6 +56,8 @@ class MockRedis
     def disconnect
       nil
     end
+    alias close disconnect
+    alias disconnect! close
 
     def connected?
       true

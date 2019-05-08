@@ -14,4 +14,16 @@ describe 'client' do
       redis.connect.should == redis
     end
   end
+
+  context '#disconnect!' do
+    it 'responds to disconnect!' do
+      expect(MockRedis.new).to respond_to(:disconnect!)
+    end
+  end
+
+  context '#close' do
+    it 'responds to close' do
+      expect(MockRedis.new).to respond_to(:close)
+    end
+  end
 end
