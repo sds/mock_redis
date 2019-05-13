@@ -220,15 +220,22 @@ class MockRedis
       end
       data[key] = value.to_s
 
-      # take latter
-      expire_option = options.to_a.last
-      if expire_option
-        type, duration = expire_option
+      duration = options.delete(:ex)
+      if duration
         if duration == 0
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
-        expire(key, type.to_sym == :ex ? duration : duration / 1000.0)
+        expire(key, duration)
       end
+
+      duration = options.delete(:px)
+      if duration
+        if duration == 0
+          raise Redis::CommandError, 'ERR invalid expire time in set'
+        end
+        expire(key, duration / 1000.0)
+      end
+
       return_true ? true : 'OK'
     end
 
