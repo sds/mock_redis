@@ -36,5 +36,10 @@ describe '#srem(key, member)' do
     @redises.get(@key).should be_nil
   end
 
+  it 'allow passing an array of integers as argument' do
+    @redises.sadd(@key, %w[1 2])
+    @redises.srem(@key, [1, 2]).should == 2
+  end
+
   it_should_behave_like 'a set-only command'
 end

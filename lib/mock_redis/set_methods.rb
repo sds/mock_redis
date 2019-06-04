@@ -117,6 +117,7 @@ class MockRedis
       with_set_at(key) do |s|
         if members.is_a?(Array)
           orig_size = s.size
+          members = members.map(&:to_s)
           s.delete_if { |m| members.include?(m) }
           orig_size - s.size
         else
