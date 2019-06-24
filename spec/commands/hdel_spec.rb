@@ -50,5 +50,21 @@ describe '#hdel(key, field)' do
     @redises.hget(@key, field).should be_nil
   end
 
+  it 'supports a variable number of fields as array' do
+    @redises.hdel(@key, %w[k1 k2]).should == 2
+
+    @redises.hget(@key, 'k1').should be_nil
+    @redises.hget(@key, 'k2').should be_nil
+    @redises.get(@key).should be_nil
+  end
+
+  it 'supports a list of fields in various way' do
+    @redises.hdel(@key, ['k1'], 'k2').should == 2
+
+    @redises.hget(@key, 'k1').should be_nil
+    @redises.hget(@key, 'k2').should be_nil
+    @redises.get(@key).should be_nil
+  end
+
   it_should_behave_like 'a hash-only command'
 end
