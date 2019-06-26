@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.21.0
 
 * Fix behavior of `time` to return array of two integers ([#161](https://github.com/sds/mock_redis/pull/161))
 * Add support for `close` and `disconnect!` ([#163](https://github.com/sds/mock_redis/pull/163))
