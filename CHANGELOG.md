@@ -1,5 +1,13 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Fix behavior of `time` to return array of two integers ([#161](https://github.com/sds/mock_redis/pull/161))
+* Add support for `close` and `disconnect!` ([#163](https://github.com/sds/mock_redis/pull/163))
+* Fix `set` to properly handle (and ignore) other options ([#164](https://github.com/sds/mock_redis/pull/163))
+* Fix `srem` to allow array of integers as argument ([#166](https://github.com/sds/mock_redis/pull/166))
+* Fix `hdel` to allow array as argument ([#168](https://github.com/sds/mock_redis/pull/168))
+
 ### 0.20.0
 
 * Add support for `count` parameter of `spop`
