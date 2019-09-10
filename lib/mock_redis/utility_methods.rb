@@ -28,12 +28,15 @@ class MockRedis
       cursor = cursor.to_i
       match = opts[:match] || '*'
       key = opts[:key] || lambda { |x| x }
+      filtered_values = []
 
       limit = cursor + count
       next_cursor = limit >= values.length ? '0' : limit.to_s
 
-      filtered_values = values[cursor...limit].select do |val|
-        redis_pattern_to_ruby_regex(match).match(key.call(val))
+      unless values[cursor...limit].nil?
+        filtered_values = values[cursor...limit].select do |val|
+          redis_pattern_to_ruby_regex(match).match(key.call(val))
+        end
       end
 
       [next_cursor, filtered_values]

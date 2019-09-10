@@ -42,6 +42,15 @@ describe '#scan' do
       end
     end
 
+    context 'when cursor is greater than collection size' do
+      let(:collection) { Array.new(count) { |i| "mock:key#{i}" } }
+      let(:expected) { ['0', []] }
+
+      it 'returns a 0 cursor and empty collection' do
+        expect(subject.scan(20, count: count, match: match)).to eq(expected)
+      end
+    end
+
     context 'when giving a custom match filter' do
       let(:match) { 'mock:key*' }
       let(:collection) { %w[mock:key mock:key2 mock:otherkey] }
