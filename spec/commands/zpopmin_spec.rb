@@ -51,7 +51,7 @@ describe '#zpopmin(key, count)' do
 
     it 'returns the entire set' do
       before = @redises.zrange(@key, 0, count, with_scores: true)
-      @redises.zpopmin(@key,count).should == before
+      @redises.zpopmin(@key, count).should == before
       @redises.zcard(@key).should == 0
     end
   end
