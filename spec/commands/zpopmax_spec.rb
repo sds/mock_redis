@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe '#zpopmin(key, count)' do
+describe '#zpopmax(key, count)' do
   before(:each) do
-    @key = 'mock-redis-test:zpopmin'
+    @key = 'mock-redis-test:zpopmax'
     @redises.del(@key)
     @redises.zadd(@key, 1, 'one')
     @redises.zadd(@key, 2, 'two')
@@ -11,11 +11,11 @@ describe '#zpopmin(key, count)' do
 
   context 'when count is unspecified' do
     it 'returns nil if the set does not exist' do
-      @redises.zpopmin('does-not-exist').should nil
+      @redises.zpopmax('does-not-exist').should nil
     end
 
-    it 'returns the lowest ranked element' do
-      @redises.zpopmin(@key).should == ['one', 1]
+    it 'returns the highest ranked element' do
+      @redises.zpopmax(@key).should == ['three', 3]
       @redises.zcard(@key).should == 2
     end
   end
@@ -24,11 +24,11 @@ describe '#zpopmin(key, count)' do
     let(:count) { 1 }
 
     it 'returns nil if the set does not exist' do
-      @redises.zpopmin('does-not-exist', count).should nil
+      @redises.zpopmax('does-not-exist', count).should nil
     end
 
-    it 'returns the lowest ranked element' do
-      @redises.zpopmin(@key, count).should == ['one', 1]
+    it 'returns the highest ranked element' do
+      @redises.zpopmax(@key, count).should == ['three', 3]
       @redises.zcard(@key).should == 2
     end
   end
@@ -37,11 +37,11 @@ describe '#zpopmin(key, count)' do
     let(:count) { 2 }
 
     it 'returns empty array if the set does not exist' do
-      @redises.zpopmin('does-not-exist', count).should == []
+      @redises.zpopmax('does-not-exist', count).should == []
     end
 
-    it 'returns the lowest ranked elements' do
-      @redises.zpopmin(@key, count).should == [['one', 1], ['two', 2]]
+    it 'returns the highest ranked elements' do
+      @redises.zpopmax(@key, count).should == [['three', 3], ['two', 2]]
       @redises.zcard(@key).should == 1
     end
   end
@@ -50,8 +50,8 @@ describe '#zpopmin(key, count)' do
     let(:count) { 4 }
 
     it 'returns the entire set' do
-      before = @redises.zrange(@key, 0, count, with_scores: true)
-      @redises.zpopmin(@key,count).should == before
+      before = @redises.zrange(@key, 0, count, with_scores: true).reverse
+      @redises.zpopmax(@key,count).should == before
       @redises.zcard(@key).should == 0
     end
   end
