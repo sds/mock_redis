@@ -27,7 +27,7 @@ module TypeCheckingHelper
   end
 
   def args_for_method(method)
-    return [] if ['spop', 'zpopmin', 'zpopmax'].include?(method.to_s)
+    return [] if %w[spop zpopmin zpopmax].include?(method.to_s)
     method_arity = @redises.real.method(method).arity
     if method_arity < 0 # -1 comes from def foo(*args)
       [1, 2] # probably good enough

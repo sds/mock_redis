@@ -51,7 +51,7 @@ describe '#zpopmax(key, count)' do
 
     it 'returns the entire set' do
       before = @redises.zrange(@key, 0, count, with_scores: true).reverse
-      @redises.zpopmax(@key,count).should == before
+      @redises.zpopmax(@key, count).should == before
       @redises.zcard(@key).should == 0
     end
   end
