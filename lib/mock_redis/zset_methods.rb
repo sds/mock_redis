@@ -155,6 +155,24 @@ class MockRedis
       retval
     end
 
+    def zpopmin(key, count=1)
+      with_zset_at(key) do |z|
+        pairs = z.sorted.first(count)
+        pairs.each { |pair| z.delete?(pair.last) }
+        retval = to_response(pairs, { with_scores: true })
+        count == 1 ? retval.first : retval
+      end
+    end
+
+    def zpopmax(key, count=1)
+      with_zset_at(key) do |z|
+        pairs = z.sorted.reverse.first(count)
+        pairs.each { |pair| z.delete?(pair.last) }
+        retval = to_response(pairs, { with_scores: true })
+        count == 1 ? retval.first : retval
+      end
+    end
+
     def zrevrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
         to_response(z.sorted.reverse[start..stop] || [], options)
