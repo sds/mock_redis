@@ -143,7 +143,7 @@ class MockRedis
     private
 
     def with_hash_at(key, &blk)
-      with_thing_at(key, :assert_hashy, proc { {} }, &blk)
+      with_thing_at(key.to_s, :assert_hashy, proc { {} }, &blk)
     end
 
     def hashy?(key)
