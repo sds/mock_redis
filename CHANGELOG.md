@@ -1,8 +1,27 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.21.0
+
+* Fix behavior of `time` to return array of two integers ([#161](https://github.com/sds/mock_redis/pull/161))
+* Add support for `close` and `disconnect!` ([#163](https://github.com/sds/mock_redis/pull/163))
+* Fix `set` to properly handle (and ignore) other options ([#164](https://github.com/sds/mock_redis/pull/163))
+* Fix `srem` to allow array of integers as argument ([#166](https://github.com/sds/mock_redis/pull/166))
+* Fix `hdel` to allow array as argument ([#168](https://github.com/sds/mock_redis/pull/168))
+
+### 0.20.0
 
 * Add support for `count` parameter of `spop`
+* Fix `mget` and `mset` to accept array as parameters
+* Fix pipelined array replies
+* Fix nested pipelining
+* Allow nested multi
+* Require Redis gem 4.0.1 or newer
+* Add support for stream commands on Redis 5
+* Keep empty strings on type mismatch
+* Improve performance of `set_expiration`
+* Fix `watch` to allow multiple keys
+* Add `unlink` alias for `del`
+* Drop support for Ruby 2.3 or older
 
 ### 0.19.0
 

@@ -1,7 +1,7 @@
 class MockRedis
   module GeospatialMethods
-    LNG_RANGE = (-180..180)
-    LAT_RANGE = (-85.05112878..85.05112878)
+    LNG_RANGE = (-180..180).freeze
+    LAT_RANGE = (-85.05112878..85.05112878).freeze
     STEP = 26
     UNITS = {
       m: 1,
@@ -23,21 +23,13 @@ class MockRedis
       zadd(key, scored_points)
     end
 
-    def geodist(key, *args)
-      if args.length < 2
-        raise Redis::CommandError,
-          "ERR wrong number of arguments for 'geodist' command"
-      end
-
-      raise Redis::CommandError, 'ERR syntax error' if args.length > 3
-
-      to_meter = 1
-      to_meter = parse_unit(args[2]) if args.length == 3
+    def geodist(key, member1, member2, unit = 'm')
+      to_meter = parse_unit(unit)
 
       return nil if zcard(key).zero?
 
-      score1 = zscore(key, args[0])
-      score2 = zscore(key, args[1])
+      score1 = zscore(key, member1)
+      score2 = zscore(key, member2)
       return nil if score1.nil? || score2.nil?
       hash1 = { bits: score1.to_i, step: STEP }
       hash2 = { bits: score2.to_i, step: STEP }
@@ -49,12 +41,12 @@ class MockRedis
       format('%.4f', distance)
     end
 
-    def geohash(key, *members)
+    def geohash(key, members)
       lng_range = (-180..180)
       lat_range = (-90..90)
       geoalphabet = '0123456789bcdefghjkmnpqrstuvwxyz'
 
-      members.map do |member|
+      Array(members).map do |member|
         score = zscore(key, member)
         next nil unless score
         score = score.to_i
@@ -71,8 +63,8 @@ class MockRedis
       end
     end
 
-    def geopos(key, *members)
-      members.map do |member|
+    def geopos(key, members)
+      Array(members).map do |member|
         score = zscore(key, member)
         next nil unless score
         hash = { bits: score.to_i, step: STEP }

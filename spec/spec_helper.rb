@@ -12,6 +12,7 @@ require 'rspec/its'
 require 'redis'
 $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, '..', '..', 'lib')))
 require 'mock_redis'
+require 'timecop'
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
 Dir['spec/support/**/*.rb'].each { |x| require x }
@@ -26,7 +27,7 @@ module TypeCheckingHelper
   end
 
   def args_for_method(method)
-    return [] if method.to_s == 'spop'
+    return [] if %w[spop zpopmin zpopmax].include?(method.to_s)
     method_arity = @redises.real.method(method).arity
     if method_arity < 0 # -1 comes from def foo(*args)
       [1, 2] # probably good enough
@@ -59,5 +60,6 @@ RSpec.configure do |config|
         @redises.send_without_checking(:del, key)
       end
     end
+    @redises._gsub_clear
   end
 end

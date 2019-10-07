@@ -11,7 +11,7 @@ class MockRedis
       zadd_options = {}
       zadd_options = args.pop if args.last.is_a?(Hash)
 
-      if zadd_options && zadd_options.include?(:nx) && zadd_options.include?(:xx)
+      if zadd_options&.include?(:nx) && zadd_options&.include?(:xx)
         raise Redis::CommandError, 'ERR XX and NX options at the same time are not compatible'
       end
 
@@ -155,6 +155,24 @@ class MockRedis
       retval
     end
 
+    def zpopmin(key, count = 1)
+      with_zset_at(key) do |z|
+        pairs = z.sorted.first(count)
+        pairs.each { |pair| z.delete?(pair.last) }
+        retval = to_response(pairs, with_scores: true)
+        count == 1 ? retval.first : retval
+      end
+    end
+
+    def zpopmax(key, count = 1)
+      with_zset_at(key) do |z|
+        pairs = z.sorted.reverse.first(count)
+        pairs.each { |pair| z.delete?(pair.last) }
+        retval = to_response(pairs, with_scores: true)
+        count == 1 ? retval.first : retval
+      end
+    end
+
     def zrevrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
         to_response(z.sorted.reverse[start..stop] || [], options)
@@ -211,7 +229,7 @@ class MockRedis
     def zscore(key, member)
       with_zset_at(key) do |z|
         score = z.score(member.to_s)
-        score.to_f if score
+        score&.to_f
       end
     end
 

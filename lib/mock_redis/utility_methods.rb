@@ -18,7 +18,7 @@ class MockRedis
     end
 
     def clean_up_empties_at(key)
-      if data[key] && data[key].empty?
+      if data[key]&.empty? && data[key] != ''
         del(key)
       end
     end
@@ -28,12 +28,15 @@ class MockRedis
       cursor = cursor.to_i
       match = opts[:match] || '*'
       key = opts[:key] || lambda { |x| x }
+      filtered_values = []
 
       limit = cursor + count
       next_cursor = limit >= values.length ? '0' : limit.to_s
 
-      filtered_values = values[cursor...limit].select do |val|
-        redis_pattern_to_ruby_regex(match).match(key.call(val))
+      unless values[cursor...limit].nil?
+        filtered_values = values[cursor...limit].select do |val|
+          redis_pattern_to_ruby_regex(match).match(key.call(val))
+        end
       end
 
       [next_cursor, filtered_values]

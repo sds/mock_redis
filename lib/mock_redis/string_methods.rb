@@ -85,12 +85,9 @@ class MockRedis
     end
 
     def get(key)
+      key = key.to_s
       assert_stringy(key)
       data[key]
-    end
-
-    def [](key)
-      get(key)
     end
 
     def getbit(key, offset)
@@ -171,6 +168,8 @@ class MockRedis
 
     def mset(*kvpairs)
       assert_has_args(kvpairs, 'mset')
+      kvpairs = kvpairs.first if kvpairs.size == 1 && kvpairs.first.is_a?(Enumerable)
+
       if kvpairs.length.odd?
         raise Redis::CommandError, 'ERR wrong number of arguments for MSET'
       end
@@ -202,6 +201,7 @@ class MockRedis
     end
 
     def set(key, value, options = {})
+      key = key.to_s
       return_true = false
       options = options.dup
       if options.delete(:nx)
@@ -220,20 +220,23 @@ class MockRedis
       end
       data[key] = value.to_s
 
-      # take latter
-      expire_option = options.to_a.last
-      if expire_option
-        type, duration = expire_option
+      duration = options.delete(:ex)
+      if duration
         if duration == 0
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
-        expire(key, type.to_sym == :ex ? duration : duration / 1000.0)
+        expire(key, duration)
       end
-      return_true ? true : 'OK'
-    end
 
-    def []=(key, value, options = {})
-      set(key, value, options)
+      duration = options.delete(:px)
+      if duration
+        if duration == 0
+          raise Redis::CommandError, 'ERR invalid expire time in set'
+        end
+        expire(key, duration / 1000.0)
+      end
+
+      return_true ? true : 'OK'
     end
 
     def setbit(key, offset, value)

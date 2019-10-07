@@ -1,7 +1,5 @@
 language: ruby
 
-sudo: false
-
 cache: bundler
 
 addons:
@@ -12,11 +10,16 @@ addons:
 services:
   - redis-server
 
+before_install:
+  - sudo sed -e 's/^bind.*/bind 127.0.0.1/' /etc/redis/redis.conf > redis.conf
+  - sudo mv redis.conf /etc/redis
+  - sudo service redis-server start
+  - echo PING | nc localhost 6379
+
 rvm:
-  - 2.2
-  - 2.3.7
-  - 2.4.4
-  - 2.5.1
+  - 2.4.6
+  - 2.5.5
+  - 2.6.3
 
 before_script:
   - git config --local user.email "travis@travis.ci"
@@ -27,7 +30,3 @@ script:
   - bundle exec rspec
   - bundle exec overcommit --sign
   - bundle exec overcommit --run
-
-matrix:
-  allow_failures:
-    - rvm: 2.1.0

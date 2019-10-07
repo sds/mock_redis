@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.version     = MockRedis::VERSION
   s.license     = 'MIT'
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ['Brigade Engineering', 'Samuel Merritt']
-  s.email       = ['eng@brigade.com']
-  s.homepage    = 'https://github.com/brigade/mock_redis'
+  s.authors     = ['Shane da Silva', 'Samuel Merritt']
+  s.email       = ['shane@dasilva.io']
+  s.homepage    = 'https://github.com/sds/mock_redis'
   s.summary     = 'Redis mock that just lives in memory; useful for testing.'
 
   s.description = <<-MSG.strip.gsub(/\s+/, ' ')
@@ -21,10 +21,11 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 2.2'
+  s.required_ruby_version = '>= 2.4'
 
   s.add_development_dependency 'rake', '>= 10', '< 12'
-  s.add_development_dependency 'redis', '~> 3.3.0'
+  s.add_development_dependency 'redis', '~>4.1.0'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rspec-its', '~> 1.0'
+  s.add_development_dependency 'timecop', '~> 0.9.1'
 end

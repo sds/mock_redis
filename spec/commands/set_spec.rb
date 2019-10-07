@@ -33,6 +33,12 @@ describe '#set(key, value)' do
       @redises.set(key, 1, xx: true).should == true
     end
 
+    it 'ignores other options' do
+      key = 'mock-redis-test'
+      @redises.del(key)
+      @redises.set(key, 1, logger: :something).should == 'OK'
+    end
+
     context '[mock only]' do
       before(:all) do
         @mock = @redises.mock

@@ -10,6 +10,7 @@ require 'mock_redis/indifferent_hash'
 require 'mock_redis/info_method'
 require 'mock_redis/utility_methods'
 require 'mock_redis/geospatial_methods'
+require 'mock_redis/stream_methods'
 
 class MockRedis
   class Database
@@ -22,6 +23,7 @@ class MockRedis
     include InfoMethod
     include UtilityMethods
     include GeospatialMethods
+    include StreamMethods
 
     attr_reader :data, :expire_times
 
@@ -54,6 +56,8 @@ class MockRedis
     def disconnect
       nil
     end
+    alias close disconnect
+    alias disconnect! close
 
     def connected?
       true
@@ -73,6 +77,7 @@ class MockRedis
         each { |k| data.delete(k) }.
         length
     end
+    alias unlink del
 
     def echo(msg)
       msg.to_s
@@ -83,7 +88,8 @@ class MockRedis
     end
 
     def pexpire(key, ms)
-      now_ms = (@base.now.to_r * 1000).to_i
+      now, miliseconds = @base.now
+      now_ms = (now * 1000) + miliseconds
       pexpireat(key, now_ms + ms.to_i)
     end
 
@@ -137,7 +143,7 @@ class MockRedis
     end
 
     def lastsave
-      @base.now.to_i
+      @base.now.first
     end
 
     def persist(key)
@@ -198,17 +204,21 @@ class MockRedis
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        expiration(key).to_i - @base.now.to_i
+        now, = @base.now
+        expiration(key).to_i - now
       else
         -1
       end
     end
 
     def pttl(key)
+      now, miliseconds = @base.now
+      now_ms = now * 1000 + miliseconds
+
       if !exists(key)
         -2
       elsif has_expiration?(key)
-        (expiration(key).to_r * 1000).to_i - (@base.now.to_r * 1000).to_i
+        (expiration(key).to_r * 1000).to_i - now_ms
       else
         -1
       end
@@ -303,11 +313,9 @@ class MockRedis
 
     def set_expiration(key, time)
       remove_expiration(key)
-
-      expire_times << [time, key.to_s]
-      expire_times.sort! do |a, b|
-        a.first <=> b.first
-      end
+      found = expire_times.each_with_index.to_a.bsearch { |item, _| item.first >= time }
+      index = found ? found.last : -1
+      expire_times.insert(index, [time, key.to_s])
     end
 
     def zero_pad(string, desired_length)
@@ -320,10 +328,11 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now = @base.now
+      now, miliseconds = @base.now
+      now_ms = now * 1_000 + miliseconds
 
       to_delete = expire_times.take_while do |(time, _key)|
-        (time.to_r * 1_000).to_i <= (now.to_r * 1_000).to_i
+        (time.to_r * 1_000).to_i <= now_ms
       end
 
       to_delete.each do |(_time, key)|
