@@ -39,5 +39,31 @@ describe '#hmset(key, field, value [, field, value ...])' do
     end.should raise_error(Redis::CommandError)
   end
 
+  # The following tests address https://github.com/sds/mock_redis/issues/170
+  context 'keys are stored as strings' do
+    before do
+      @redises.hmset(1, :foo, :bar)
+      @redises.hmset(:a_sym, :boo, :bas)
+    end
+
+    it { expect(@redises.hgetall('1')).to eq @redises.hgetall(1) }
+    it { expect(@redises.hgetall('a_sym')).to eq @redises.hgetall(:a_sym) }
+    it { expect(@redises.del('1')).to eq 1 }
+    it { expect(@redises.del(1)).to eq 1 }
+    it { expect(@redises.del('a_sym')).to eq 1 }
+    it { expect(@redises.del(:a_sym)).to eq 1 }
+
+    after do
+      @redises.del(1)
+      @redises.del(:a_sym)
+    end
+  end
+
+  # The following tests address https://github.com/sds/mock_redis/issues/134
+  context 'hmset accepts an array as its only argument' do
+    it { expect(@redises.hmset([@key, :bar, :bas])).to eq 'OK' }
+    it { lambda { @redises.hmset([:foo, :bar]) }.should raise_error(Redis::CommandError) }
+  end
+
   it_should_behave_like 'a hash-only command'
 end
