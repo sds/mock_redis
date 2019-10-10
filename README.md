@@ -8,10 +8,19 @@ MockRedis provides the same interface as `redis-rb`, but it stores its
 data in memory instead of talking to a Redis server. It is intended
 for use in tests.
 
-The current implementation is tested against *Redis 4*. Older versions
-of Redis may return different results or not support some commands.
+## Requirements
+
+* Ruby 2.4+
+
+The current implementation is tested against **Redis 4**. Older versions may work, but can also return different results or not support some commands.
 
 ## Getting Started
+
+Install the gem:
+
+```bash
+gem install mock_redis
+```
 
 It's as easy as `require 'mock_redis'; mr = MockRedis.new`. Then you can
 call the same methods on it as you can call on a real `Redis` object.
@@ -90,17 +99,32 @@ please submit a pull request with your (tested!) implementation.
 * `#config(:get|:set|:resetstat)` isn't done. They can just return
   canned values.
 
-## Compatibility
+## Running tests
 
-As of version `0.19.0`, Ruby 2.2 and above are supported. For
-older versions of Ruby, use `0.18.0` or older.
+We recommend running Redis within a Docker container to make development as simple as possible, but as long as you have a Redis instance listening on `localhost:6379` you should be good to go.
 
-## Running the Tests
+1. Start Redis.
+   ```bash
+   docker run --rm -p 6379:6379 redis
+   ```
+2. Install dependencies.
+   ```bash
+   bundle install
+   ```
+3. Run tests.
+   ```bash
+   bundle exec rspec
+   ```
 
-If you want to work on this, you'll probably want to run the
-tests. (Just kidding! There's no probably about it.) These tests were
-written with Redis running on `localhost` without any passwords
-required. If you're using a different version of Redis, you may see
-failures due to error message text being different. If you're running
-a really old version of Redis, you'll definitely see failures due to
-stuff that doesn't work!
+These tests were written with Redis running on `localhost` without any
+passwords required. If you're using a different version of Redis, you
+may see failures due to error message text being different and other
+breaking changes over time.
+
+## Changelog
+
+If you're interested in seeing the changes and bug fixes between each version of `mock_redis`, read the [MockRedis Changelog](CHANGELOG.md).
+
+## License
+
+This project is released under the [MIT license](LICENSE.md).
