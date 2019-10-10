@@ -12,7 +12,7 @@ for use in tests.
 
 * Ruby 2.4+
 
-The current implementation is tested against **Redis 4**. Older versions may work, but can also return different results or not support some commands.
+The current implementation is tested against **Redis 5**. Older versions may work, but can also return different results or not support some commands.
 
 ## Getting Started
 
