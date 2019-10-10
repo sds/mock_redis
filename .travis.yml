@@ -17,9 +17,9 @@ before_install:
   - echo PING | nc localhost 6379
 
 rvm:
-  - 2.4.6
-  - 2.5.5
-  - 2.6.3
+  - 2.4
+  - 2.5
+  - 2.6
 
 before_script:
   - git config --local user.email "travis@travis.ci"
