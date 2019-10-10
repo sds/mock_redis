@@ -1,5 +1,12 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Gracefully handle cursors larger than the collection size in scan commands ([#171](https://github.com/sds/mock_redis/pull/171))
+* Add `zpopmin` and `zpopmax` commands ([#172](https://github.com/sds/mock_redis/pull/172))
+* Fix `hmset` to support array arguments ([#173](https://github.com/sds/mock_redis/pull/173))
+* Fix `hmset` to always treat keys as strings ([#173](https://github.com/sds/mock_redis/pull/173))
+
 ### 0.21.0
 
 * Fix behavior of `time` to return array of two integers ([#161](https://github.com/sds/mock_redis/pull/161))
