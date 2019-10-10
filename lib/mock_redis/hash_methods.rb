@@ -84,10 +84,17 @@ class MockRedis
     end
 
     def hmset(key, *kvpairs)
+      if key.is_a? Array
+        err_msg = 'ERR wrong number of arguments for \'hmset\' command'
+        kvpairs = key[1..-1]
+        key = key[0]
+      end
+
       kvpairs.flatten!
       assert_has_args(kvpairs, 'hmset')
+
       if kvpairs.length.odd?
-        raise Redis::CommandError, 'ERR wrong number of arguments for HMSET'
+        raise Redis::CommandError, err_msg || 'ERR wrong number of arguments for HMSET'
       end
 
       kvpairs.each_slice(2) do |(k, v)|
@@ -143,7 +150,7 @@ class MockRedis
     private
 
     def with_hash_at(key, &blk)
-      with_thing_at(key, :assert_hashy, proc { {} }, &blk)
+      with_thing_at(key.to_s, :assert_hashy, proc { {} }, &blk)
     end
 
     def hashy?(key)
