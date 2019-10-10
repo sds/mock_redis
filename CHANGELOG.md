@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.22.0
 
 * Gracefully handle cursors larger than the collection size in scan commands ([#171](https://github.com/sds/mock_redis/pull/171))
 * Add `zpopmin` and `zpopmax` commands ([#172](https://github.com/sds/mock_redis/pull/172))
