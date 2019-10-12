@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Raise error when `setex` called with negative timeout ([#174](https://github.com/sds/mock_redis/pull/174))
+
 ### 0.22.0
 
 * Gracefully handle cursors larger than the collection size in scan commands ([#171](https://github.com/sds/mock_redis/pull/171))
