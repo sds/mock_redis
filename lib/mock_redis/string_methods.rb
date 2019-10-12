@@ -313,9 +313,13 @@ class MockRedis
     end
 
     def setex(key, seconds, value)
-      set(key, value)
-      expire(key, seconds)
-      'OK'
+      if seconds <= 0
+        raise Redis::CommandError, 'ERR invalid expire time in setex'
+      else
+        set(key, value)
+        expire(key, seconds)
+        'OK'
+      end
     end
 
     def setnx(key, value)

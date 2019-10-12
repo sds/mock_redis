@@ -19,4 +19,20 @@ describe '#setex(key, seconds, value)' do
     @redises.real.ttl(@key).should > 0
     @redises.mock.ttl(@key).should > 0
   end
+
+  context 'when expiration time is zero' do
+    it 'raises Redis::CommandError' do
+      expect do
+        @redises.setex(@key, 0, 'value')
+      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in setex')
+    end
+  end
+
+  context 'when expiration time is negative' do
+    it 'raises Redis::CommandError' do
+      expect do
+        @redises.setex(@key, -2, 'value')
+      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in setex')
+    end
+  end
 end
