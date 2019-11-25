@@ -124,6 +124,22 @@ class MockRedis
       'OK'
     end
 
+    def dump(key)
+      value = data[key]
+      value ? Marshal.dump(value) : nil
+    end
+
+    def restore(key, ttl, value, replace: false)
+      if !replace && exists(key)
+        raise Redis::CommandError, 'BUSYKEY Target key name already exists.'
+      end
+      data[key] = Marshal.load(value) # rubocop:disable Security/MarshalLoad
+      if ttl > 0
+        pexpire(key, ttl)
+      end
+      'OK'
+    end
+
     def keys(format = '*')
       data.keys.grep(redis_pattern_to_ruby_regex(format))
     end
