@@ -26,7 +26,7 @@ class MockRedis
     end
 
     def zadd_one_member(key, score, member, zadd_options = {})
-      assert_scorey(score) unless score =~ /(\+|\-)inf/
+      assert_scorey(score) unless score.to_s =~ /(\+|\-)inf/
 
       with_zset_at(key) do |zset|
         if zadd_options[:incr]
@@ -326,7 +326,7 @@ class MockRedis
     end
 
     def assert_scorey(value, message = 'ERR value is not a valid float')
-      return if value =~ /\(?(\-|\+)inf/
+      return if value.to_s =~ /\(?(\-|\+)inf/
 
       value = $1 if value.to_s =~ /\((.*)/
       unless looks_like_float?(value)
