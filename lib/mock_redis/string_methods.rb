@@ -233,7 +233,7 @@ class MockRedis
         if duration == 0
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
-        expire(key, duration / 1000.0)
+        pexpire(key, duration)
       end
 
       return_true ? true : 'OK'
