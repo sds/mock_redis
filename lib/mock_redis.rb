@@ -23,6 +23,7 @@ class MockRedis
     :password => nil,
     :db => 0,
     :time_class => Time,
+    :evalsha => proc {},
   }.freeze
 
   def self.connect(*args)
