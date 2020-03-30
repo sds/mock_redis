@@ -282,7 +282,7 @@ class MockRedis
                      raise Redis::CommandError, 'ERR syntax error'
                    end
 
-      with_zsets_at(*keys) do |*zsets|
+      with_zsets_at(*keys, coercible: true) do |*zsets|
         zsets.zip(weights).map do |(zset, weight)|
           zset.reduce(Zset.new) do |acc, (score, member)|
             acc.add(score * weight, member)
@@ -293,16 +293,30 @@ class MockRedis
       end
     end
 
-    def with_zset_at(key, &blk)
-      with_thing_at(key, :assert_zsety, proc { Zset.new }, &blk)
+    def coerce_to_zset(set)
+      zset = Zset.new
+      set.each do |member|
+        zset.add(1.0, member)
+      end
+      zset
     end
 
-    def with_zsets_at(*keys, &blk)
-      if keys.length == 1
-        with_zset_at(keys.first, &blk)
+    def with_zset_at(key, coercible: false, &blk)
+      if coercible
+        with_thing_at(key, :assert_coercible_zsety, proc { Zset.new }) do |value|
+          blk.call value.is_a?(Set) ? coerce_to_zset(value) : value
+        end
       else
-        with_zset_at(keys.first) do |set|
-          with_zsets_at(*(keys[1..-1])) do |*sets|
+        with_thing_at(key, :assert_zsety, proc { Zset.new }, &blk)
+      end
+    end
+
+    def with_zsets_at(*keys, coercible: false, &blk)
+      if keys.length == 1
+        with_zset_at(keys.first, coercible: coercible, &blk)
+      else
+        with_zset_at(keys.first, coercible: coercible) do |set|
+          with_zsets_at(*(keys[1..-1]), coercible: coercible) do |*sets|
             yield(*([set] + sets))
           end
         end
@@ -313,8 +327,19 @@ class MockRedis
       data[key].nil? || data[key].is_a?(Zset)
     end
 
+    def coercible_zsety?(key)
+      zsety?(key) || data[key].is_a?(Set)
+    end
+
     def assert_zsety(key)
       unless zsety?(key)
+        raise Redis::CommandError,
+          'WRONGTYPE Operation against a key holding the wrong kind of value'
+      end
+    end
+
+    def assert_coercible_zsety(key)
+      unless coercible_zsety?(key)
         raise Redis::CommandError,
           'WRONGTYPE Operation against a key holding the wrong kind of value'
       end

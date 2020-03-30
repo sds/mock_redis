@@ -42,6 +42,40 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     end.should raise_error(Redis::CommandError)
   end
 
+  context 'when used with a set' do
+    before do
+      @primes_text = 'mock-redis-test:zinterstore:primes-text'
+
+      @redises.sadd(@primes_text, 'two')
+      @redises.sadd(@primes_text, 'three')
+      @redises.sadd(@primes_text, 'five')
+      @redises.sadd(@primes_text, 'seven')
+    end
+
+    it 'returns the number of elements in the new set' do
+      @redises.zinterstore(@dest, [@odds, @primes_text]).should == 3
+    end
+
+    it 'sums the scores, substituting 1.0 for set values' do
+      @redises.zinterstore(@dest, [@odds, @primes_text])
+      @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+        [['three', 4.0], ['five', 6.0], ['seven', 8.0]]
+    end
+  end
+
+  context 'when used with a non-coercible structure' do
+    before do
+      @non_set = 'mock-redis-test:zinterstore:non-set'
+
+      @redises.set(@non_set, 'one')
+    end
+    it 'raises an error for wrong value type' do
+      lambda do
+        @redises.zinterstore(@dest, [@odds, @non_set])
+      end.should raise_error(Redis::CommandError)
+    end
+  end
+
   context 'the :weights argument' do
     it 'multiplies the scores by the weights while aggregating' do
       @redises.zinterstore(@dest, [@odds, @primes], :weights => [2, 3])
