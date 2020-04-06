@@ -66,6 +66,26 @@ describe '#pipelined' do
     end
   end
 
+  context 'with redis time return value' do
+    let(:time_stub) { double 'Time', :now => Time.new(2019, 1, 2, 3, 4, 6, '+00:00') }
+    let(:options)   { { :time_class => time_stub } }
+
+    subject { MockRedis.new(options) }
+
+    it 'returns the time value' do
+      subject.set('foo', 'bar')
+
+      results = subject.pipelined do
+        subject.get('foo')
+        subject.host # defined on MockRedis, so not captured
+        subject.time
+        subject.echo('baz')
+      end
+
+      expect(results).to eq(['bar', [1_546_398_246, 0], 'baz'])
+    end
+  end
+
   context 'with nested pipelines' do
     let(:key1)   { 'hello' }
     let(:key2)   { 'world' }

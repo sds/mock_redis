@@ -159,7 +159,7 @@ class MockRedis
     end
 
     def lastsave
-      @base.now.first
+      now.first
     end
 
     def persist(key)
@@ -239,6 +239,13 @@ class MockRedis
         -1
       end
     end
+
+    def now
+      current_time = @base.options[:time_class].now
+      miliseconds = (current_time.to_r - current_time.to_i) * 1_000
+      [current_time.to_i, miliseconds.to_i]
+    end
+    alias time now
 
     def type(key)
       if !exists(key)
@@ -344,7 +351,7 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now, miliseconds = @base.now
+      now, miliseconds = self.now
       now_ms = now * 1_000 + miliseconds
 
       to_delete = expire_times.take_while do |(time, _key)|
