@@ -41,6 +41,39 @@ describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     end.should raise_error(Redis::CommandError)
   end
 
+  context 'when used with a set' do
+    before do
+      @set4 = 'mock-redis-test:zunionstore4'
+
+      @redises.sadd(@set4, 'two')
+      @redises.sadd(@set4, 'three')
+      @redises.sadd(@set4, 'four')
+    end
+
+    it 'returns the number of elements in the new set' do
+      @redises.zunionstore(@dest, [@set3, @set4]).should == 4
+    end
+
+    it 'sums the scores, substituting 1.0 for set values' do
+      @redises.zunionstore(@dest, [@set3, @set4])
+      @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+        [['four', 1.0], ['one', 1.0], ['two', 3.0], ['three', 4.0]]
+    end
+  end
+
+  context 'when used with a non-coercible structure' do
+    before do
+      @non_set = 'mock-redis-test:zunionstore4'
+
+      @redises.set(@non_set, 'one')
+    end
+    it 'raises an error for wrong value type' do
+      lambda do
+        @redises.zunionstore(@dest, [@set1, @non_set])
+      end.should raise_error(Redis::CommandError)
+    end
+  end
+
   context 'the :weights argument' do
     it 'multiplies the scores by the weights while aggregating' do
       @redises.zunionstore(@dest, [@set1, @set2, @set3], :weights => [2, 3, 5])
