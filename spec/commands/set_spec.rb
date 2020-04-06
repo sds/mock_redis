@@ -59,9 +59,11 @@ describe '#set(key, value)' do
 
       it 'accepts PX milliseconds' do
         key = 'mock-redis-test'
-        @mock.set(key, 1, px: 1000).should == 'OK'
+        @mock.set(key, 1, px: 500).should == 'OK'
         @mock.get(key).should_not be_nil
-        Time.stub(:now).and_return(@now + 2)
+        Time.stub(:now).and_return(@now + 300 / 1000.to_f)
+        @mock.get(key).should_not be_nil
+        Time.stub(:now).and_return(@now + 600 / 1000.to_f)
         @mock.get(key).should be_nil
       end
     end
