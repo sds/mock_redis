@@ -1,8 +1,13 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.23.0
 
 * Raise error when `setex` called with negative timeout ([#174](https://github.com/sds/mock_redis/pull/174))
+* Add support for `dump`/`restore` between MockRedis instances ([#176](https://github.com/sds/mock_redis/pull/176))
+* Fix warnings for ZSET methods on Ruby 2.7 ([#177](https://github.com/sds/mock_redis/pull/177))
+* Add support for returning time in pipelines ([#179](https://github.com/sds/mock_redis/pull/179))
+* Fix SET methods to correct set milliseconds with `px` ([#180](https://github.com/sds/mock_redis/pull/180))
+* Add support for unsorted sets within `zinterstore`/`zunionstore`([#182](https://github.com/sds/mock_redis/pull/182))
 
 ### 0.22.0
 
