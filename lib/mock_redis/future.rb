@@ -17,7 +17,7 @@ class MockRedis
 
     def store_result(result)
       @result_set = true
-      @result = result
+      @result = @block ? @block.call(result) : result
     end
   end
 end
