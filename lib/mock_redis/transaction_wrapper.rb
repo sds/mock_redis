@@ -17,7 +17,7 @@ class MockRedis
 
     def method_missing(method, *args, &block)
       if in_multi?
-        future = MockRedis::Future.new([method, *args])
+        future = MockRedis::Future.new([method, *args], block)
         @transaction_futures << future
 
         if @multi_block_given
@@ -60,7 +60,7 @@ class MockRedis
         begin
           result = send(*future.command)
           future.store_result(result)
-          result
+          future.value
         rescue StandardError => e
           e
         end
