@@ -38,7 +38,7 @@ class MockRedis
       lng2, lat2 = geohash_decode(hash2)
 
       distance = geohash_distance(lng1, lat1, lng2, lat2) / to_meter
-      format('%.4f', distance)
+      format('%<distance>.4f', distance: distance)
     end
 
     def geohash(key, members)
@@ -95,8 +95,8 @@ class MockRedis
       lat = Float(point[1])
 
       unless LNG_RANGE.include?(lng) && LAT_RANGE.include?(lat)
-        lng = format('%.6f', lng)
-        lat = format('%.6f', lat)
+        lng = format('%<long>.6f', long: lng)
+        lat = format('%<lat>.6f', lat: lat)
         raise Redis::CommandError,
           "ERR invalid longitude,latitude pair #{lng},#{lat}"
       end
@@ -201,7 +201,7 @@ class MockRedis
     end
 
     def format_decoded_coord(coord)
-      coord = format('%.17f', coord)
+      coord = format('%<coord>.17f', coord: coord)
       l = 1
       l += 1 while coord[-l] == '0'
       coord = coord[0..-l]

@@ -9,7 +9,7 @@
 # Offense count: 17
 # Configuration parameters: MinNameLength, AllowNamesEndingInNumbers, AllowedNames, ForbiddenNames.
 # AllowedNames: io, id, to, by, on, in, at, ip
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Exclude:
     - 'lib/mock_redis/database.rb'
     - 'lib/mock_redis/expire_wrapper.rb'

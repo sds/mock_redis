@@ -15,7 +15,7 @@ require 'mock_redis'
 require 'timecop'
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..')))
-Dir['spec/support/**/*.rb'].each { |x| require x }
+Dir['spec/support/**/*.rb'].sort.each { |x| require x }
 
 module TypeCheckingHelper
   def method_from_description(example)

@@ -24,7 +24,7 @@ class MockRedis
     def initialize_copy(source)
       super
       @databases = @databases.clone
-      @databases.keys.each do |k|
+      @databases.each_key do |k|
         @databases[k] = @databases[k].clone
       end
     end
