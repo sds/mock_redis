@@ -351,8 +351,8 @@ class MockRedis
     # This method isn't private, but it also isn't a Redis command, so
     # it doesn't belong up above with all the Redis commands.
     def expire_keys
-      now, miliseconds = self.now
-      now_ms = now * 1_000 + miliseconds
+      now_sec, miliseconds = now
+      now_ms = now_sec * 1_000 + miliseconds
 
       to_delete = expire_times.take_while do |(time, _key)|
         (time.to_r * 1_000).to_i <= now_ms
