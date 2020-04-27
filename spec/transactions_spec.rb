@@ -67,6 +67,22 @@ describe 'transactions (multi/exec/discard)' do
       @redises.get('counter').should eq '6'
       @redises.get('test').should eq '1'
     end
+
+    it 'allows blocks within multi blocks' do
+      @redises.set('foo', 'bar')
+      @redises.set('fuu', 'baz')
+
+      result = nil
+
+      @redises.multi do |r|
+        result = r.mget('foo', 'fuu') { |reply| reply.map(&:upcase) }
+        r.del('foo', 'fuu')
+      end
+
+      result.value.should eq %w[BAR BAZ]
+      @redises.get('foo').should eq nil
+      @redises.get('fuu').should eq nil
+    end
   end
 
   context '#discard' do

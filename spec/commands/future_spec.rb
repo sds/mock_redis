@@ -3,7 +3,12 @@ require 'spec_helper'
 describe MockRedis::Future do
   let(:command) { [:get, 'foo'] }
   let(:result)  { 'bar' }
-  before        { @future = MockRedis::Future.new(command) }
+  let(:block)   { ->(value) { value.upcase } }
+
+  before do
+    @future = MockRedis::Future.new(command)
+    @future2 = MockRedis::Future.new(command, block)
+  end
 
   it 'remembers the command' do
     @future.command.should eq(command)
@@ -16,5 +21,10 @@ describe MockRedis::Future do
   it 'returns the value after the result has been set' do
     @future.store_result(result)
     @future.value.should eq(result)
+  end
+
+  it 'executes the block on the value if block is passed in' do
+    @future2.store_result(result)
+    @future2.value.should eq('BAR')
   end
 end
