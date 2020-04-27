@@ -7,7 +7,7 @@ describe MockRedis::Future do
 
   before do
     @future = MockRedis::Future.new(command)
-    @future_2 = MockRedis::Future.new(command, block)
+    @future2 = MockRedis::Future.new(command, block)
   end
 
   it 'remembers the command' do
@@ -24,7 +24,7 @@ describe MockRedis::Future do
   end
 
   it 'executes the block on the value if block is passed in' do
-    @future_2.store_result(result)
-    @future_2.value.should eq('BAR')
+    @future2.store_result(result)
+    @future2.value.should eq('BAR')
   end
 end

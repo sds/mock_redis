@@ -79,7 +79,7 @@ describe 'transactions (multi/exec/discard)' do
         r.del('foo', 'fuu')
       end
 
-      result.value.should eq ['BAR', 'BAZ']
+      result.value.should eq %w[BAR BAZ]
       @redises.get('foo').should eq nil
       @redises.get('fuu').should eq nil
     end
