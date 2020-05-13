@@ -29,6 +29,7 @@ describe '#keys()' do
 
       @redises.set('mock-redis-test:special-key?', 'true')
       @redises.set('mock-redis-test:special-key*', 'true')
+      @redises.set('mock-redis-test:special-key-!?*', 'true')
     end
 
     describe 'the ? character' do
@@ -52,6 +53,22 @@ describe '#keys()' do
         @redises.keys('mock-redis-test:special-key\?').sort.should == [
           'mock-redis-test:special-key?',
         ]
+      end
+
+      context 'multiple ? characters' do
+        it "properly handles multiple consequtive '?' characters" do
+          @redises.keys('mock-redis-test:special-key-???').sort.should == [
+            'mock-redis-test:special-key-!?*',
+          ]
+        end
+
+        context '\\? as a literal ' do
+          it 'handles multiple ? as both literal and special character' do
+            @redises.keys('mock-redis-test:special-key-?\??').sort.should == [
+              'mock-redis-test:special-key-!?*',
+            ]
+          end
+        end
       end
     end
 
