@@ -41,7 +41,7 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = [:expect, :should]
     # Allow for a large output so we can debug error messages
-    c.max_formatted_output_length = 1000000
+    c.max_formatted_output_length = 1_000_000
   end
 
   config.mock_with :rspec do |c|

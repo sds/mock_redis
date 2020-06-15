@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'mock_redis/assertions'
 
 class MockRedis
@@ -236,7 +235,7 @@ class MockRedis
         end
         pexpire(key, duration)
       end
-      if options.length > 0
+      if !options.empty?
         raise ArgumentError, "unknown keyword: #{options.keys[0]}"
       end
 

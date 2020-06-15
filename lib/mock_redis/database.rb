@@ -116,12 +116,12 @@ class MockRedis
     end
 
     def exists(*keys)
-      keys.count {|key| data.key?(key)}
+      keys.count { |key| data.key?(key) }
     end
 
     def exists?(*keys)
-      keys.each {|key| return true if data.key?(key)}
-      return false
+      keys.each { |key| return true if data.key?(key) }
+      false
     end
 
     def flushdb
