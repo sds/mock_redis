@@ -39,7 +39,7 @@ class MockRedis
       src = current_db
       dest = db(db_index)
 
-      if !src.exists(key) || dest.exists(key)
+      if !src.exists?(key) || dest.exists?(key)
         false
       else
         case current_db.type(key)

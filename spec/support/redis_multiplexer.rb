@@ -9,6 +9,7 @@ class RedisMultiplexer < BlankSlate
 
   def initialize(*a)
     @mock_redis = MockRedis.new(*a)
+    Redis.exists_returns_integer = true
     @real_redis = Redis.new(*a)
     _gsub_clear
   end
