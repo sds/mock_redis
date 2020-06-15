@@ -52,8 +52,7 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
     expect { @redises.xadd('mock-redis-test:unknown-stream', { key: 'value' }, id: '0') }
       .to raise_error(
         Redis::CommandError,
-        'ERR The ID specified in XADD is equal or smaller than the target ' \
-        'stream top item'
+        'ERR The ID specified in XADD must be greater than 0-0'
       )
   end
 

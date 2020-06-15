@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe '#setbit(key, offset)' do
   before do
+    Encoding.default_external = 'UTF-8'
     @key = 'mock-redis-test:setbit'
     @redises.set(@key, 'h') # ASCII 0x68
   end
