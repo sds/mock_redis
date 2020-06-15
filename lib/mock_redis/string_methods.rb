@@ -235,7 +235,7 @@ class MockRedis
         end
         pexpire(key, duration)
       end
-      if !options.empty?
+      unless options.empty?
         raise ArgumentError, "unknown keyword: #{options.keys[0]}"
       end
 
