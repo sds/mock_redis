@@ -106,7 +106,7 @@ class MockRedis
         raise Redis::CommandError, 'ERR value is not an integer or out of range'
       end
 
-      if exists(key)
+      if exists?(key)
         timestamp = Rational(timestamp_ms.to_i, 1000)
         set_expiration(key, @base.time_at(timestamp))
         true
@@ -115,8 +115,13 @@ class MockRedis
       end
     end
 
-    def exists(key)
-      data.key?(key)
+    def exists(*keys)
+      keys.count { |key| data.key?(key) }
+    end
+
+    def exists?(*keys)
+      keys.each { |key| return true if data.key?(key) }
+      false
     end
 
     def flushdb
@@ -130,7 +135,7 @@ class MockRedis
     end
 
     def restore(key, ttl, value, replace: false)
-      if !replace && exists(key)
+      if !replace && exists?(key)
         raise Redis::CommandError, 'BUSYKEY Target key name already exists.'
       end
       data[key] = Marshal.load(value) # rubocop:disable Security/MarshalLoad
@@ -163,7 +168,7 @@ class MockRedis
     end
 
     def persist(key)
-      if exists(key) && has_expiration?(key)
+      if exists?(key) && has_expiration?(key)
         remove_expiration(key)
         true
       else
@@ -204,7 +209,7 @@ class MockRedis
         raise Redis::CommandError, 'ERR no such key'
       end
 
-      if exists(newkey)
+      if exists?(newkey)
         false
       else
         rename(key, newkey)
@@ -217,7 +222,7 @@ class MockRedis
     end
 
     def ttl(key)
-      if !exists(key)
+      if !exists?(key)
         -2
       elsif has_expiration?(key)
         now, = @base.now
@@ -231,7 +236,7 @@ class MockRedis
       now, miliseconds = @base.now
       now_ms = now * 1000 + miliseconds
 
-      if !exists(key)
+      if !exists?(key)
         -2
       elsif has_expiration?(key)
         (expiration(key).to_r * 1000).to_i - now_ms
@@ -248,7 +253,7 @@ class MockRedis
     alias time now
 
     def type(key)
-      if !exists(key)
+      if !exists?(key)
         'none'
       elsif hashy?(key)
         'hash'

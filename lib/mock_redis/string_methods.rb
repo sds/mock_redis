@@ -188,7 +188,7 @@ class MockRedis
     def msetnx(*kvpairs)
       assert_has_args(kvpairs, 'msetnx')
 
-      if kvpairs.each_slice(2).any? { |(k, _)| exists(k) }
+      if kvpairs.each_slice(2).any? { |(k, _)| exists?(k) }
         false
       else
         mset(*kvpairs)
@@ -205,14 +205,14 @@ class MockRedis
       return_true = false
       options = options.dup
       if options.delete(:nx)
-        if exists(key)
+        if exists?(key)
           return false
         else
           return_true = true
         end
       end
       if options.delete(:xx)
-        if exists(key)
+        if exists?(key)
           return_true = true
         else
           return false
@@ -234,6 +234,9 @@ class MockRedis
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
         pexpire(key, duration)
+      end
+      unless options.empty?
+        raise ArgumentError, "unknown keyword: #{options.keys[0]}"
       end
 
       return_true ? true : 'OK'
@@ -323,7 +326,7 @@ class MockRedis
     end
 
     def setnx(key, value)
-      if exists(key)
+      if exists?(key)
         false
       else
         set(key, value)

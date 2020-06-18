@@ -64,7 +64,7 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists(@key).should == false
+      @redises.exists?(@key).should == false
     end
 
     it 'copies key to destdb' do
@@ -81,7 +81,7 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists(@key).should == false
+      @redises.exists?(@key).should == false
     end
 
     it 'copies key to destdb' do
@@ -99,7 +99,7 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists(@key).should == false
+      @redises.exists?(@key).should == false
     end
 
     it 'copies key to destdb' do
@@ -117,7 +117,7 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists(@key).should == false
+      @redises.exists?(@key).should == false
     end
 
     it 'copies key to destdb' do
@@ -135,7 +135,7 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists(@key).should == false
+      @redises.exists?(@key).should == false
     end
 
     it 'copies key to destdb' do

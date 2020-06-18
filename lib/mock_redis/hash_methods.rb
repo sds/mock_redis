@@ -128,10 +128,15 @@ class MockRedis
       end
     end
 
-    def hset(key, field, value)
-      field_exists = hexists(key, field)
-      with_hash_at(key) { |h| h[field.to_s] = value.to_s }
-      !field_exists
+    def hset(key, *args)
+      added = 0
+      with_hash_at(key) do |hash|
+        args.each_slice(2) do |field, value|
+          added += 1 unless hash.key?(field.to_s)
+          hash[field.to_s] = value.to_s
+        end
+      end
+      added
     end
 
     def hsetnx(key, field, value)

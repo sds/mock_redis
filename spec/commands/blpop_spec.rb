@@ -27,12 +27,6 @@ describe '#blpop(key [, key, ...,], timeout)' do
       [@list1, 'one']
   end
 
-  it 'raises an error on subsecond timeouts' do
-    lambda do
-      @redises.blpop(@list1, @list2, :timeout => 0.5)
-    end.should raise_error(Redis::CommandError)
-  end
-
   it 'raises an error on negative timeout' do
     lambda do
       @redises.blpop(@list1, @list2, :timeout => -1)

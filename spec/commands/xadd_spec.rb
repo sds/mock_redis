@@ -54,6 +54,8 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
         Redis::CommandError,
         'ERR The ID specified in XADD is equal or smaller than the target ' \
         'stream top item'
+        # TOOD: Redis version 6.0.4, w redis 4.2.1 generates the following error message:
+        # 'ERR The ID specified in XADD must be greater than 0-0'
       )
   end
 

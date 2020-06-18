@@ -33,10 +33,12 @@ describe '#set(key, value)' do
       @redises.set(key, 1, xx: true).should == true
     end
 
-    it 'ignores other options' do
+    it 'raises on unknown options' do
       key = 'mock-redis-test'
       @redises.del(key)
-      @redises.set(key, 1, logger: :something).should == 'OK'
+      expect do
+        @redises.set(key, 1, logger: :something)
+      end.to raise_error(ArgumentError, 'unknown keyword: logger')
     end
 
     context '[mock only]' do

@@ -5,18 +5,18 @@ describe '#hset(key, field)' do
     @key = 'mock-redis-test:hset'
   end
 
-  it 'returns true if the key does not exist' do
-    @redises.hset(@key, 'k1', 'v1').should == true
+  it 'returns 1 if the key does not exist' do
+    @redises.hset(@key, 'k1', 'v1').should == 1
   end
 
-  it 'returns true if the key exists but the field does not' do
+  it 'returns 1 if the key exists but the field does not' do
     @redises.hset(@key, 'k1', 'v1')
-    @redises.hset(@key, 'k2', 'v2').should == true
+    @redises.hset(@key, 'k2', 'v2').should == 1
   end
 
-  it 'returns false if the field already exists' do
+  it 'returns 0 if the field already exists' do
     @redises.hset(@key, 'k1', 'v1')
-    @redises.hset(@key, 'k1', 'v1').should == false
+    @redises.hset(@key, 'k1', 'v1').should == 0
   end
 
   it 'creates a hash there is no such field' do
