@@ -1,5 +1,11 @@
 # MockRedis Changelog
 
+### 0.24.0
+
+* Fix handling of blocks within `multi` blocks ([#185](https://github.com/sds/mock_redis/pull/185))
+* Fix handling of multiple consecutive `?` characters in key pattern matching ([#186](https://github.com/sds/mock_redis/pull/186))
+* Change `exists` to return an integer and add `exists?` ([#188](https://github.com/sds/mock_redis/pull/188))
+
 ### 0.23.0
 
 * Raise error when `setex` called with negative timeout ([#174](https://github.com/sds/mock_redis/pull/174))
