@@ -67,6 +67,18 @@ class MockRedis
       end
     end
 
+    def xread(keys, ids, count: nil, block: nil)
+      result = {}
+      keys = keys.is_a?(Array) ? keys : [keys]
+      ids = ids.is_a?(Array) ? ids : [ids]
+      keys.each_with_index do |key, index|
+        with_stream_at(key) do |stream|
+          result[key] = stream.read(ids[index])
+        end
+      end
+      result
+    end
+
     private
 
     def with_stream_at(key, &blk)
