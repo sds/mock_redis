@@ -23,14 +23,25 @@ class MockRedis
 
     def add(id, values)
       @last_id = MockRedis::Stream::Id.new(id, min: @last_id)
+      if @last_id.to_s == '0-0'
+        raise Redis::CommandError,
+              'ERR The ID specified in XADD is equal or smaller than ' \
+              'the target stream top item'
+        # TOOD: Redis version 6.0.4, w redis 4.2.1 generates the following error message:
+        # 'ERR The ID specified in XADD must be greater than 0-0'
+      end
       members.add [@last_id, Hash[values.map { |k, v| [k.to_s, v.to_s] }]]
       @last_id.to_s
     end
 
     def trim(count)
       deleted = @members.size - count
-      @members = @members.to_a[-count..-1].to_set
-      deleted
+      if deleted > 0
+        @members = @members.to_a[-count..-1].to_set
+        deleted
+      else
+        0
+      end
     end
 
     def range(start, finish, reversed, *opts_in)
@@ -43,6 +54,11 @@ class MockRedis
       items.reverse! if reversed
       return items.first(opts['count'].to_i) if opts.key?('count')
       items
+    end
+
+    def read(id)
+      stream_id = MockRedis::Stream::Id.new(id)
+      members.select { |m| (stream_id < m[0]) }.map { |m| [m[0].to_s, m[1]] }
     end
 
     def each
