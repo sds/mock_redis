@@ -54,6 +54,19 @@ describe '#xrange("mystream", first: "0-1", last: "0-3", count: 10)' do
       )
     end
 
+    it 'returns all entries with a lower limit of 0-0' do
+      expect(@redises.xrange(@key, '0-0', '+')).to eq(
+        [
+          ['1234567891234-0', { 'key1' => 'value1' }],
+          ['1234567891245-0', { 'key2' => 'value2' }],
+          ['1234567891245-1', { 'key3' => 'value3' }],
+          ['1234567891278-0', { 'key4' => 'value4' }],
+          ['1234567891278-1', { 'key5' => 'value5' }],
+          ['1234567891299-0', { 'key6' => 'value6' }]
+        ]
+      )
+    end
+
     it 'returns entries with an upper limit' do
       expect(@redises.xrange(@key, '-', '1234567891285-0')).to eq(
         [

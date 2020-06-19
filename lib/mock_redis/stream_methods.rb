@@ -4,7 +4,6 @@ require 'mock_redis/stream'
 
 # TODO: Implement the following commands
 #
-#   * xread
 #   * xgroup
 #   * xreadgroup
 #   * xack
@@ -67,13 +66,15 @@ class MockRedis
       end
     end
 
-    def xread(keys, ids, count: nil, block: nil)
+    # TODO: Implement count and block parameters
+    def xread(keys, ids)
       result = {}
       keys = keys.is_a?(Array) ? keys : [keys]
       ids = ids.is_a?(Array) ? ids : [ids]
       keys.each_with_index do |key, index|
         with_stream_at(key) do |stream|
-          result[key] = stream.read(ids[index])
+          data = stream.read(ids[index])
+          result[key] = data unless data.empty?
         end
       end
       result
