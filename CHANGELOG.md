@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Add support for `xread` command ([#190](https://github.com/sds/mock_redis/pull/190))
+
 ### 0.24.0
 
 * Fix handling of blocks within `multi` blocks ([#185](https://github.com/sds/mock_redis/pull/185))
