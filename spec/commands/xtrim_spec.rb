@@ -16,6 +16,12 @@ describe '#xtrim("mystream", 1000, approximate: true)' do
     expect(@redises.xtrim(@key, 4)).to eq 2
   end
 
+  it 'returns 0 if count is greater than size' do
+    initial = @redises.xrange(@key, '-', '+')
+    expect(@redises.xtrim(@key, 1000)).to eq 0
+    expect(@redises.xrange(@key, '-', '+')).to eql(initial)
+  end
+
   it 'deletes the oldes elements' do
     @redises.xtrim(@key, 4)
     expect(@redises.xrange(@key, '-', '+')).to eq(

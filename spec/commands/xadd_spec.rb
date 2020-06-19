@@ -101,4 +101,15 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
       ]
     )
   end
+
+  it 'supports a maxlen greater than the current size' do
+    @redises.xadd(@key, { key1: 'value1' }, id: '1234567891234-0')
+    @redises.xadd(@key, { key2: 'value2' }, id: '1234567891245-0', maxlen: 1000)
+    expect(@redises.xrange(@key, '-', '+')).to eq(
+      [
+        ['1234567891234-0', { 'key1' => 'value1' }],
+        ['1234567891245-0', { 'key2' => 'value2' }],
+      ]
+    )
+  end
 end
