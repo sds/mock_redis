@@ -154,9 +154,10 @@ class MockRedis
     end
 
     def mget(*keys)
+      keys.flatten!
+
       assert_has_args(keys, 'mget')
 
-      keys.flatten!
       keys.map do |key|
         get(key) if stringy?(key)
       end

@@ -49,5 +49,11 @@ describe '#mget(key [, key, ...])' do
         @redises.mget
       end.should raise_error(Redis::CommandError)
     end
+
+    it 'raises an error if you pass it empty array' do
+      lambda do
+        @redises.mget([])
+      end.should raise_error(Redis::CommandError)
+    end
   end
 end
