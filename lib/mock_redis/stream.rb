@@ -37,11 +37,11 @@ class MockRedis
     def trim(count)
       deleted = @members.size - count
       if deleted > 0
-        if count == 0
-          @members = Set.new
-        else
-          @members = @members.to_a[-count..-1].to_set
-        end
+        @members = if count == 0
+                     Set.new
+                   else
+                     @members.to_a[-count..-1].to_set
+                   end
         deleted
       else
         0
