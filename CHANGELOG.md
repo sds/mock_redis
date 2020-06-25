@@ -3,6 +3,8 @@
 ### master (unreleased)
 
 * Add support for `xread` command ([#190](https://github.com/sds/mock_redis/pull/190))
+* Fix `mget` to raise error when passing empty array ([#191](https://github.com/sds/mock_redis/pull/191))
+* Fix `xadd` when `maxlen` is zero ([#192](https://github.com/sds/mock_redis/pull/192))
 
 ### 0.24.0
 
