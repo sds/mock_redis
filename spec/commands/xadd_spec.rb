@@ -112,4 +112,11 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
       ]
     )
   end
+
+  it 'creates an empty stream with maxlen of 0' do
+    @redises.xadd(@key, { key: 'value' }, maxlen: 0)
+    expect(@redises.xlen(@key)).to eq 0
+    expect(@redises.xrange(@key, '-', '+')).to eq([])
+    expect(@redises.exists?(@key)).to eq true
+  end
 end

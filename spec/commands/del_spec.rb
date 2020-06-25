@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe '#del(key [, key, ...])' do
+  before :all do
+    sleep 1 - (Time.now.to_f % 1)
+  end
+
+  before :each do
+    @redises._gsub(/\d{3}-\d/, '...-.')
+  end
+
   it 'returns the number of keys deleted' do
     @redises.set('mock-redis-test:1', 1)
     @redises.set('mock-redis-test:2', 1)
@@ -31,5 +39,12 @@ describe '#del(key [, key, ...])' do
 
   it 'raises an error if an empty array is given' do
     expect { @redises.del [] }.to raise_error Redis::CommandError
+  end
+
+  it 'removes a stream key' do
+    @redises.xadd('mock-redis-stream', { key: 'value' }, maxlen: 0)
+    expect(@redises.exists?('mock-redis-stream')).to eq true
+    @redises.del('mock-redis-stream')
+    expect(@redises.exists?('mock-redis-stream')).to eq false
   end
 end
