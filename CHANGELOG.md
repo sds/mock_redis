@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.25.0
 
 * Add support for `xread` command ([#190](https://github.com/sds/mock_redis/pull/190))
 * Fix `mget` to raise error when passing empty array ([#191](https://github.com/sds/mock_redis/pull/191))
