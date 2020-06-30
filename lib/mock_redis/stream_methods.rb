@@ -66,14 +66,16 @@ class MockRedis
       end
     end
 
-    # TODO: Implement count and block parameters
-    def xread(keys, ids)
+    def xread(keys, ids, count: nil, block: nil)
+      args = []
+      args += ['COUNT', count] if count
+      args += ['BLOCK', block.to_i] if block
       result = {}
       keys = keys.is_a?(Array) ? keys : [keys]
       ids = ids.is_a?(Array) ? ids : [ids]
       keys.each_with_index do |key, index|
         with_stream_at(key) do |stream|
-          data = stream.read(ids[index])
+          data = stream.read(ids[index], *args)
           result[key] = data unless data.empty?
         end
       end
