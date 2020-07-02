@@ -60,9 +60,12 @@ class MockRedis
       items
     end
 
-    def read(id)
+    def read(id, *opts_in)
+      opts = options opts_in, %w[count block]
       stream_id = MockRedis::Stream::Id.new(id)
-      members.select { |m| (stream_id < m[0]) }.map { |m| [m[0].to_s, m[1]] }
+      items = members.select { |m| (stream_id < m[0]) }.map { |m| [m[0].to_s, m[1]] }
+      return items.first(opts['count'].to_i) if opts.key?('count')
+      items
     end
 
     def each

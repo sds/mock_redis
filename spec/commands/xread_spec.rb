@@ -47,4 +47,20 @@ describe '#xread(keys, ids)' do
     expect(@redises.xread([@key, @key1], %w[1234567891234-2 1234567891234-1]))
       .to eq({ @key1 => [['1234567891234-2', { 'key1' => 'value2' }]] })
   end
+
+  it 'supports the block parameter' do
+    @redises.xadd(@key, { key: 'value' }, id: '1234567891234-0')
+    expect(@redises.xread(@key, '0-0', block: 1000))
+      .to eq({ @key => [['1234567891234-0', { 'key' => 'value' }]] })
+  end
+
+  it 'limits results with count' do
+    @redises.xadd(@key, { key: 'value' }, id: '1234567891234-0')
+    @redises.xadd(@key, { key: 'value' }, id: '1234567891234-1')
+    @redises.xadd(@key, { key: 'value' }, id: '1234567891234-2')
+    expect(@redises.xread(@key, '0-0', count: 1))
+      .to eq({ @key => [['1234567891234-0', { 'key' => 'value' }]] })
+    expect(@redises.xread(@key, '1234567891234-0', count: 1))
+      .to eq({ @key => [['1234567891234-1', { 'key' => 'value' }]] })
+  end
 end
