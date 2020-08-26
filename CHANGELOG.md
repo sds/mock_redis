@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.26.0
 
 * Add block and count support to `xread` ([#194](https://github.com/sds/mock_redis/pull/194))
 
