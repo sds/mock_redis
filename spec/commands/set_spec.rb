@@ -38,7 +38,7 @@ describe '#set(key, value)' do
       @redises.del(key)
       expect do
         @redises.set(key, 1, logger: :something)
-      end.to raise_error(ArgumentError, 'unknown keyword: logger')
+      end.to raise_error(ArgumentError, /unknown keyword/)
     end
 
     context '[mock only]' do
