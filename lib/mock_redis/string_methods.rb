@@ -220,6 +220,7 @@ class MockRedis
       end
       data[key] = value.to_s
 
+      remove_expiration(key) unless keepttl
       if ex
         if ex == 0
           raise Redis::CommandError, 'ERR invalid expire time in set'
