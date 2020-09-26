@@ -201,6 +201,8 @@ class MockRedis
       msetnx(*hash.to_a.flatten)
     end
 
+    # Parameer list required to ensure the ArgumentError is returned correctly
+    # rubocop:disable Metrics/ParameterLists
     def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil)
       key = key.to_s
       return_true = false
@@ -237,6 +239,7 @@ class MockRedis
 
       return_true ? true : 'OK'
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def setbit(key, offset, value)
       assert_stringy(key, 'ERR bit is not an integer or out of range')
