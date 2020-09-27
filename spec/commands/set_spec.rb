@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe '#set(key, value)' do
+  let(:key) { 'mock-redis-test' }
+
   it "responds with 'OK'" do
     @redises.set('mock-redis-test', 1).should == 'OK'
   end
@@ -19,26 +21,72 @@ describe '#set(key, value)' do
     end
 
     it 'accepts NX' do
-      key = 'mock-redis-test'
       @redises.del(key)
       @redises.set(key, 1, nx: true).should == true
       @redises.set(key, 1, nx: true).should == false
     end
 
     it 'accepts XX' do
-      key = 'mock-redis-test'
       @redises.del(key)
       @redises.set(key, 1, xx: true).should == false
       @redises.set(key, 1).should == 'OK'
       @redises.set(key, 1, xx: true).should == true
     end
 
+    it 'sets the ttl to -1' do
+      @redises.set(key, 1)
+      expect(@redises.ttl(key)).to eq(-1)
+    end
+
+    context 'with an expiry time' do
+      before :each do
+        Timecop.freeze
+        @redises.set(key, 1, ex: 90)
+      end
+
+      after :each do
+        @redises.del(key)
+        Timecop.return
+      end
+
+      it 'has the TTL set' do
+        expect(@redises.ttl(key)).to eq 90
+      end
+
+      it 'resets the TTL without keepttl' do
+        expect do
+          @redises.set(key, 2)
+        end.to change { @redises.ttl(key) }.from(90).to(-1)
+      end
+
+      it 'does not change the TTL with keepttl: true' do
+        expect do
+          @redises.set(key, 2, keepttl: true)
+        end.not_to change { @redises.ttl(key) }.from(90)
+      end
+    end
+
+    it 'accepts KEEPTTL' do
+      expect(@redises.set(key, 1, keepttl: true)).to eq 'OK'
+    end
+
+    it 'does not set TTL without ex' do
+      @redises.set(key, 1)
+      expect(@redises.ttl(key)).to eq(-1)
+    end
+
+    it 'sets the TTL' do
+      Timecop.freeze do
+        @redises.set(key, 1, ex: 90)
+        expect(@redises.ttl(key)).to eq 90
+      end
+    end
+
     it 'raises on unknown options' do
-      key = 'mock-redis-test'
       @redises.del(key)
       expect do
         @redises.set(key, 1, logger: :something)
-      end.to raise_error(ArgumentError, 'unknown keyword: logger')
+      end.to raise_error(ArgumentError, /unknown keyword/)
     end
 
     context '[mock only]' do
@@ -52,7 +100,6 @@ describe '#set(key, value)' do
       end
 
       it 'accepts EX seconds' do
-        key = 'mock-redis-test'
         @mock.set(key, 1, ex: 1).should == 'OK'
         @mock.get(key).should_not be_nil
         Time.stub(:now).and_return(@now + 2)
@@ -60,7 +107,6 @@ describe '#set(key, value)' do
       end
 
       it 'accepts PX milliseconds' do
-        key = 'mock-redis-test'
         @mock.set(key, 1, px: 500).should == 'OK'
         @mock.get(key).should_not be_nil
         Time.stub(:now).and_return(@now + 300 / 1000.to_f)

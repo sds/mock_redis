@@ -201,18 +201,19 @@ class MockRedis
       msetnx(*hash.to_a.flatten)
     end
 
-    def set(key, value, options = {})
+    # Parameer list required to ensure the ArgumentError is returned correctly
+    # rubocop:disable Metrics/ParameterLists
+    def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil)
       key = key.to_s
       return_true = false
-      options = options.dup
-      if options.delete(:nx)
+      if nx
         if exists?(key)
           return false
         else
           return_true = true
         end
       end
-      if options.delete(:xx)
+      if xx
         if exists?(key)
           return_true = true
         else
@@ -221,27 +222,24 @@ class MockRedis
       end
       data[key] = value.to_s
 
-      duration = options.delete(:ex)
-      if duration
-        if duration == 0
+      remove_expiration(key) unless keepttl
+      if ex
+        if ex == 0
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
-        expire(key, duration)
+        expire(key, ex)
       end
 
-      duration = options.delete(:px)
-      if duration
-        if duration == 0
+      if px
+        if px == 0
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
-        pexpire(key, duration)
-      end
-      unless options.empty?
-        raise ArgumentError, "unknown keyword: #{options.keys[0]}"
+        pexpire(key, px)
       end
 
       return_true ? true : 'OK'
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def setbit(key, offset, value)
       assert_stringy(key, 'ERR bit is not an integer or out of range')
