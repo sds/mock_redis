@@ -23,7 +23,7 @@ class RedisMultiplexer < BlankSlate
     @gsub_from = @gsub_to = ''
   end
 
-  def method_missing(method, *args, &blk)
+  ruby2_keywords def method_missing(method, *args, &blk)
     # If we're in a Redis command that accepts a block, and we execute more
     # redis commands, ONLY execute them on the Redis implementation that the
     # block came from.

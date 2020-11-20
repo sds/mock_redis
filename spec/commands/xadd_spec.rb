@@ -7,11 +7,14 @@ describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, app
   end
 
   before :each do
-    @redises._gsub(/\d{3}-\d/, '...-.')
+    # TODO: Redis appears to be returning a timestamp a few seconds in the future
+    # so we're ignoring the last 5 digits (time in milliseconds)
+    @redises._gsub(/\d{5}-\d/, '....-.')
   end
 
   it 'returns an id based on the timestamp' do
     t = Time.now.to_i
+    id = @redises.xadd(@key, key: 'value')
     expect(@redises.xadd(@key, key: 'value')).to match(/#{t}\d{3}-0/)
   end
 

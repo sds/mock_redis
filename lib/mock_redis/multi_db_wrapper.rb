@@ -17,7 +17,7 @@ class MockRedis
       super || current_db.respond_to?(method, include_private)
     end
 
-    def method_missing(method, *args, &block)
+    ruby2_keywords def method_missing(method, *args, &block)
       current_db.send(method, *args, &block)
     end
 

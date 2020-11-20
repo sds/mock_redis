@@ -6,7 +6,9 @@ describe '#del(key [, key, ...])' do
   end
 
   before :each do
-    @redises._gsub(/\d{3}-\d/, '...-.')
+    # TODO: Redis appears to be returning a timestamp a few seconds in the future
+    # so we're ignoring the last 5 digits (time in milliseconds)
+    @redises._gsub(/\d{5}-\d/, '...-.')
   end
 
   it 'returns the number of keys deleted' do
