@@ -12,7 +12,7 @@ class MockRedis
     D_R = Math::PI / 180.0
     EARTH_RADIUS_IN_METERS = 6_372_797.560856
 
-    def geoadd(key, *args)
+    ruby2_keywords def geoadd(key, *args)
       points = parse_points(args)
 
       scored_points = points.map do |point|

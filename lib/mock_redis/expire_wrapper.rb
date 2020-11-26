@@ -12,7 +12,7 @@ class MockRedis
       @db = db
     end
 
-    def method_missing(method, *args, &block)
+    ruby2_keywords def method_missing(method, *args, &block)
       @db.expire_keys
       @db.send(method, *args, &block)
     end

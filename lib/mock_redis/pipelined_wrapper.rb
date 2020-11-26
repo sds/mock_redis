@@ -18,7 +18,7 @@ class MockRedis
       @pipelined_futures = @pipelined_futures.clone
     end
 
-    def method_missing(method, *args, &block)
+    ruby2_keywords def method_missing(method, *args, &block)
       if in_pipeline?
         future = MockRedis::Future.new([method, *args], block)
         @pipelined_futures << future
