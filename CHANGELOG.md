@@ -1,5 +1,11 @@
 # MockRedis Changelog
 
+### 0.27.0
+
+* Fix handling of keyword arguments on Ruby 3 ([#199](https://github.com/sds/mock_redis/pull/199))
+* Allow passing string `offset` to `setbit` ([#200](https://github.com/sds/mock_redis/pull/200))
+* Add `connection` method ([#201](https://github.com/sds/mock_redis/pull/201))
+
 ### 0.26.0
 
 * Add block and count support to `xread` ([#194](https://github.com/sds/mock_redis/pull/194))
