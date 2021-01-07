@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.27.1
+
+* Fix missing `ruby2_keywords` gem
+* Allow passing string `offset` to `getbit` ([#203](https://github.com/sds/mock_redis/pull/203))
+
 ### 0.27.0
 
 * Fix handling of keyword arguments on Ruby 3 ([#199](https://github.com/sds/mock_redis/pull/199))
