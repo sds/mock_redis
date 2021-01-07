@@ -93,6 +93,7 @@ class MockRedis
     def getbit(key, offset)
       assert_stringy(key)
 
+      offset = offset.to_i
       offset_of_byte = offset / 8
       offset_within_byte = offset % 8
 
