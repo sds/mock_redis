@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.27.3
+
+* Ensure `ruby2_keywords` dependency is `require`d at runtime
+
 ### 0.27.2
 
 * Switch `ruby2_keywords` gem from development dependency to runtime dependency
