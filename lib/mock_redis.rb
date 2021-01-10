@@ -1,4 +1,5 @@
 require 'set'
+require 'ruby2_keywords'
 
 require 'mock_redis/assertions'
 require 'mock_redis/database'
