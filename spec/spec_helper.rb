@@ -11,7 +11,6 @@ end
 require 'rspec/its'
 require 'redis'
 $LOAD_PATH.unshift(File.expand_path(File.join(__FILE__, '..', '..', 'lib')))
-require 'ruby2_keywords'
 require 'mock_redis'
 require 'timecop'
 
