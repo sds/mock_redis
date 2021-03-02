@@ -48,7 +48,12 @@ class MockRedis
     "redis://#{host}:#{port}/#{db}"
   end
   alias location id
-
+  
+  def is_a?(klass)
+    return true if klass.to_s == Redis
+    super
+  end
+  
   def call(command, &_block)
     send(*command)
   end
