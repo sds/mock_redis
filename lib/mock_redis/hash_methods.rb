@@ -131,6 +131,10 @@ class MockRedis
     def hset(key, *args)
       added = 0
       with_hash_at(key) do |hash|
+        if args.length == 1 && args[0].is_a?(Hash)
+          args = args[0].to_a.flatten
+        end
+
         args.each_slice(2) do |field, value|
           added += 1 unless hash.key?(field.to_s)
           hash[field.to_s] = value.to_s

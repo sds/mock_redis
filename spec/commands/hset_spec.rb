@@ -34,5 +34,9 @@ describe '#hset(key, field)' do
     @redises.hget(@key, '1').should == 'one'
   end
 
+  it 'stores fields sent in a hash' do
+    @redises.hset(@key, {'k1' => 'v1', 'k2' => 'v2'}).should == 2
+  end
+
   it_should_behave_like 'a hash-only command'
 end
