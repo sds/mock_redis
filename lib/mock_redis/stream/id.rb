@@ -20,8 +20,11 @@ class MockRedis
           @timestamp = @sequence = Float::INFINITY
         else
           if id.is_a? String
-            (_, @timestamp, @sequence) = id.match(/^(\d+)-?(\d+)?$/)
-                                           .to_a
+            # See https://redis.io/topics/streams-intro
+            # Ids are a unix timestamp in milliseconds followed by an
+            # optional dash sequence number, e.g. -0. They can also optionally
+            # be prefixed with '(' to change the XRANGE to exclusive.
+            (_, @timestamp, @sequence) = id.match(/^\(?(\d+)-?(\d+)?$/).to_a
             if @timestamp.nil?
               raise Redis::CommandError,
                     'ERR Invalid stream ID specified as stream command argument'
