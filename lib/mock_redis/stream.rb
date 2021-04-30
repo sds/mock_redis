@@ -49,9 +49,15 @@ class MockRedis
       opts = options opts_in, ['count']
       start_id = MockRedis::Stream::Id.new(start)
       finish_id = MockRedis::Stream::Id.new(finish, sequence: Float::INFINITY)
-      items = members
-              .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
-              .map { |m| [m[0].to_s, m[1]] }
+      if start_id.exclusive
+        items = members
+                .select { |m| (start_id < m[0]) && (finish_id >= m[0]) }
+                .map { |m| [m[0].to_s, m[1]] }
+      else
+        items = members
+                .select { |m| (start_id <= m[0]) && (finish_id >= m[0]) }
+                .map { |m| [m[0].to_s, m[1]] }
+      end
       items.reverse! if reversed
       return items.first(opts['count'].to_i) if opts.key?('count')
       items
