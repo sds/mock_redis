@@ -56,4 +56,10 @@ describe '#mget(key [, key, ...])' do
       end.should raise_error(Redis::CommandError)
     end
   end
+
+  context 'emulate block' do
+    it 'returns an array of values' do
+      @redises.mget(@key1, @key2) { |values| values.map(&:to_i) }.should == [1, 2]
+    end
+  end
 end

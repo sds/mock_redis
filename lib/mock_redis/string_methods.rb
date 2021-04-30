@@ -154,14 +154,16 @@ class MockRedis
       new_value
     end
 
-    def mget(*keys)
+    def mget(*keys, &blk)
       keys.flatten!
 
       assert_has_args(keys, 'mget')
 
-      keys.map do |key|
+      data = keys.map do |key|
         get(key) if stringy?(key)
       end
+
+      blk ? blk.call(data) : data
     end
 
     def mapped_mget(*keys)
