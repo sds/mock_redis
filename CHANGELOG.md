@@ -1,5 +1,12 @@
 # MockRedis Changelog
 
+### 0.28.0
+
+* Fix `hmset` exception ([#206](https://github.com/sds/mock_redis/pull/206))
+* Fix `hmset` to accept hashes in addition to key/value pairs ([#208](https://github.com/sds/mock_redis/pull/208))
+* Fix stream ID regex to support `(` ([#209](https://github.com/sds/mock_redis/pull/209))
+* Allow `mget` to accept a block ([#210](https://github.com/sds/mock_redis/pull/210))
+
 ### 0.27.3
 
 * Ensure `ruby2_keywords` dependency is `require`d at runtime
