@@ -22,6 +22,7 @@ class MockRedis
     :path => nil,
     :timeout => 5.0,
     :password => nil,
+    :logger => nil,
     :db => 0,
     :time_class => Time,
   }.freeze
@@ -65,6 +66,10 @@ class MockRedis
     options[:db]
   end
 
+  def logger
+    options[:logger]
+  end
+
   def time_at(timestamp)
     options[:time_class].at(timestamp)
   end
@@ -86,7 +91,9 @@ class MockRedis
   end
 
   ruby2_keywords def method_missing(method, *args, &block)
-    @db.send(method, *args, &block)
+    logging([[method, *args]]) do
+      @db.send(method, *args, &block)
+    end
   end
 
   def initialize_copy(source)
@@ -138,5 +145,29 @@ class MockRedis
     options[:db] = options[:db].to_i
 
     options
+  end
+
+  def logging(commands)
+    return yield unless logger&.debug?
+
+    begin
+      commands.each do |name, *args|
+        logged_args = args.map do |a|
+          if a.respond_to?(:inspect) then a.inspect
+          elsif a.respond_to?(:to_s) then a.to_s
+          else
+            # handle poorly-behaved descendants of BasicObject
+            klass = a.instance_exec { (class << self; self end).superclass }
+            "\#<#{klass}:#{a.__id__}>"
+          end
+        end
+        logger.debug("[MockRedis] command=#{name.to_s.upcase} args=#{logged_args.join(' ')}")
+      end
+
+      t1 = Time.now
+      yield
+    ensure
+      logger.debug("[MockRedis] call_time=%0.2f ms" % ((Time.now - t1) * 1000)) if t1
+    end
   end
 end
