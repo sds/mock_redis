@@ -23,6 +23,12 @@ describe '#zadd(key, score, member)' do
     @redises.zrange(@key, 0, -1).should == [member.to_s]
   end
 
+  it 'allows scores to be set to Float::INFINITY' do
+    member = '1'
+    @redises.zadd(@key, Float::INFINITY, member)
+    @redises.zrange(@key, 0, -1).should == [member]
+  end
+
   it 'updates the score' do
     @redises.zadd(@key, 1, 'foo')
     @redises.zadd(@key, 2, 'foo')
