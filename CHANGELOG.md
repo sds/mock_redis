@@ -1,5 +1,11 @@
 # MockRedis Changelog
 
+### master (unreleased)
+
+* Add support for `logger` option ([#211](https://github.com/sds/mock_redis/pull/211))
+* Fix `zadd` to not perform conditional type conversion ([#214](https://github.com/sds/mock_redis/pull/214))
+* Fix `hdel` to raise error when called with empty array ([#215](https://github.com/sds/mock_redis/pull/215))
+
 ### 0.28.0
 
 * Fix `hmset` exception ([#206](https://github.com/sds/mock_redis/pull/206))
