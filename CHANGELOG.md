@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### master (unreleased)
+### 0.29.0
 
 * Add support for `logger` option ([#211](https://github.com/sds/mock_redis/pull/211))
 * Fix `zadd` to not perform conditional type conversion ([#214](https://github.com/sds/mock_redis/pull/214))
