@@ -66,5 +66,12 @@ describe '#hdel(key, field)' do
     @redises.get(@key).should be_nil
   end
 
+  it 'raises error if an empty array is passed' do
+    expect { @redises.hdel(@key, []) }.to raise_error(
+      Redis::CommandError,
+      "ERR wrong number of arguments for 'hdel' command"
+    )
+  end
+
   it_should_behave_like 'a hash-only command'
 end

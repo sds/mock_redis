@@ -10,6 +10,11 @@ class MockRedis
       with_hash_at(key) do |hash|
         orig_size = hash.size
         fields = Array(fields).flatten.map(&:to_s)
+
+        if fields.empty?
+          raise Redis::CommandError, "ERR wrong number of arguments for 'hdel' command"
+        end
+
         hash.delete_if { |k, _v| fields.include?(k) }
         orig_size - hash.size
       end
