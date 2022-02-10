@@ -86,27 +86,27 @@ class MockRedis
     end
 
     def expire(key, seconds)
+      assert_valid_integer(seconds)
+
       pexpire(key, seconds.to_i * 1000)
     end
 
     def pexpire(key, ms)
+      assert_valid_integer(ms)
+
       now, miliseconds = @base.now
       now_ms = (now * 1000) + miliseconds
       pexpireat(key, now_ms + ms.to_i)
     end
 
     def expireat(key, timestamp)
-      unless looks_like_integer?(timestamp.to_s)
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
+      assert_valid_integer(timestamp)
 
       pexpireat(key, timestamp.to_i * 1000)
     end
 
     def pexpireat(key, timestamp_ms)
-      unless looks_like_integer?(timestamp_ms.to_s)
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
+      assert_valid_integer(timestamp_ms)
 
       if exists?(key)
         timestamp = Rational(timestamp_ms.to_i, 1000)
@@ -279,6 +279,13 @@ class MockRedis
     def eval(*args); end
 
     private
+
+    def assert_valid_integer(integer)
+      if !looks_like_integer?(integer.to_s)
+        raise Redis::CommandError, 'ERR value is not an integer or out of range'
+      end
+      integer
+    end
 
     def assert_valid_timeout(timeout)
       if !looks_like_integer?(timeout.to_s)
