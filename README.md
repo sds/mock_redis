@@ -10,9 +10,9 @@ for use in tests.
 
 ## Requirements
 
-* Ruby 2.4+
+Ruby 2.6+
 
-The current implementation is tested against **Redis 6**. Older versions may work, but can also return different results or not support some commands.
+The current implementation is tested against Redis 6.2. Older versions may work, but can also return different results or not support some commands.
 
 ## Getting Started
 
