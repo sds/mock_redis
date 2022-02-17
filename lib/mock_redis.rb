@@ -167,7 +167,9 @@ class MockRedis
       t1 = Time.now
       yield
     ensure
-      logger.debug("[MockRedis] call_time=%0.2f ms" % ((Time.now - t1) * 1000)) if t1
+      if t1
+        logger.debug(format('[MockRedis] call_time=%<time>0.2f ms', time: ((Time.now - t1) * 1000)))
+      end
     end
   end
 end
