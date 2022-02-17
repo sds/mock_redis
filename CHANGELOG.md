@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.30.0
+
+* Drop support for Ruby 2.4 and Ruby 2.5 since they are EOL
+* Fix `expire` to to raise error on invalid integer
+
 ### 0.29.0
 
 * Add support for `logger` option ([#211](https://github.com/sds/mock_redis/pull/211))
