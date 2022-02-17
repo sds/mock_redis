@@ -6,7 +6,7 @@ on:
     branches: [master]
 
 jobs:
-  test:
+  overcommit:
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Prepare test environment
+      - name: Prepare environment
         run: |
           git config --local user.email "gh-actions@example.com"
           git config --local user.name "GitHub Actions"

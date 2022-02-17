@@ -6,7 +6,7 @@ on:
     branches: [master]
 
 jobs:
-  test:
+  rspec:
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
@@ -16,10 +16,7 @@ jobs:
           - '2.6'
           - '2.7'
           - '3.0'
-          - '3.1'
         redis-version:
-          - '6.0'
-          - '6.1'
           - '6.2'
 
     services:

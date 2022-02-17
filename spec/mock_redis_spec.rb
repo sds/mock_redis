@@ -87,7 +87,7 @@ describe MockRedis do
       logger = double('Logger', debug?: true, debug: nil)
       mock_redis = MockRedis.new(logger: logger)
       expect(logger).to receive(:debug).with(/command=HMGET args="hash" "key1" "key2"/)
-      mock_redis.hmget("hash", "key1", "key2")
+      mock_redis.hmget('hash', 'key1', 'key2')
     end
   end
 end
