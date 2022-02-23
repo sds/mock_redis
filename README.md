@@ -1,7 +1,7 @@
 # MockRedis
 
 [![Gem Version](https://badge.fury.io/rb/mock_redis.svg)](http://badge.fury.io/rb/mock_redis)
-[![Build Status](https://travis-ci.org/sds/mock_redis.svg)](https://travis-ci.org/sds/mock_redis)
+![Build Status](https://github.com/sds/mock_redis/actions/workflows/tests.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/sds/mock_redis/badge.svg)](https://coveralls.io/r/sds/mock_redis)
 
 MockRedis provides the same interface as `redis-rb`, but it stores its
