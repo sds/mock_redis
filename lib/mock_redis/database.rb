@@ -178,8 +178,8 @@ class MockRedis
       end
     end
 
-    def ping
-      'PONG'
+    def ping(response = 'PONG')
+      response
     end
 
     def quit
