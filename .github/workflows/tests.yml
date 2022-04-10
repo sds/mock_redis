@@ -43,3 +43,21 @@ jobs:
 
       - name: Run tests
         run: bundle exec rspec
+
+      - name: Code coverage reporting
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: ruby${{ matrix.ruby-version }}-${{ matrix.redis-version }}
+          parallel: true
+
+  finish:
+    needs: rspec
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Finalize code coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
