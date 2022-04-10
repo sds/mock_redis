@@ -9,4 +9,5 @@ gem 'overcommit', '0.53.0'
 # Pin tool versions (which are executed by Overcommit) for Travis builds
 gem 'rubocop', '0.82.0'
 
-gem 'coveralls', require: false
+gem 'simplecov', '~> 0.21.0'
+gem 'simplecov-lcov', '~> 0.8.0'
