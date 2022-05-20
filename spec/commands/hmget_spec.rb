@@ -36,5 +36,11 @@ describe '#hmget(key, field [, field, ...])' do
     end.should raise_error(Redis::CommandError)
   end
 
+  it 'raises an error if given an empty list of fields' do
+    lambda do
+      @redises.hmget(@key, [])
+    end.should raise_error(Redis::CommandError)
+  end
+
   it_should_behave_like 'a hash-only command'
 end

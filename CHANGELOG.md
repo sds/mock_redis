@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.31.0
+
+* Allow `ping` to take argument
+* Raise `CommandError` on `hmget` with empty list of fields
+
 ### 0.30.0
 
 * Drop support for Ruby 2.4 and Ruby 2.5 since they are EOL
