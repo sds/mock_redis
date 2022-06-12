@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.32.0
+
+* Add support for `psetex`
+
 ### 0.31.0
 
 * Allow `ping` to take argument
