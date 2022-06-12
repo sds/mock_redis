@@ -328,6 +328,16 @@ class MockRedis
       end
     end
 
+    def psetex(key, milliseconds, value)
+      if milliseconds <= 0
+        raise Redis::CommandError, 'ERR invalid expire time in psetex'
+      else
+        set(key, value)
+        pexpire(key, milliseconds)
+        'OK'
+      end
+    end
+
     def setnx(key, value)
       if exists?(key)
         false
