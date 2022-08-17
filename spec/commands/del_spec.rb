@@ -40,7 +40,7 @@ describe '#del(key [, key, ...])' do
   end
 
   it 'raises an error if an empty array is given' do
-    expect { @redises.del [] }.to raise_error Redis::CommandError
+    expect { @redises.del [] }.not_to raise_error Redis::CommandError
   end
 
   it 'removes a stream key' do

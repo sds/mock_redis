@@ -71,7 +71,7 @@ class MockRedis
 
     def del(*keys)
       keys = keys.flatten.map(&:to_s)
-      assert_has_args(keys, 'del')
+      # assert_has_args(keys, 'del') # no longer errors in redis > v4.5
 
       keys.
         find_all { |key| data[key] }.
