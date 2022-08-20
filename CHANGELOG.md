@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.33.0
+
+* Add support for `GET` argument to `SET` command
+
 ### 0.32.0
 
 * Add support for `psetex`
