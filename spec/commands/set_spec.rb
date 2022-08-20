@@ -33,6 +33,21 @@ describe '#set(key, value)' do
       @redises.set(key, 1, xx: true).should == true
     end
 
+    it 'accepts GET on a string' do
+      @redises.set(key, '1').should == 'OK'
+      @redises.set(key, '2', get: true).should == '1'
+      @redises.set(key, '3', get: true).should == '2'
+    end
+
+    context 'when set key is not a String' do
+      it 'should error with Redis::CommandError' do
+        @redises.lpush(key, '1').should == 1
+        expect do
+          @redises.set(key, '2', get: true)
+        end.to raise_error(Redis::CommandError)
+      end
+    end
+
     it 'sets the ttl to -1' do
       @redises.set(key, 1)
       expect(@redises.ttl(key)).to eq(-1)

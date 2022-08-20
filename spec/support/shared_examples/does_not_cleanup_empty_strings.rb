@@ -8,7 +8,7 @@ shared_examples_for 'does not remove empty strings on error' do
     @redises.set(key, '')
     lambda do
       @redises.send(method, *args)
-    end.should raise_error(RuntimeError)
+    end.should raise_error(defined?(default_error) ? default_error : RuntimeError)
     @redises.get(key).should == ''
   end
 end

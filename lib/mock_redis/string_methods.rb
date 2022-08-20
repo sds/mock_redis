@@ -206,8 +206,10 @@ class MockRedis
 
     # Parameer list required to ensure the ArgumentError is returned correctly
     # rubocop:disable Metrics/ParameterLists
-    def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil)
+    def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil, get: nil)
       key = key.to_s
+      retval = self.get(key) if get
+
       return_true = false
       if nx
         if exists?(key)
@@ -240,7 +242,11 @@ class MockRedis
         pexpire(key, px)
       end
 
-      return_true ? true : 'OK'
+      if get
+        retval
+      else
+        return_true ? true : 'OK'
+      end
     end
     # rubocop:enable Metrics/ParameterLists
 

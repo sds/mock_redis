@@ -30,5 +30,6 @@ describe '#rpop(key)' do
     @redises.get(@key).should be_nil
   end
 
+  let(:default_error) { RedisMultiplexer::MismatchedResponse }
   it_should_behave_like 'a list-only command'
 end
