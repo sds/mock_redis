@@ -26,4 +26,11 @@ describe 'client' do
       expect(MockRedis.new).to respond_to(:close)
     end
   end
+
+  context '#with' do
+    it 'supports with' do
+      redis = MockRedis.new
+      redis.with { |c| c.set('key', 'value') }.should == 'OK'
+    end
+  end
 end
