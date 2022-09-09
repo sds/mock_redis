@@ -105,7 +105,7 @@ We recommend running Redis within a Docker container to make development as simp
 
 1. Start Redis.
    ```bash
-   docker run --rm -p 6379:6379 redis
+   docker run --rm -p 6379:6379 redis:6.2-alpine
    ```
 2. Install dependencies.
    ```bash
