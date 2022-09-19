@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.34.0
+
+* Add support for `with`
+
 ### 0.33.0
 
 * Add support for `GET` argument to `SET` command
