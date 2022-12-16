@@ -107,6 +107,12 @@ class MockRedis
       end
     end
 
+    def getdel(key)
+      value = get(key)
+      del(key)
+      value
+    end
+
     def getrange(key, start, stop)
       assert_stringy(key)
       (data[key] || '')[start..stop]
