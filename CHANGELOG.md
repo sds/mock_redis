@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.35.0
+
+* Add support for `getdel`
+
 ### 0.34.0
 
 * Add support for `with`
