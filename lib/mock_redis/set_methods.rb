@@ -64,6 +64,12 @@ class MockRedis
       with_set_at(key) { |s| s.include?(member.to_s) }
     end
 
+    def smismember(key, *members)
+      with_set_at(key) do |set|
+        members.flatten.map { |m| set.include?(m.to_s) }
+      end
+    end
+
     def smembers(key)
       with_set_at(key, &:to_a).map(&:dup).reverse
     end
