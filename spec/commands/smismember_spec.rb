@@ -11,13 +11,13 @@ describe '#sismember(key, *members)' do
     @redises.smismember(@key, 'whiskey').should == [true]
     @redises.smismember(@key, 'beer').should == [true]
     @redises.smismember(@key, 'whiskey', 'beer').should == [true, true]
-    @redises.smismember(@key, ['whiskey', 'beer']).should == [true, true]
+    @redises.smismember(@key, %w[whiskey beer]).should == [true, true]
   end
 
   it 'returns false if member is not in set' do
     @redises.smismember(@key, 'cola').should == [false]
     @redises.smismember(@key, 'whiskey', 'cola').should == [true, false]
-    @redises.smismember(@key, ['whiskey', 'beer', 'cola']).should == [true, true, false]
+    @redises.smismember(@key, %w[whiskey beer cola]).should == [true, true, false]
   end
 
   it 'stringifies member' do
