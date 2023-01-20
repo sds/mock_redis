@@ -55,8 +55,8 @@ since it's an in-memory object confined to a single process. MockRedis
 makes every attempt to be Redis-compatible, but there are some
 necessary exceptions.
 
-* Blocking list commands (`#blpop`, `#brpop`, and `#brpoplpush`) work
-  as expected if there is data for them to retrieve. If you use one of
+* Blocking list commands (`#blmove`, `#blpop`, `#brpop`, and `#brpoplpush`)
+  work as expected if there is data for them to retrieve. If you use one of
   these commands with a nonzero timeout and there is no data for it to
   retrieve, then the command returns immediately. However, if you ask
   one of these commands for data with a 0 timeout (means "wait

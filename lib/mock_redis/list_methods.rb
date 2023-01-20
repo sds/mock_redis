@@ -6,6 +6,20 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
+    def blmove(source, destination, wherefrom, whereto, options = {})
+      options = { :timeout => options } if options.is_a?(Integer)
+      timeout = options.is_a?(Hash) && options[:timeout] || 0
+      assert_valid_timeout(timeout)
+
+      if llen(source) > 0
+        lmove(source, destination, wherefrom, whereto)
+      elsif timeout > 0
+        nil
+      else
+        raise MockRedis::WouldBlock, "Can't block forever"
+      end
+    end
+
     def blpop(*args)
       lists, timeout = extract_timeout(args)
       nonempty_list = first_nonempty_list(lists)
