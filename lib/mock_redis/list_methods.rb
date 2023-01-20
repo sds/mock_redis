@@ -78,6 +78,22 @@ class MockRedis
       with_list_at(key, &:length)
     end
 
+    def lmove(source, destination, wherefrom, whereto)
+      assert_listy(source)
+      assert_listy(destination)
+
+      wherefrom = wherefrom.to_s.downcase
+      whereto = whereto.to_s.downcase
+
+      unless %w[left right].include?(wherefrom) && %w[left right].include?(whereto)
+        raise Redis::CommandError, 'ERR syntax error'
+      end
+
+      value = wherefrom == 'left' ? lpop(source) : rpop(source)
+      (whereto == 'left' ? lpush(destination, value) : rpush(destination, value)) unless value.nil?
+      value
+    end
+
     def lpop(key)
       with_list_at(key, &:shift)
     end
