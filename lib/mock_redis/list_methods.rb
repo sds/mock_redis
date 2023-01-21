@@ -6,6 +6,20 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
+    def blmove(source, destination, wherefrom, whereto, options = {})
+      options = { :timeout => options } if options.is_a?(Integer)
+      timeout = options.is_a?(Hash) && options[:timeout] || 0
+      assert_valid_timeout(timeout)
+
+      if llen(source) > 0
+        lmove(source, destination, wherefrom, whereto)
+      elsif timeout > 0
+        nil
+      else
+        raise MockRedis::WouldBlock, "Can't block forever"
+      end
+    end
+
     def blpop(*args)
       lists, timeout = extract_timeout(args)
       nonempty_list = first_nonempty_list(lists)
@@ -76,6 +90,22 @@ class MockRedis
 
     def llen(key)
       with_list_at(key, &:length)
+    end
+
+    def lmove(source, destination, wherefrom, whereto)
+      assert_listy(source)
+      assert_listy(destination)
+
+      wherefrom = wherefrom.to_s.downcase
+      whereto = whereto.to_s.downcase
+
+      unless %w[left right].include?(wherefrom) && %w[left right].include?(whereto)
+        raise Redis::CommandError, 'ERR syntax error'
+      end
+
+      value = wherefrom == 'left' ? lpop(source) : rpop(source)
+      (whereto == 'left' ? lpush(destination, value) : rpush(destination, value)) unless value.nil?
+      value
     end
 
     def lpop(key)
