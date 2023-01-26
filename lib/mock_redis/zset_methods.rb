@@ -147,7 +147,7 @@ class MockRedis
         else
           retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
           with_zset_at(key) do |z|
-            args.each { |member| z.delete?(member) }
+            args.each { |member| z.delete?(member.to_s) }
           end
         end
       end
