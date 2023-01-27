@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#sismember(key, *members)' do
+describe '#smismember(key, *members)' do
   before do
     @key = 'mock-redis-test:smismember'
     @redises.sadd(@key, 'whiskey')
