@@ -44,13 +44,17 @@ module TypeCheckingHelper
 end
 
 RSpec.configure do |config|
-  config.expect_with :rspec do |c|
-    c.syntax = [:expect, :should]
+  config.expect_with(:rspec) do |expectations|
+    expectations.syntax = :expect
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  config.mock_with :rspec do |c|
-    c.syntax = [:expect, :should]
+  config.mock_with(:rspec) do |mocks|
+    mocks.syntax = :expect
   end
+
+  config.shared_context_metadata_behavior = :apply_to_host_groups
+  config.disable_monkey_patching!
 
   config.include(TypeCheckingHelper)
 
