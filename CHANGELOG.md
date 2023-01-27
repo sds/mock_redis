@@ -1,5 +1,11 @@
 # MockRedis Changelog
 
+### 0.36.0
+
+* Add support for `smismember`
+* Add support for `lmove` and `blmove`
+* Fix `zrem` to support passing array of integers
+
 ### 0.35.0
 
 * Add support for `getdel`
