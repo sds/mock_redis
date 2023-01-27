@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe '#evalsha(*)' do
+RSpec.describe '#evalsha(*)' do
   let(:script) { 'return nil' }
   let(:script_digest) { Digest::SHA1.hexdigest(script) }
 
   it 'returns nothing' do
-    @redises.evalsha(script_digest).should be_nil
+    expect(@redises.evalsha(script_digest)).to be_nil
   end
 end

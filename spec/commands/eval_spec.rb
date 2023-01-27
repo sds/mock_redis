@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe '#eval(*)' do
+RSpec.describe '#eval(*)' do
   it 'returns nothing' do
-    @redises.eval('return nil').should be_nil
+    expect(@redises.eval('return nil')).to be_nil
   end
 end

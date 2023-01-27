@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
+RSpec.describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
   before do
     @odds   = 'mock-redis-test:zinterstore:odds'
     @primes = 'mock-redis-test:zinterstore:primes'
@@ -19,27 +19,29 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
   end
 
   it 'returns the number of elements in the new set' do
-    @redises.zinterstore(@dest, [@odds, @primes]).should == 3
+    expect(@redises.zinterstore(@dest, [@odds, @primes])).to eq(3)
   end
 
   it "sums the members' scores by default" do
     @redises.zinterstore(@dest, [@odds, @primes])
-    @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+    expect(@redises.zrange(@dest, 0, -1, :with_scores => true)).to eq(
       [['three', 6.0], ['five', 10.0], ['seven', 14.0]]
+    )
   end
 
   it 'removes existing elements in destination' do
     @redises.zadd(@dest, 10, 'ten')
 
     @redises.zinterstore(@dest, [@primes])
-    @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+    expect(@redises.zrange(@dest, 0, -1, :with_scores => true)).to eq(
       [['two', 2.0], ['three', 3.0], ['five', 5.0], ['seven', 7.0]]
+    )
   end
 
   it 'raises an error if keys is empty' do
-    lambda do
+    expect do
       @redises.zinterstore(@dest, [])
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   context 'when used with a set' do
@@ -53,13 +55,14 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
     end
 
     it 'returns the number of elements in the new set' do
-      @redises.zinterstore(@dest, [@odds, @primes_text]).should == 3
+      expect(@redises.zinterstore(@dest, [@odds, @primes_text])).to eq(3)
     end
 
     it 'sums the scores, substituting 1.0 for set values' do
       @redises.zinterstore(@dest, [@odds, @primes_text])
-      @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+      expect(@redises.zrange(@dest, 0, -1, :with_scores => true)).to eq(
         [['three', 4.0], ['five', 6.0], ['seven', 8.0]]
+      )
     end
   end
 
@@ -70,23 +73,24 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
       @redises.set(@non_set, 'one')
     end
     it 'raises an error for wrong value type' do
-      lambda do
+      expect do
         @redises.zinterstore(@dest, [@odds, @non_set])
-      end.should raise_error(Redis::CommandError)
+      end.to raise_error(Redis::CommandError)
     end
   end
 
   context 'the :weights argument' do
     it 'multiplies the scores by the weights while aggregating' do
       @redises.zinterstore(@dest, [@odds, @primes], :weights => [2, 3])
-      @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+      expect(@redises.zrange(@dest, 0, -1, :with_scores => true)).to eq(
         [['three', 15.0], ['five', 25.0], ['seven', 35.0]]
+      )
     end
 
     it 'raises an error if the number of weights != the number of keys' do
-      lambda do
+      expect do
         @redises.zinterstore(@dest, [@odds, @primes], :weights => [1, 2, 3])
-      end.should raise_error(Redis::CommandError)
+      end.to raise_error(Redis::CommandError)
     end
   end
 
@@ -103,28 +107,30 @@ describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :s
 
     it 'aggregates scores with min when :aggregate => :min is specified' do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :min)
-      @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+      expect(@redises.zrange(@dest, 0, -1, :with_scores => true)).to eq(
         [['bert', 1.0], ['ernie', 2.0]]
+      )
     end
 
     it 'aggregates scores with max when :aggregate => :max is specified' do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :max)
-      @redises.zrange(@dest, 0, -1, :with_scores => true).should ==
+      expect(@redises.zrange(@dest, 0, -1, :with_scores => true)).to eq(
         [['bert', 100.0], ['ernie', 200.0]]
+      )
     end
 
     it "allows 'min', 'MIN', etc. as aliases for :min" do
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => 'min')
-      @redises.zscore(@dest, 'bert').should == 1.0
+      expect(@redises.zscore(@dest, 'bert')).to eq(1.0)
 
       @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => 'MIN')
-      @redises.zscore(@dest, 'bert').should == 1.0
+      expect(@redises.zscore(@dest, 'bert')).to eq(1.0)
     end
 
     it 'raises an error for unknown aggregation function' do
-      lambda do
+      expect do
         @redises.zinterstore(@dest, [@bigs, @smalls], :aggregate => :mix)
-      end.should raise_error(Redis::CommandError)
+      end.to raise_error(Redis::CommandError)
     end
   end
 end

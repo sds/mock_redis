@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe '#auth(password) [mock only]' do
+RSpec.describe '#auth(password) [mock only]' do
   it "just returns 'OK'" do
-    @redises.mock.auth('foo').should == 'OK'
+    expect(@redises.mock.auth('foo')).to eq('OK')
   end
 end

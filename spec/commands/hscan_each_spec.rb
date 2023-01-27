@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#hscan_each' do
+RSpec.describe '#hscan_each' do
   subject { MockRedis::Database.new(self) }
 
   let(:key) { 'mock-redis-test:hscan_each' }

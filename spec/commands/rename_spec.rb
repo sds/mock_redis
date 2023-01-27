@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#rename(key, newkey)' do
+RSpec.describe '#rename(key, newkey)' do
   before do
     @key = 'mock-redis-test:rename:key'
     @newkey = 'mock-redis-test:rename:newkey'
@@ -9,34 +9,34 @@ describe '#rename(key, newkey)' do
   end
 
   it 'responds with "OK"' do
-    @redises.rename(@key, @newkey).should == 'OK'
+    expect(@redises.rename(@key, @newkey)).to eq('OK')
   end
 
   it 'moves the data' do
     @redises.rename(@key, @newkey)
-    @redises.get(@newkey).should == 'oof'
+    expect(@redises.get(@newkey)).to eq('oof')
   end
 
   it 'raises an error when the source key is nonexistant' do
     @redises.del(@key)
-    lambda do
+    expect do
       @redises.rename(@key, @newkey)
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it 'responds with "OK" when key == newkey' do
-    @redises.rename(@key, @key).should == 'OK'
+    expect(@redises.rename(@key, @key)).to eq('OK')
   end
 
   it 'overwrites any existing value at newkey' do
     @redises.set(@newkey, 'rab')
     @redises.rename(@key, @newkey)
-    @redises.get(@newkey).should == 'oof'
+    expect(@redises.get(@newkey)).to eq('oof')
   end
 
   it 'keeps expiration' do
     @redises.expire(@key, 1000)
     @redises.rename(@key, @newkey)
-    @redises.ttl(@newkey).should be > 0
+    expect(@redises.ttl(@newkey)).to be > 0
   end
 end

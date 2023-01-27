@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#geohash' do
+RSpec.describe '#geohash' do
   let(:key) { 'cities' }
 
   context 'with existing key' do

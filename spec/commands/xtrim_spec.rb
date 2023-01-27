@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xtrim("mystream", 1000, approximate: true)' do
+RSpec.describe '#xtrim("mystream", 1000, approximate: true)' do
   before { @key = 'mock-redis-test:xtrim' }
 
   before :each do

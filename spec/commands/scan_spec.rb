@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#scan' do
+RSpec.describe '#scan' do
   subject { MockRedis::Database.new(self) }
 
   let(:count) { 10 }

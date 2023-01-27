@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, approximate: true)' do
+RSpec.describe '#xadd("mystream", { f1: "v1", f2: "v2" }, id: "0-0", maxlen: 1000, approximate: true)' do
   before :all do
     sleep 1 - (Time.now.to_f % 1)
     @key = 'mock-redis-test:xadd'

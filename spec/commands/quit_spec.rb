@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe '#quit' do
+RSpec.describe '#quit' do
   it "responds with 'OK'" do
-    @redises.quit.should == 'OK'
+    expect(@redises.quit).to eq('OK')
   end
 end

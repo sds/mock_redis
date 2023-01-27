@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#hlen(key)' do
+RSpec.describe '#hlen(key)' do
   before do
     @key = 'mock-redis-test:hlen'
     @redises.hset(@key, 'k1', 'v1')
@@ -8,11 +8,11 @@ describe '#hlen(key)' do
   end
 
   it 'returns the number of keys stored in the hash' do
-    @redises.hlen(@key).should == 2
+    expect(@redises.hlen(@key)).to eq(2)
   end
 
   it 'returns [] when there is no such key' do
-    @redises.hlen('mock-redis-test:nonesuch').should == 0
+    expect(@redises.hlen('mock-redis-test:nonesuch')).to eq(0)
   end
 
   it_should_behave_like 'a hash-only command'

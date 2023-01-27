@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xrange("mystream", first: "0-1", last: "0-3", count: 10)' do
+RSpec.describe '#xrange("mystream", first: "0-1", last: "0-3", count: 10)' do
   before { @key = 'mock-redis-test:xrange' }
 
   it 'finds an empty range' do

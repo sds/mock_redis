@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe '#set(key, value)' do
+RSpec.describe '#set(key, value)' do
   let(:key) { 'mock-redis-test' }
 
   it "responds with 'OK'" do
-    @redises.set('mock-redis-test', 1).should == 'OK'
+    expect(@redises.set('mock-redis-test', 1)).to eq('OK')
   end
 
   context 'options' do
@@ -22,26 +22,26 @@ describe '#set(key, value)' do
 
     it 'accepts NX' do
       @redises.del(key)
-      @redises.set(key, 1, nx: true).should == true
-      @redises.set(key, 1, nx: true).should == false
+      expect(@redises.set(key, 1, nx: true)).to eq(true)
+      expect(@redises.set(key, 1, nx: true)).to eq(false)
     end
 
     it 'accepts XX' do
       @redises.del(key)
-      @redises.set(key, 1, xx: true).should == false
-      @redises.set(key, 1).should == 'OK'
-      @redises.set(key, 1, xx: true).should == true
+      expect(@redises.set(key, 1, xx: true)).to eq(false)
+      expect(@redises.set(key, 1)).to eq('OK')
+      expect(@redises.set(key, 1, xx: true)).to eq(true)
     end
 
     it 'accepts GET on a string' do
-      @redises.set(key, '1').should == 'OK'
-      @redises.set(key, '2', get: true).should == '1'
-      @redises.set(key, '3', get: true).should == '2'
+      expect(@redises.set(key, '1')).to eq('OK')
+      expect(@redises.set(key, '2', get: true)).to eq('1')
+      expect(@redises.set(key, '3', get: true)).to eq('2')
     end
 
     context 'when set key is not a String' do
       it 'should error with Redis::CommandError' do
-        @redises.lpush(key, '1').should == 1
+        expect(@redises.lpush(key, '1')).to eq(1)
         expect do
           @redises.set(key, '2', get: true)
         end.to raise_error(Redis::CommandError)
@@ -111,23 +111,23 @@ describe '#set(key, value)' do
 
       before do
         @now = Time.now
-        Time.stub(:now).and_return(@now)
+        allow(Time).to receive(:now).and_return(@now)
       end
 
       it 'accepts EX seconds' do
-        @mock.set(key, 1, ex: 1).should == 'OK'
-        @mock.get(key).should_not be_nil
-        Time.stub(:now).and_return(@now + 2)
-        @mock.get(key).should be_nil
+        expect(@mock.set(key, 1, ex: 1)).to eq('OK')
+        expect(@mock.get(key)).not_to be_nil
+        allow(Time).to receive(:now).and_return(@now + 2)
+        expect(@mock.get(key)).to be_nil
       end
 
       it 'accepts PX milliseconds' do
-        @mock.set(key, 1, px: 500).should == 'OK'
-        @mock.get(key).should_not be_nil
-        Time.stub(:now).and_return(@now + 300 / 1000.to_f)
-        @mock.get(key).should_not be_nil
-        Time.stub(:now).and_return(@now + 600 / 1000.to_f)
-        @mock.get(key).should be_nil
+        expect(@mock.set(key, 1, px: 500)).to eq('OK')
+        expect(@mock.get(key)).not_to be_nil
+        allow(Time).to receive(:now).and_return(@now + 300 / 1000.to_f)
+        expect(@mock.get(key)).not_to be_nil
+        allow(Time).to receive(:now).and_return(@now + 600 / 1000.to_f)
+        expect(@mock.get(key)).to be_nil
       end
     end
   end

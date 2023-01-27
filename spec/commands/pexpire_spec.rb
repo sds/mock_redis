@@ -1,32 +1,32 @@
 require 'spec_helper'
 
-describe '#pexpire(key, ms)' do
+RSpec.describe '#pexpire(key, ms)' do
   before do
     @key = 'mock-redis-test:pexpire'
     @redises.set(@key, 'spork')
   end
 
   it 'returns true for a key that exists' do
-    @redises.pexpire(@key, 1).should == true
+    expect(@redises.pexpire(@key, 1)).to eq(true)
   end
 
   it 'returns false for a key that does not exist' do
-    @redises.pexpire('mock-redis-test:nonesuch', 1).should == false
+    expect(@redises.pexpire('mock-redis-test:nonesuch', 1)).to eq(false)
   end
 
   it 'removes a key immediately when ms==0' do
     @redises.pexpire(@key, 0)
-    @redises.get(@key).should be_nil
+    expect(@redises.get(@key)).to be_nil
   end
 
   it 'raises an error if ms is bogus' do
-    lambda do
+    expect do
       @redises.pexpire(@key, 'a couple minutes or so')
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it 'stringifies key' do
-    @redises.pexpire(@key.to_sym, 9).should == true
+    expect(@redises.pexpire(@key.to_sym, 9)).to eq(true)
   end
 
   context '[mock only]' do
@@ -39,21 +39,21 @@ describe '#pexpire(key, ms)' do
 
     before do
       @now = Time.now.round
-      Time.stub(:now).and_return(@now)
+      allow(Time).to receive(:now).and_return(@now)
     end
 
     it 'removes keys after enough time has passed' do
       @mock.pexpire(@key, 5)
-      Time.stub(:now).and_return(@now + Rational(6, 1000))
-      @mock.get(@key).should be_nil
+      allow(Time).to receive(:now).and_return(@now + Rational(6, 1000))
+      expect(@mock.get(@key)).to be_nil
     end
 
     it 'updates an existing pexpire time' do
       @mock.pexpire(@key, 5)
       @mock.pexpire(@key, 6)
 
-      Time.stub(:now).and_return(@now + Rational(5, 1000))
-      @mock.get(@key).should_not be_nil
+      allow(Time).to receive(:now).and_return(@now + Rational(5, 1000))
+      expect(@mock.get(@key)).not_to be_nil
     end
 
     context 'expirations on a deleted key' do
@@ -65,9 +65,9 @@ describe '#pexpire(key, ms)' do
         @mock.del(@key)
         @mock.set(@key, 'string')
 
-        Time.stub(:now).and_return(@now + 0.003)
+        allow(Time).to receive(:now).and_return(@now + 0.003)
 
-        @mock.get(@key).should_not be_nil
+        expect(@mock.get(@key)).not_to be_nil
       end
 
       it 'cleans up the expiration once the key is gone (list)' do
@@ -77,9 +77,9 @@ describe '#pexpire(key, ms)' do
 
         @mock.rpush(@key, 'coconuts')
 
-        Time.stub(:now).and_return(@now + 0.003)
+        allow(Time).to receive(:now).and_return(@now + 0.003)
 
-        @mock.lindex(@key, 0).should_not be_nil
+        expect(@mock.lindex(@key, 0)).not_to be_nil
       end
     end
   end

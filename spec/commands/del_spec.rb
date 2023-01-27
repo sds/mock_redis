@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#del(key [, key, ...])' do
+RSpec.describe '#del(key [, key, ...])' do
   before :all do
     sleep 1 - (Time.now.to_f % 1)
   end
@@ -15,18 +15,18 @@ describe '#del(key [, key, ...])' do
     @redises.set('mock-redis-test:1', 1)
     @redises.set('mock-redis-test:2', 1)
 
-    @redises.del(
+    expect(@redises.del(
       'mock-redis-test:1',
       'mock-redis-test:2',
       'mock-redis-test:other'
-    ).should == 2
+    )).to eq(2)
   end
 
   it 'actually removes the key' do
     @redises.set('mock-redis-test:1', 1)
     @redises.del('mock-redis-test:1')
 
-    @redises.get('mock-redis-test:1').should be_nil
+    expect(@redises.get('mock-redis-test:1')).to be_nil
   end
 
   it 'accepts an array of keys' do
@@ -35,12 +35,12 @@ describe '#del(key [, key, ...])' do
 
     @redises.del(%w[mock-redis-test:1 mock-redis-test:2])
 
-    @redises.get('mock-redis-test:1').should be_nil
-    @redises.get('mock-redis-test:2').should be_nil
+    expect(@redises.get('mock-redis-test:1')).to be_nil
+    expect(@redises.get('mock-redis-test:2')).to be_nil
   end
 
   it 'raises an error if an empty array is given' do
-    expect { @redises.del [] }.not_to raise_error Redis::CommandError
+    expect { @redises.del [] }.not_to raise_error
   end
 
   it 'removes a stream key' do

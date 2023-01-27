@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe '#flushdb [mock only]' do
+RSpec.describe '#flushdb [mock only]' do
   # don't want to hurt things in the real redis that are outside our
   # namespace.
   before { @mock = @redises.mock }
   before { @key = 'mock-redis-test:select' }
 
   it "returns 'OK'" do
-    @mock.flushdb.should == 'OK'
+    expect(@mock.flushdb).to eq('OK')
   end
 
   it 'removes all keys in the current DB' do
@@ -15,7 +15,7 @@ describe '#flushdb [mock only]' do
     @mock.lpush('k2', 'v2')
 
     @mock.flushdb
-    @mock.keys('*').should == []
+    expect(@mock.keys('*')).to eq([])
   end
 
   it 'leaves other databases alone' do
@@ -25,7 +25,7 @@ describe '#flushdb [mock only]' do
     @mock.flushdb
     @mock.select(0)
 
-    @mock.get('k1').should == 'v1'
+    expect(@mock.get('k1')).to eq('v1')
   end
 
   it 'removes expiration times' do
@@ -33,6 +33,6 @@ describe '#flushdb [mock only]' do
     @mock.expire('k1', 360_000)
     @mock.flushdb
     @mock.set('k1', 'v1')
-    @mock.ttl('k1').should == -1
+    expect(@mock.ttl('k1')).to eq(-1)
   end
 end

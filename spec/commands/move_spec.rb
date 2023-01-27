@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#move(key, db)' do
+RSpec.describe '#move(key, db)' do
   before do
     @srcdb = 0
     @destdb = 1
@@ -17,16 +17,16 @@ describe '#move(key, db)' do
     end
 
     it 'returns false' do
-      @redises.move(@key, @destdb).should == false
+      expect(@redises.move(@key, @destdb)).to eq(false)
     end
 
     it 'leaves destdb/key alone' do
       @redises.select(@destdb)
-      @redises.get(@key).should == 'destvalue'
+      expect(@redises.get(@key)).to eq('destvalue')
     end
 
     it 'leaves srcdb/key alone' do
-      @redises.get(@key).should == 'srcvalue'
+      expect(@redises.get(@key)).to eq('srcvalue')
     end
   end
 
@@ -38,12 +38,12 @@ describe '#move(key, db)' do
     end
 
     it 'returns false' do
-      @redises.move(@key, @destdb).should == false
+      expect(@redises.move(@key, @destdb)).to eq(false)
     end
 
     it 'leaves destdb/key alone' do
       @redises.select(@destdb)
-      @redises.get(@key).should == 'destvalue'
+      expect(@redises.get(@key)).to eq('destvalue')
     end
   end
 
@@ -53,7 +53,7 @@ describe '#move(key, db)' do
     end
 
     it 'returns true' do
-      @redises.move(@key, @destdb).should == true
+      expect(@redises.move(@key, @destdb)).to eq(true)
     end
   end
 
@@ -64,12 +64,12 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists?(@key).should == false
+      expect(@redises.exists?(@key)).to eq(false)
     end
 
     it 'copies key to destdb' do
       @redises.select(@destdb)
-      @redises.get(@key).should == 'value'
+      expect(@redises.get(@key)).to eq('value')
     end
   end
 
@@ -81,12 +81,12 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists?(@key).should == false
+      expect(@redises.exists?(@key)).to eq(false)
     end
 
     it 'copies key to destdb' do
       @redises.select(@destdb)
-      @redises.lrange(@key, 0, -1).should == %w[bert ernie]
+      expect(@redises.lrange(@key, 0, -1)).to eq(%w[bert ernie])
     end
   end
 
@@ -99,12 +99,12 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists?(@key).should == false
+      expect(@redises.exists?(@key)).to eq(false)
     end
 
     it 'copies key to destdb' do
       @redises.select(@destdb)
-      @redises.hgetall(@key).should == { 'a' => '1', 'b' => '2' }
+      expect(@redises.hgetall(@key)).to eq({ 'a' => '1', 'b' => '2' })
     end
   end
 
@@ -117,12 +117,12 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists?(@key).should == false
+      expect(@redises.exists?(@key)).to eq(false)
     end
 
     it 'copies key to destdb' do
       @redises.select(@destdb)
-      @redises.smembers(@key).should == %w[wine beer]
+      expect(@redises.smembers(@key)).to eq(%w[wine beer])
     end
   end
 
@@ -135,13 +135,14 @@ describe '#move(key, db)' do
     end
 
     it 'removes key from srcdb' do
-      @redises.exists?(@key).should == false
+      expect(@redises.exists?(@key)).to eq(false)
     end
 
     it 'copies key to destdb' do
       @redises.select(@destdb)
-      @redises.zrange(@key, 0, -1, :with_scores => true).should ==
+      expect(@redises.zrange(@key, 0, -1, :with_scores => true)).to eq(
         [['beer', 1.0], ['wine', 2.0]]
+      )
     end
   end
 end
