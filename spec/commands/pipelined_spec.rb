@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe '#pipelined' do
+RSpec.describe '#pipelined' do
   it 'yields to its block' do
     res = false
     @redises.pipelined do
       res = true
     end
-    res.should == true
+    expect(res).to eq(true)
   end
 
   context 'with a few added data' do
@@ -26,7 +26,7 @@ describe '#pipelined' do
         redis.get key2
       end
 
-      results.should == [value1, value2]
+      expect(results).to eq([value1, value2])
     end
 
     it 'returns futures' do
@@ -36,7 +36,7 @@ describe '#pipelined' do
         future = redis.get key1
       end
 
-      future.class.should be MockRedis::Future
+      expect(future.class).to be MockRedis::Future
     end
   end
 
@@ -62,7 +62,7 @@ describe '#pipelined' do
         @redises.lrange(key2, 0, -1)
       end
 
-      results.should == [value1, value2]
+      expect(results).to eq([value1, value2])
     end
   end
 
@@ -108,7 +108,7 @@ describe '#pipelined' do
         end
       end
 
-      results.should == [value1, value2]
+      expect(results).to eq([value1, value2])
     end
   end
 end

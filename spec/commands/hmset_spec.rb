@@ -1,42 +1,42 @@
 require 'spec_helper'
 
-describe '#hmset(key, field, value [, field, value ...])' do
+RSpec.describe '#hmset(key, field, value [, field, value ...])' do
   before do
     @key = 'mock-redis-test:hmset'
   end
 
   it "returns 'OK'" do
-    @redises.hmset(@key, 'k1', 'v1', 'k2', 'v2').should == 'OK'
+    expect(@redises.hmset(@key, 'k1', 'v1', 'k2', 'v2')).to eq('OK')
   end
 
   it 'sets the values' do
     @redises.hmset(@key, 'k1', 'v1', 'k2', 'v2')
-    @redises.hmget(@key, 'k1', 'k2').should == %w[v1 v2]
+    expect(@redises.hmget(@key, 'k1', 'k2')).to eq(%w[v1 v2])
   end
 
   it 'updates an existing hash' do
     @redises.hset(@key, 'foo', 'bar')
     @redises.hmset(@key, 'bert', 'ernie', 'diet', 'coke')
 
-    @redises.hmget(@key, 'foo', 'bert', 'diet').
-      should == %w[bar ernie coke]
+    expect(@redises.hmget(@key, 'foo', 'bert', 'diet')).
+      to eq(%w[bar ernie coke])
   end
 
   it 'stores the values as strings' do
     @redises.hmset(@key, 'one', 1)
-    @redises.hget(@key, 'one').should == '1'
+    expect(@redises.hget(@key, 'one')).to eq('1')
   end
 
   it 'raises an error if given no fields or values' do
-    lambda do
+    expect do
       @redises.hmset(@key)
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it 'raises an error if given an odd number of fields+values' do
-    lambda do
+    expect do
       @redises.hmset(@key, 'k1', 1, 'k2')
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   # The following tests address https://github.com/sds/mock_redis/issues/170
@@ -62,7 +62,7 @@ describe '#hmset(key, field, value [, field, value ...])' do
   # The following tests address https://github.com/sds/mock_redis/issues/134
   context 'hmset accepts an array as its only argument' do
     it { expect(@redises.hmset([@key, :bar, :bas])).to eq 'OK' }
-    it { lambda { @redises.hmset([:foo, :bar]) }.should raise_error(Redis::CommandError) }
+    it { expect { @redises.hmset([:foo, :bar]) }.to raise_error(Redis::CommandError) }
   end
 
   it_should_behave_like 'a hash-only command'

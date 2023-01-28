@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-shared_examples 'a distance calculator' do
+RSpec.shared_examples 'a distance calculator' do
   it 'returns distance between two points in specified unit' do
     dist = @redises.geodist(key, 'SF', 'LA', unit)
     expect(dist).to be == expected_result
   end
 end
 
-describe '#geodist' do
+RSpec.describe '#geodist' do
   let(:key) { 'cities' }
 
   context 'with existing key' do

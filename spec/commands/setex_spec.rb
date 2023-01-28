@@ -1,23 +1,23 @@
 require 'spec_helper'
 
-describe '#setex(key, seconds, value)' do
+RSpec.describe '#setex(key, seconds, value)' do
   before { @key = 'mock-redis-test:setex' }
 
   it "responds with 'OK'" do
-    @redises.setex(@key, 10, 'value').should == 'OK'
+    expect(@redises.setex(@key, 10, 'value')).to eq('OK')
   end
 
   it 'sets the value' do
     @redises.setex(@key, 10_000, 'value')
-    @redises.get(@key).should == 'value'
+    expect(@redises.get(@key)).to eq('value')
   end
 
   it 'sets the expiration time' do
     @redises.setex(@key, 10_000, 'value')
 
     # no guarantee these are the same
-    @redises.real.ttl(@key).should > 0
-    @redises.mock.ttl(@key).should > 0
+    expect(@redises.real.ttl(@key)).to be > 0
+    expect(@redises.mock.ttl(@key)).to be > 0
   end
 
   context 'when expiration time is zero' do

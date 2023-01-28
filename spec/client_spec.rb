@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe 'client' do
+RSpec.describe 'client' do
   context '#reconnect' do
     it 'reconnects' do
       redis = MockRedis.new
-      redis.reconnect.should == redis
+      expect(redis.reconnect).to eq(redis)
     end
   end
 
   context '#connect' do
     it 'connects' do
       redis = MockRedis.new
-      redis.connect.should == redis
+      expect(redis.connect).to eq(redis)
     end
   end
 
@@ -30,7 +30,7 @@ describe 'client' do
   context '#with' do
     it 'supports with' do
       redis = MockRedis.new
-      redis.with { |c| c.set('key', 'value') }.should == 'OK'
+      expect(redis.with { |c| c.set('key', 'value') }).to eq('OK')
     end
   end
 end

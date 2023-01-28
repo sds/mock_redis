@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#scan_each' do
+RSpec.describe '#scan_each' do
   subject { MockRedis::Database.new(self) }
 
   let(:match) { '*' }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#script(subcommand, *args)' do
+RSpec.describe '#script(subcommand, *args)' do
   before { @key = 'mock-redis-test:script' }
 
   it 'works with load subcommand' do

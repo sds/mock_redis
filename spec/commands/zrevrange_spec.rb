@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#zrevrange(key, start, stop [, :with_scores => true])' do
+RSpec.describe '#zrevrange(key, start, stop [, :with_scores => true])' do
   before do
     @key = 'mock-redis-test:zrevrange'
     @redises.zadd(@key, 1, 'Washington')
@@ -15,13 +15,13 @@ describe '#zrevrange(key, start, stop [, :with_scores => true])' do
     end
 
     it 'should return an empty array' do
-      @redises.exists?(@key).should == false
-      @redises.zrevrange(@key, 0, 4).should == []
+      expect(@redises.exists?(@key)).to eq(false)
+      expect(@redises.zrevrange(@key, 0, 4)).to eq([])
     end
   end
 
   it 'returns the elements in order by score' do
-    @redises.zrevrange(@key, 0, 1).should == %w[Madison Jefferson]
+    expect(@redises.zrevrange(@key, 0, 1)).to eq(%w[Madison Jefferson])
   end
 
   context 'when a subset of elements have the same score' do
@@ -30,26 +30,26 @@ describe '#zrevrange(key, start, stop [, :with_scores => true])' do
     end
 
     it 'returns the elements in descending lexicographical order' do
-      @redises.zrevrange(@key, 3, 4).should == %w[Washington Martha]
+      expect(@redises.zrevrange(@key, 3, 4)).to eq(%w[Washington Martha])
     end
   end
 
   it 'returns the elements in order by score (negative indices)' do
-    @redises.zrevrange(@key, -2, -1).should == %w[Adams Washington]
+    expect(@redises.zrevrange(@key, -2, -1)).to eq(%w[Adams Washington])
   end
 
   it 'returns empty list when start is too large' do
-    @redises.zrevrange(@key, 5, -1).should == []
+    expect(@redises.zrevrange(@key, 5, -1)).to eq([])
   end
 
   it 'returns the scores when :with_scores is specified' do
-    @redises.zrevrange(@key, 2, 3, :with_scores => true).
-      should == [['Adams', 2.0], ['Washington', 1.0]]
+    expect(@redises.zrevrange(@key, 2, 3, :with_scores => true)).
+      to eq([['Adams', 2.0], ['Washington', 1.0]])
   end
 
   it 'returns the scores when :withscores is specified' do
-    @redises.zrevrange(@key, 2, 3, :withscores => true).
-      should == [['Adams', 2.0], ['Washington', 1.0]]
+    expect(@redises.zrevrange(@key, 2, 3, :withscores => true)).
+      to eq([['Adams', 2.0], ['Washington', 1.0]])
   end
 
   it_should_behave_like 'a zset-only command'

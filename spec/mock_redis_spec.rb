@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe MockRedis do
+RSpec.describe MockRedis do
   let(:url) { 'redis://127.0.0.1:6379/1' }
 
   describe '.new' do
     subject { MockRedis.new(:url => url) }
 
     it 'correctly parses options' do
-      subject.host.should == '127.0.0.1'
-      subject.port.should == 6379
-      subject.db.should == 1
+      expect(subject.host).to eq('127.0.0.1')
+      expect(subject.port).to eq(6379)
+      expect(subject.db).to eq(1)
     end
 
     its(:id) { should == url }
@@ -22,9 +22,9 @@ describe MockRedis do
     subject { MockRedis.connect(:url => url) }
 
     it 'correctly parses options' do
-      subject.host.should == '127.0.0.1'
-      subject.port.should == 6379
-      subject.db.should == 0
+      expect(subject.host).to eq('127.0.0.1')
+      expect(subject.port).to eq(6379)
+      expect(subject.db).to eq(0)
     end
 
     its(:id) { should == url }
@@ -38,13 +38,13 @@ describe MockRedis do
       it 'defaults to Time' do
         mock_redis = MockRedis.new
 
-        mock_redis.options[:time_class].should == Time
+        expect(mock_redis.options[:time_class]).to eq(Time)
       end
 
       it 'has a configurable Time class' do
         mock_redis = MockRedis.new(options)
 
-        mock_redis.options[:time_class].should == time_stub
+        expect(mock_redis.options[:time_class]).to eq(time_stub)
       end
     end
 
@@ -75,9 +75,9 @@ describe MockRedis do
       subject { MockRedis.new(options) }
 
       it 'Forwards time_at to the time_class' do
-        time_stub.should_receive(:at).with(timestamp).and_return(time_at)
+        expect(time_stub).to receive(:at).with(timestamp).and_return(time_at)
 
-        subject.time_at(timestamp).should == time_at
+        expect(subject.time_at(timestamp)).to eq(time_at)
       end
     end
   end

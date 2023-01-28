@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#sscan' do
+RSpec.describe '#sscan' do
   let(:count) { 10 }
   let(:match) { '*' }
   let(:key) { 'mock-redis-test:sscan' }

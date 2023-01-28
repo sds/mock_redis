@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#sismember(key, member)' do
+RSpec.describe '#sismember(key, member)' do
   before do
     @key = 'mock-redis-test:sismember'
     @redises.sadd(@key, 'whiskey')
@@ -8,21 +8,21 @@ describe '#sismember(key, member)' do
   end
 
   it 'returns true if member is in set' do
-    @redises.sismember(@key, 'whiskey').should == true
-    @redises.sismember(@key, 'beer').should == true
+    expect(@redises.sismember(@key, 'whiskey')).to eq(true)
+    expect(@redises.sismember(@key, 'beer')).to eq(true)
   end
 
   it 'returns false if member is not in set' do
-    @redises.sismember(@key, 'cola').should == false
+    expect(@redises.sismember(@key, 'cola')).to eq(false)
   end
 
   it 'stringifies member' do
     @redises.sadd(@key, '1')
-    @redises.sismember(@key, 1).should == true
+    expect(@redises.sismember(@key, 1)).to eq(true)
   end
 
   it 'treats a nonexistent value as an empty set' do
-    @redises.sismember('mock-redis-test:nonesuch', 'beer').should == false
+    expect(@redises.sismember('mock-redis-test:nonesuch', 'beer')).to eq(false)
   end
 
   it_should_behave_like 'a set-only command'

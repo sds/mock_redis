@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe '#watch(key [, key, ...)' do
+RSpec.describe '#watch(key [, key, ...)' do
   before do
     @key1 = 'mock-redis-test-watch1'
     @key2 = 'mock-redis-test-watch2'
   end
 
   it "returns 'OK'" do
-    @redises.watch(@key1, @key2).should == 'OK'
+    expect(@redises.watch(@key1, @key2)).to eq('OK')
   end
 
   it 'EXECs its MULTI on successes' do
@@ -16,6 +16,6 @@ describe '#watch(key [, key, ...)' do
         multi.set 'bar', 'baz'
       end
     end
-    @redises.get('bar').should eq('baz')
+    expect(@redises.get('bar')).to eq('baz')
   end
 end

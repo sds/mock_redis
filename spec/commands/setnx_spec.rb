@@ -1,25 +1,25 @@
 require 'spec_helper'
 
-describe '#setnx(key, value)' do
+RSpec.describe '#setnx(key, value)' do
   before { @key = 'mock-redis-test:setnx' }
 
   it 'returns true if the key was absent' do
-    @redises.setnx(@key, 1).should == true
+    expect(@redises.setnx(@key, 1)).to eq(true)
   end
 
   it 'returns false if the key was present' do
     @redises.set(@key, 2)
-    @redises.setnx(@key, 1).should == false
+    expect(@redises.setnx(@key, 1)).to eq(false)
   end
 
   it 'sets the value if missing' do
     @redises.setnx(@key, 'value')
-    @redises.get(@key).should == 'value'
+    expect(@redises.get(@key)).to eq('value')
   end
 
   it 'does nothing if the value is present' do
     @redises.set(@key, 'old')
     @redises.setnx(@key, 'new')
-    @redises.get(@key).should == 'old'
+    expect(@redises.get(@key)).to eq('old')
   end
 end

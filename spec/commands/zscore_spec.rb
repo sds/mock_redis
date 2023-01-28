@@ -1,21 +1,21 @@
 require 'spec_helper'
 
-describe '#zscore(key, member)' do
+RSpec.describe '#zscore(key, member)' do
   before { @key = 'mock-redis-test:zscore' }
 
   it 'returns the score as a string' do
-    @redises.zadd(@key, 0.25, 'foo').should == true
-    @redises.zscore(@key, 'foo').should == 0.25
+    expect(@redises.zadd(@key, 0.25, 'foo')).to eq(true)
+    expect(@redises.zscore(@key, 'foo')).to eq(0.25)
   end
 
   it 'handles integer members correctly' do
     member = 11
-    @redises.zadd(@key, 0.25, member).should == true
-    @redises.zscore(@key, member).should == 0.25
+    expect(@redises.zadd(@key, 0.25, member)).to eq(true)
+    expect(@redises.zscore(@key, member)).to eq(0.25)
   end
 
   it 'returns nil if member is not present in the set' do
-    @redises.zscore(@key, 'foo').should be_nil
+    expect(@redises.zscore(@key, 'foo')).to be_nil
   end
 
   it_should_behave_like 'a zset-only command'

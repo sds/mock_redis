@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xrevrange(key, start, end)' do
+RSpec.describe '#xrevrange(key, start, end)' do
   before { @key = 'mock-redis-test:xrevrange' }
 
   it 'finds an empty range' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#geoadd' do
+RSpec.describe '#geoadd' do
   let(:key) { 'cities' }
 
   context 'with valid points' do

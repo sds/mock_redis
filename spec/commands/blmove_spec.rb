@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#blmove(source, destination, wherefrom, whereto, timeout)' do
+RSpec.describe '#blmove(source, destination, wherefrom, whereto, timeout)' do
   before do
     @list1 = 'mock-redis-test:blmove-list1'
     @list2 = 'mock-redis-test:blmove-list2'
@@ -13,20 +13,20 @@ describe '#blmove(source, destination, wherefrom, whereto, timeout)' do
   end
 
   it 'returns the value moved' do
-    @redises.blmove(@list1, @list2, 'left', 'right').should == 'a'
+    expect(@redises.blmove(@list1, @list2, 'left', 'right')).to eq('a')
   end
 
   it 'takes the first element of source and appends it to destination' do
     @redises.blmove(@list1, @list2, 'left', 'right')
 
-    @redises.lrange(@list1, 0, -1).should == %w[b]
-    @redises.lrange(@list2, 0, -1).should == %w[x y a]
+    expect(@redises.lrange(@list1, 0, -1)).to eq(%w[b])
+    expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y a])
   end
 
   it 'raises an error on negative timeout' do
-    lambda do
+    expect do
       @redises.blmove(@list1, @list2, 'left', 'right', :timeout => -1)
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   let(:default_error) { RedisMultiplexer::MismatchedResponse }
@@ -34,19 +34,26 @@ describe '#blmove(source, destination, wherefrom, whereto, timeout)' do
 
   context '[mock only]' do
     it 'ignores positive timeouts and returns nil' do
-      @redises.mock.blmove('mock-redis-test:not-here', @list1, 'left', 'right', :timeout => 1).
-        should be_nil
+      expect(
+        @redises.mock.blmove(
+          'mock-redis-test:not-here',
+          @list1,
+          'left',
+          'right',
+          :timeout => 1
+        )
+      ).to be_nil
     end
 
     it 'ignores positive legacy timeouts and returns nil' do
-      @redises.mock.blmove('mock-redis-test:not-here', @list1, 'left', 'right', 1).
-        should be_nil
+      expect(@redises.mock.blmove('mock-redis-test:not-here', @list1, 'left', 'right', 1)).
+        to be_nil
     end
 
     it 'raises WouldBlock on zero timeout (no blocking in the mock)' do
-      lambda do
+      expect do
         @redises.mock.blmove('mock-redis-test:not-here', @list1, 'left', 'right', :timeout => 0)
-      end.should raise_error(MockRedis::WouldBlock)
+      end.to raise_error(MockRedis::WouldBlock)
     end
   end
 end

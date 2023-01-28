@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#lset(key, index, value)' do
+RSpec.describe '#lset(key, index, value)' do
   before do
     @key = 'mock-redis-test:21522'
 
@@ -9,34 +9,34 @@ describe '#lset(key, index, value)' do
   end
 
   it "returns 'OK'" do
-    @redises.lset(@key, 0, 'newthing').should == 'OK'
+    expect(@redises.lset(@key, 0, 'newthing')).to eq('OK')
   end
 
   it "sets the list's value at index to value" do
     @redises.lset(@key, 0, 'newthing')
-    @redises.lindex(@key, 0).should == 'newthing'
+    expect(@redises.lindex(@key, 0)).to eq('newthing')
   end
 
   it "sets the list's value at index to value when the index is a string" do
     @redises.lset(@key, '0', 'newthing')
-    @redises.lindex(@key, 0).should == 'newthing'
+    expect(@redises.lindex(@key, 0)).to eq('newthing')
   end
 
   it 'stringifies value' do
     @redises.lset(@key, 0, 12_345)
-    @redises.lindex(@key, 0).should == '12345'
+    expect(@redises.lindex(@key, 0)).to eq('12345')
   end
 
   it 'raises an exception for nonexistent keys' do
-    lambda do
+    expect do
       @redises.lset('mock-redis-test:bogus-key', 100, 'value')
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it 'raises an exception for out-of-range indices' do
-    lambda do
+    expect do
       @redises.lset(@key, 100, 'value')
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it_should_behave_like 'a list-only command'

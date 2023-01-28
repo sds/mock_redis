@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#renamenx(key, newkey)' do
+RSpec.describe '#renamenx(key, newkey)' do
   before do
     @key = 'mock-redis-test:renamenx:key'
     @newkey = 'mock-redis-test:renamenx:newkey'
@@ -9,33 +9,33 @@ describe '#renamenx(key, newkey)' do
   end
 
   it 'responds with true when newkey does not exist' do
-    @redises.renamenx(@key, @newkey).should == true
+    expect(@redises.renamenx(@key, @newkey)).to eq(true)
   end
 
   it 'responds with false when newkey exists' do
     @redises.set(@newkey, 'monkey')
-    @redises.renamenx(@key, @newkey).should == false
+    expect(@redises.renamenx(@key, @newkey)).to eq(false)
   end
 
   it 'moves the data' do
     @redises.renamenx(@key, @newkey)
-    @redises.get(@newkey).should == 'oof'
+    expect(@redises.get(@newkey)).to eq('oof')
   end
 
   it 'raises an error when the source key is nonexistant' do
     @redises.del(@key)
-    lambda do
+    expect do
       @redises.rename(@key, @newkey)
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it 'returns false when key == newkey' do
-    @redises.renamenx(@key, @key).should == false
+    expect(@redises.renamenx(@key, @key)).to eq(false)
   end
 
   it 'leaves any existing value at newkey alone' do
     @redises.set(@newkey, 'rab')
     @redises.renamenx(@key, @newkey)
-    @redises.get(@newkey).should == 'rab'
+    expect(@redises.get(@newkey)).to eq('rab')
   end
 end

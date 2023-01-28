@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#mapped_mset(hash)' do
+RSpec.describe '#mapped_mset(hash)' do
   before do
     @key1 = 'mock-redis-test:a'
     @key2 = 'mock-redis-test:b'
@@ -11,9 +11,9 @@ describe '#mapped_mset(hash)' do
   end
 
   it 'sets the values properly' do
-    @redises.mapped_mset(@key1 => 'one', @key3 => 'three').should eq('OK')
-    @redises.get(@key1).should eq('one')
-    @redises.get(@key2).should eq('2') # left alone
-    @redises.get(@key3).should eq('three')
+    expect(@redises.mapped_mset(@key1 => 'one', @key3 => 'three')).to eq('OK')
+    expect(@redises.get(@key1)).to eq('one')
+    expect(@redises.get(@key2)).to eq('2') # left alone
+    expect(@redises.get(@key3)).to eq('three')
   end
 end

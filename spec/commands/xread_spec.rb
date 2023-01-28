@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xread(keys, ids)' do
+RSpec.describe '#xread(keys, ids)' do
   before :all do
     sleep 1 - (Time.now.to_f % 1)
     @key = 'mock-redis-test:xread'
