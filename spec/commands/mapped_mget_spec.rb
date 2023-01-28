@@ -11,9 +11,11 @@ RSpec.describe '#mapped_mget(*keys)' do
   end
 
   it 'returns a hash' do
-    expect(@redises.mapped_mget(@key1, @key2, @key3)).to eq(@key1 => '1',
-                                                        @key2 => '2',
-                                                        @key3 => nil)
+    expect(@redises.mapped_mget(@key1, @key2, @key3)).to eq(
+      @key1 => '1',
+      @key2 => '2',
+      @key3 => nil
+    )
   end
 
   it 'returns a hash even when no matches' do

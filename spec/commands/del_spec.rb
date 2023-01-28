@@ -15,11 +15,13 @@ RSpec.describe '#del(key [, key, ...])' do
     @redises.set('mock-redis-test:1', 1)
     @redises.set('mock-redis-test:2', 1)
 
-    expect(@redises.del(
-      'mock-redis-test:1',
-      'mock-redis-test:2',
-      'mock-redis-test:other'
-    )).to eq(2)
+    expect(
+      @redises.del(
+        'mock-redis-test:1',
+        'mock-redis-test:2',
+        'mock-redis-test:other'
+      )
+    ).to eq(2)
   end
 
   it 'actually removes the key' do

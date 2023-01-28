@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe '#zunionstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
+RSpec.describe '#zunionstore(destination, keys, '\
+               '[:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
   before do
     @set1 = 'mock-redis-test:zunionstore1'
     @set2 = 'mock-redis-test:zunionstore2'

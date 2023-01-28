@@ -30,7 +30,8 @@ RSpec.describe '#srandmember(key)' do
     # NOTE: We disable result checking since MockRedis and Redis will likely
     # return a different random set (since the selection is, well, random)
     it 'returns the whole set if count is greater than the set size' do
-      expect(@redises.send_without_checking(:srandmember, @key, 5)).to match_array(%w[value value2 value3])
+      expect(@redises.send_without_checking(:srandmember, @key, 5))
+        .to match_array(%w[value value2 value3])
     end
 
     it 'returns random members up to count from the set when count is smaller than the set size' do

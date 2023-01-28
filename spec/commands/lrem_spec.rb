@@ -16,10 +16,12 @@ RSpec.describe '#lrem(key, count, value)' do
   it 'deletes the first count instances of key when count > 0' do
     @redises.lrem(@key, 2, 'bottles')
 
-    expect(@redises.lrange(@key, 0, 8)).to eq(%w[
-      99 of beer on the wall
-      99 of beer
-    ])
+    expect(@redises.lrange(@key, 0, 8)).to eq(
+      %w[
+        99 of beer on the wall
+        99 of beer
+      ]
+    )
 
     expect(@redises.lrange(@key, -7, -1)).to eq(%w[98 bottles of beer on the wall])
   end
@@ -27,10 +29,12 @@ RSpec.describe '#lrem(key, count, value)' do
   it 'deletes the last count instances of key when count < 0' do
     @redises.lrem(@key, -2, 'bottles')
 
-    expect(@redises.lrange(@key, 0, 9)).to eq(%w[
-      99 bottles of beer on the wall
-      99 of beer
-    ])
+    expect(@redises.lrange(@key, 0, 9)).to eq(
+      %w[
+        99 bottles of beer on the wall
+        99 of beer
+      ]
+    )
 
     expect(@redises.lrange(@key, -6, -1)).to eq(%w[98 of beer on the wall])
   end

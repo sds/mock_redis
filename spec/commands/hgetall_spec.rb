@@ -8,10 +8,12 @@ RSpec.describe '#hgetall(key)' do
   end
 
   it 'returns the (key, value) pairs stored in the hash' do
-    expect(@redises.hgetall(@key)).to eq({
-      'k1' => 'v1',
-      'k2' => 'v2',
-    })
+    expect(@redises.hgetall(@key)).to eq(
+      {
+        'k1' => 'v1',
+        'k2' => 'v2',
+      }
+    )
   end
 
   it 'returns [] when there is no such key' do

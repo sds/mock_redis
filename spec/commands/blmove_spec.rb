@@ -34,8 +34,15 @@ RSpec.describe '#blmove(source, destination, wherefrom, whereto, timeout)' do
 
   context '[mock only]' do
     it 'ignores positive timeouts and returns nil' do
-      expect(@redises.mock.blmove('mock-redis-test:not-here', @list1, 'left', 'right', :timeout => 1)).
-        to be_nil
+      expect(
+        @redises.mock.blmove(
+          'mock-redis-test:not-here',
+          @list1,
+          'left',
+          'right',
+          :timeout => 1
+        )
+      ).to be_nil
     end
 
     it 'ignores positive legacy timeouts and returns nil' do

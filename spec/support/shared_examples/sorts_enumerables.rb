@@ -23,7 +23,8 @@ RSpec.shared_examples_for 'a sortable' do
     end
 
     it 'projects through a key pattern and reflects element' do
-      expect(@redises.sort(@key, :get => ['#', 'mock-redis-test:values_*'])).to eq([%w[1 a], %w[2 b]])
+      expect(@redises.sort(@key, :get => ['#', 'mock-redis-test:values_*']))
+        .to eq([%w[1 a], %w[2 b]])
     end
 
     it 'projects through a hash key pattern' do
@@ -37,7 +38,8 @@ RSpec.shared_examples_for 'a sortable' do
     end
 
     it 'weights by projecting through a key pattern and a specific order' do
-      expect(@redises.sort(@key, :order => 'DESC', :by => 'mock-redis-test:weight_*')).to eq(%w[1 2])
+      expect(@redises.sort(@key, :order => 'DESC', :by => 'mock-redis-test:weight_*'))
+        .to eq(%w[1 2])
     end
   end
 

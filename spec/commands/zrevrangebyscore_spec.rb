@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe '#zrevrangebyscore(key, start, stop [:with_scores => true] [:limit => [offset count]])' do
+RSpec.describe '#zrevrangebyscore(key, start, stop '\
+               '[:with_scores => true] [:limit => [offset count]])' do
   before do
     @key = 'mock-redis-test:zrevrangebyscore'
     @redises.zadd(@key, 1, 'Washington')

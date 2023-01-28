@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe '#zinterstore(destination, keys, [:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
+RSpec.describe '#zinterstore(destination, keys, '\
+               '[:weights => [w,w,], [:aggregate => :sum|:min|:max])' do
   before do
     @odds   = 'mock-redis-test:zinterstore:odds'
     @primes = 'mock-redis-test:zinterstore:primes'
