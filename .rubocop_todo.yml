@@ -20,14 +20,6 @@ Naming/MethodParameterName:
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowedMethods, AllowedPatterns, IgnoredMethods.
-# AllowedMethods: ==, equal?, eql?
-Style/ClassEqualityComparison:
-  Exclude:
-    - 'spec/support/redis_multiplexer.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
 Style/ExplicitBlockArgument:
   Exclude:
     - 'lib/mock_redis/stream.rb'
