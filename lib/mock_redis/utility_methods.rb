@@ -68,7 +68,7 @@ class MockRedis
     end
 
     def left_pad(str, size)
-      str = '0' + str while str.length < size
+      str = "0#{str}" while str.length < size
 
       str
     end
