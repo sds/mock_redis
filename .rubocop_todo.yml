@@ -29,12 +29,6 @@ Style/OptionalBooleanParameter:
     - 'lib/mock_redis/pipelined_wrapper.rb'
     - 'lib/mock_redis/transaction_wrapper.rb'
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantRegexpEscape:
-  Exclude:
-    - 'lib/mock_redis/zset_methods.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Mode.
