@@ -71,8 +71,8 @@ class MockRedis
       items
     end
 
-    def each
-      members.each { |m| yield m }
+    def each(&block)
+      members.each(&block)
     end
 
     private

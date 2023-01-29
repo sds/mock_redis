@@ -19,12 +19,6 @@ Naming/MethodParameterName:
     - 'spec/support/redis_multiplexer.rb'
 
 # Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Style/ExplicitBlockArgument:
-  Exclude:
-    - 'lib/mock_redis/stream.rb'
-
-# Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: AllowedReceivers.
 # AllowedReceivers: Thread.current
