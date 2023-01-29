@@ -8,6 +8,7 @@ class RedisMultiplexer < BlankSlate
   MismatchedResponse = Class.new(StandardError)
 
   def initialize(*a)
+    super()
     @mock_redis = MockRedis.new(*a)
     Redis.exists_returns_integer = true
     @real_redis = Redis.new(*a)
