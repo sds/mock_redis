@@ -1,6 +1,8 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  NewCops: disable
+  SuggestExtensions: false
   TargetRubyVersion: 2.4
 
 Layout/ArgumentAlignment:
@@ -92,10 +94,6 @@ Style/IfUnlessModifier:
   Enabled: false
 
 Style/Lambda:
-  Enabled: false
-
-# TODO: Address these at some point
-Style/MethodMissingSuper:
   Enabled: false
 
 Style/MissingRespondToMissing:
