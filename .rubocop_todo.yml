@@ -18,14 +18,6 @@ Naming/MethodParameterName:
     - 'lib/mock_redis/zset_methods.rb'
     - 'spec/support/redis_multiplexer.rb'
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowedReceivers.
-# AllowedReceivers: Thread.current
-Style/HashEachMethods:
-  Exclude:
-    - 'lib/mock_redis/multi_db_wrapper.rb'
-
 # Offense count: 5
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: respond_to_missing?
