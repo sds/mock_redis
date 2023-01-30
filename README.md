@@ -10,7 +10,7 @@ for use in tests.
 
 ## Requirements
 
-Ruby 2.6+
+Ruby 2.7+
 
 The current implementation is tested against Redis 6.2. Older versions may work, but can also return different results or not support some commands.
 
