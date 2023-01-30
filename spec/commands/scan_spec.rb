@@ -22,7 +22,7 @@ RSpec.describe '#scan' do
     context 'when count is lower than collection size' do
       let(:collection) { Array.new(count * 2) { |i| "mock:key#{i}" } }
       let(:expected_first) { [count.to_s, collection[0...count]] }
-      let(:expected_second) { ['0', collection[count..-1]] }
+      let(:expected_second) { ['0', collection[count..]] }
 
       it 'returns a the next cursor and the collection' do
         expect(subject.scan(0, count: count, match: match)).to eq(expected_first)

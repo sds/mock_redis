@@ -130,7 +130,7 @@ class MockRedis
         defaults[:host]     = uri.host
         defaults[:port]     = uri.port if uri.port
         defaults[:password] = uri.password if uri.password
-        defaults[:db]       = uri.path[1..-1].to_i if uri.path
+        defaults[:db]       = uri.path[1..].to_i if uri.path
       end
     end
 
