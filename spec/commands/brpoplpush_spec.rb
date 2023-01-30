@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'spec_helper'
-
 RSpec.describe '#brpoplpush(source, destination, timeout)' do
   before do
     @list1 = 'mock-redis-test:brpoplpush1'

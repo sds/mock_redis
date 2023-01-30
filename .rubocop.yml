@@ -1,6 +1,8 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  NewCops: disable
+  SuggestExtensions: false
   TargetRubyVersion: 2.4
 
 Layout/ArgumentAlignment:
@@ -18,22 +20,8 @@ Layout/EmptyLineAfterGuardClause:
 Layout/LineLength:
   Max: 100
 
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-
 Lint/AssignmentInCondition:
   Enabled: false
-
-Lint/RaiseException:
-  Enabled: true
-
-Lint/StructNewOverride:
-  Enabled: true
-
-# We use this a lot in specs where it's perfectly valid
-Lint/Void:
-  Exclude:
-    - spec/**/*
 
 Metrics/AbcSize:
   Enabled: false
@@ -66,18 +54,6 @@ Style/Documentation:
 Style/DoubleNegation:
   Enabled: false
 
-Style/ExponentialNotation:
-  Enabled: true
-
-Style/HashEachMethods:
-  Enabled: true
-
-Style/HashTransformKeys:
-  Enabled: true
-
-Style/HashTransformValues:
-  Enabled: true
-
 # We have too much code that relies on modifying strings
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -92,10 +68,6 @@ Style/IfUnlessModifier:
   Enabled: false
 
 Style/Lambda:
-  Enabled: false
-
-# TODO: Address these at some point
-Style/MethodMissingSuper:
   Enabled: false
 
 Style/MissingRespondToMissing:
@@ -124,12 +96,6 @@ Style/PerlBackrefs:
   Enabled: false
 
 Style/RescueModifier:
-  Enabled: false
-
-Style/SignalException:
-  Enabled: false
-
-Style/SingleLineBlockParams:
   Enabled: false
 
 Style/SymbolArray:
