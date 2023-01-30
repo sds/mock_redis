@@ -38,7 +38,7 @@ class MockRedis
         type, offset = args.shift(2)
 
         is_signed = type.slice(0) == 'i'
-        type_size = type[1..-1].to_i
+        type_size = type[1..].to_i
 
         if (type_size > 64 && is_signed) || (type_size >= 64 && !is_signed)
           raise Redis::CommandError,
@@ -47,7 +47,7 @@ class MockRedis
         end
 
         if offset.to_s[0] == '#'
-          offset = offset[1..-1].to_i * type_size
+          offset = offset[1..].to_i * type_size
         end
 
         bits = []
@@ -365,7 +365,7 @@ class MockRedis
       old_value = (data[key] || '')
 
       prefix = zero_pad(old_value[0...offset], offset)
-      data[key] = prefix + value + (old_value[(offset + value.length)..-1] || '')
+      data[key] = prefix + value + (old_value[(offset + value.length)..] || '')
       data[key].length
     end
 

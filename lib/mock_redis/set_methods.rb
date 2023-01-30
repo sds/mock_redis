@@ -171,7 +171,7 @@ class MockRedis
         with_set_at(keys.first, &blk)
       else
         with_set_at(keys.first) do |set|
-          with_sets_at(*(keys[1..-1])) do |*sets|
+          with_sets_at(*(keys[1..])) do |*sets|
             yield(*([set] + sets))
           end
         end

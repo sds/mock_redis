@@ -316,7 +316,7 @@ class MockRedis
         with_zset_at(keys.first, coercible: coercible, &blk)
       else
         with_zset_at(keys.first, coercible: coercible) do |set|
-          with_zsets_at(*(keys[1..-1]), coercible: coercible) do |*sets|
+          with_zsets_at(*(keys[1..]), coercible: coercible) do |*sets|
             yield(*([set] + sets))
           end
         end

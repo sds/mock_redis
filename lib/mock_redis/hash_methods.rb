@@ -93,7 +93,7 @@ class MockRedis
     def hmset(key, *kvpairs)
       if key.is_a? Array
         err_msg = 'ERR wrong number of arguments for \'hmset\' command'
-        kvpairs = key[1..-1]
+        kvpairs = key[1..]
         key = key[0]
       end
 
