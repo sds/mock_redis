@@ -23,8 +23,6 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.7'
 
-  s.add_runtime_dependency 'ruby2_keywords'
-
   s.add_development_dependency 'redis', '~> 4.5.0'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rspec-its', '~> 1.0'
