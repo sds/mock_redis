@@ -16,6 +16,14 @@ Gem::Specification.new do |s|
    normal Redis object. It supports all the usual Redis operations.
   MSG
 
+  s.metadata = {
+    'bug_tracker_uri' => "#{s.homepage}/issues",
+    'changelog_uri' => "#{s.homepage}/blob/v#{s.version}/CHANGELOG.md",
+    'documentation_uri' => "https://www.rubydoc.info/gems/#{s.name}/#{s.version}",
+    'homepage_uri' => s.homepage,
+    'source_code_uri' => "#{s.homepage}/tree/v#{s.version}",
+  }
+
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- spec/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
