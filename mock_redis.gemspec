@@ -21,10 +21,20 @@ Gem::Specification.new do |s|
       file.start_with?('lib') || file.end_with?('.md')
     end
   end
+
+  s.metadata = {
+    'bug_tracker_uri' => "#{s.homepage}/issues",
+    'changelog_uri' => "#{s.homepage}/blob/v#{s.version}/CHANGELOG.md",
+    'documentation_uri' => "https://www.rubydoc.info/gems/#{s.name}/#{s.version}",
+    'homepage_uri' => s.homepage,
+    'source_code_uri' => "#{s.homepage}/tree/v#{s.version}",
+  }
+
   s.require_paths = ['lib']
 
   s.required_ruby_version = '>= 2.7'
 
+  s.add_development_dependency 'rake', '~> 13'
   s.add_development_dependency 'redis', '~> 4.5.0'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rspec-its', '~> 1.0'
