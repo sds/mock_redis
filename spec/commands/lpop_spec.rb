@@ -61,6 +61,6 @@ RSpec.describe '#lpop(key)' do
     end
   end
 
-  let(:default_error) { RedisMultiplexer::MismatchedResponse }
+  let(:default_error) { ArgumentError }
   it_should_behave_like 'a list-only command'
 end
