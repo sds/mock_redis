@@ -108,8 +108,13 @@ class MockRedis
       value
     end
 
-    def lpop(key)
-      with_list_at(key, &:shift)
+    def lpop(key, count = nil)
+      return with_list_at(key, &:shift) if count.nil?
+
+      record_count = llen(key)
+      return nil if record_count.zero?
+
+      [record_count, count].min.times.map { with_list_at(key, &:shift) }
     end
 
     def lpush(key, values)
