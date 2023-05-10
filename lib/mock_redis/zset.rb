@@ -10,9 +10,11 @@ class MockRedis
 
     def_delegators :members, :empty?, :include?, :size
 
-    def initialize
+    def initialize(enum = nil)
       @members = Set.new
-      @scores  = {}
+      @members.merge(enum) if enum
+
+      @scores = {}
     end
 
     def initialize_copy(source)
