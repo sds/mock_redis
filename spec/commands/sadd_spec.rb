@@ -19,7 +19,7 @@ RSpec.describe '#sadd(key, member)' do
       expect(@redises.smembers(@key)).to eq(%w[2 1])
     end
   end
-  
+
   context 'sadd?' do
     it 'returns true if the set did not already contain member' do
       expect(@redises.sadd?(@key, 1)).to eq(true)
@@ -36,7 +36,7 @@ RSpec.describe '#sadd(key, member)' do
       expect(@redises.smembers(@key)).to eq(%w[2 1])
     end
   end
-  
+
   describe 'adding multiple members at once' do
     it 'returns the amount of added members' do
       expect(@redises.sadd(@key, [1, 2, 3])).to eq(3)
