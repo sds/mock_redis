@@ -3,21 +3,40 @@ require 'spec_helper'
 RSpec.describe '#sadd(key, member)' do
   before { @key = 'mock-redis-test:sadd' }
 
-  it 'returns true if the set did not already contain member' do
-    expect(@redises.sadd(@key, 1)).to eq(true)
-  end
+  context 'sadd' do
+    it 'returns true if the set did not already contain member' do
+      expect(@redises.sadd(@key, 1)).to eq(true)
+    end
 
-  it 'returns false if the set did already contain member' do
-    @redises.sadd(@key, 1)
-    expect(@redises.sadd(@key, 1)).to eq(false)
-  end
+    it 'returns false if the set did already contain member' do
+      @redises.sadd(@key, 1)
+      expect(@redises.sadd(@key, 1)).to eq(false)
+    end
 
-  it 'adds member to the set' do
-    @redises.sadd(@key, 1)
-    @redises.sadd(@key, 2)
-    expect(@redises.smembers(@key)).to eq(%w[2 1])
+    it 'adds member to the set' do
+      @redises.sadd(@key, 1)
+      @redises.sadd(@key, 2)
+      expect(@redises.smembers(@key)).to eq(%w[2 1])
+    end
   end
+  
+  context 'sadd?' do
+    it 'returns true if the set did not already contain member' do
+      expect(@redises.sadd?(@key, 1)).to eq(true)
+    end
 
+    it 'returns false if the set did already contain member' do
+      @redises.sadd(@key, 1)
+      expect(@redises.sadd?(@key, 1)).to eq(false)
+    end
+
+    it 'adds member to the set' do
+      @redises.sadd?(@key, 1)
+      @redises.sadd?(@key, 2)
+      expect(@redises.smembers(@key)).to eq(%w[2 1])
+    end
+  end
+  
   describe 'adding multiple members at once' do
     it 'returns the amount of added members' do
       expect(@redises.sadd(@key, [1, 2, 3])).to eq(3)
