@@ -46,7 +46,6 @@ RSpec.describe '#scan_each' do
       end
     end
 
-
     context 'when giving a custom match and type filter' do
       let(:data) do
         { 'mock:stringkey' => 'mockvalue',
