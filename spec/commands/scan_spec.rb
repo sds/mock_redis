@@ -61,6 +61,16 @@ RSpec.describe '#scan' do
       end
     end
 
+    context 'when giving a custom match filter with a hash tag' do
+      let(:match) { 'mock:key:{1}:*' }
+      let(:data) { ['mock:key:{1}:1', 'mock:key:{1}:2', 'mock:key:{2}:1'].to_h { |e| [e, nil] } }
+      let(:expected) { ['0', %w[mock:key:{1}:1 mock:key:{1}:2]] }
+
+      it 'returns a 0 cursor and the filtered collection' do
+        expect(subject.scan(0, count: count, match: match)).to eq(expected)
+      end
+    end
+
     context 'when giving a custom match and type filter' do
       let(:data) do
         { 'mock:stringkey' => 'mockvalue',
