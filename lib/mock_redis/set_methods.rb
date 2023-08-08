@@ -27,6 +27,11 @@ class MockRedis
       end
     end
 
+    def sadd?(key, members)
+      res = sadd(key, members)
+      res.is_a?(Numeric) ? res > 0 : res
+    end
+
     def scard(key)
       with_set_at(key, &:length)
     end
