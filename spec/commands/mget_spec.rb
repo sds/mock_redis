@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#mget(key [, key, ...])' do
+RSpec.describe '#mget(key [, key, ...])' do
   before do
     @key1 = 'mock-redis-test:mget1'
     @key2 = 'mock-redis-test:mget2'
@@ -11,11 +11,11 @@ describe '#mget(key [, key, ...])' do
 
   context 'emulate param array' do
     it 'returns an array of values' do
-      @redises.mget([@key1, @key2]).should == %w[1 2]
+      expect(@redises.mget([@key1, @key2])).to eq(%w[1 2])
     end
 
     it 'returns an array of values' do
-      @redises.mget([@key1, @key2]).should == %w[1 2]
+      expect(@redises.mget([@key1, @key2])).to eq(%w[1 2])
     end
 
     it 'returns nil for non-string keys' do
@@ -23,17 +23,17 @@ describe '#mget(key [, key, ...])' do
 
       @redises.lpush(list, 'bork bork bork')
 
-      @redises.mget([@key1, @key2, list]).should == ['1', '2', nil]
+      expect(@redises.mget([@key1, @key2, list])).to eq(['1', '2', nil])
     end
   end
 
   context 'emulate params strings' do
     it 'returns an array of values' do
-      @redises.mget(@key1, @key2).should == %w[1 2]
+      expect(@redises.mget(@key1, @key2)).to eq(%w[1 2])
     end
 
     it 'returns nil for missing keys' do
-      @redises.mget(@key1, 'mock-redis-test:not-found', @key2).should == ['1', nil, '2']
+      expect(@redises.mget(@key1, 'mock-redis-test:not-found', @key2)).to eq(['1', nil, '2'])
     end
 
     it 'returns nil for non-string keys' do
@@ -41,25 +41,25 @@ describe '#mget(key [, key, ...])' do
 
       @redises.lpush(list, 'bork bork bork')
 
-      @redises.mget(@key1, @key2, list).should == ['1', '2', nil]
+      expect(@redises.mget(@key1, @key2, list)).to eq(['1', '2', nil])
     end
 
     it 'raises an error if you pass it 0 arguments' do
-      lambda do
+      expect do
         @redises.mget
-      end.should raise_error(Redis::CommandError)
+      end.to raise_error(Redis::CommandError)
     end
 
     it 'raises an error if you pass it empty array' do
-      lambda do
+      expect do
         @redises.mget([])
-      end.should raise_error(Redis::CommandError)
+      end.to raise_error(Redis::CommandError)
     end
   end
 
   context 'emulate block' do
     it 'returns an array of values' do
-      @redises.mget(@key1, @key2) { |values| values.map(&:to_i) }.should == [1, 2]
+      expect(@redises.mget(@key1, @key2) { |values| values.map(&:to_i) }).to eq([1, 2])
     end
   end
 end

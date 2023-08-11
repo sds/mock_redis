@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#persist(key)' do
+RSpec.describe '#persist(key)' do
   before do
     @key = 'mock-redis-test:persist'
     @redises.set(@key, 'spork')
@@ -8,21 +8,21 @@ describe '#persist(key)' do
 
   it 'returns true for a key with a timeout' do
     @redises.expire(@key, 10_000)
-    @redises.persist(@key).should == true
+    expect(@redises.persist(@key)).to eq(true)
   end
 
   it 'returns false for a key with no timeout' do
-    @redises.persist(@key).should == false
+    expect(@redises.persist(@key)).to eq(false)
   end
 
   it 'returns false for a key that does not exist' do
-    @redises.persist('mock-redis-test:nonesuch').should == false
+    expect(@redises.persist('mock-redis-test:nonesuch')).to eq(false)
   end
 
   it 'removes the timeout' do
     @redises.expire(@key, 10_000)
     @redises.persist(@key)
-    @redises.persist(@key).should == false
+    expect(@redises.persist(@key)).to eq(false)
   end
 
   context '[mock only]' do
@@ -35,14 +35,14 @@ describe '#persist(key)' do
 
     before do
       @now = Time.now
-      Time.stub(:now).and_return(@now)
+      allow(Time).to receive(:now).and_return(@now)
     end
 
     it 'makes keys stay around' do
       @mock.expire(@key, 5)
       @mock.persist(@key)
-      Time.stub(:now).and_return(@now + 5)
-      @mock.get(@key).should_not be_nil
+      allow(Time).to receive(:now).and_return(@now + 5)
+      expect(@mock.get(@key)).not_to be_nil
     end
   end
 end

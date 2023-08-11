@@ -27,6 +27,11 @@ class MockRedis
       end
     end
 
+    def sadd?(key, members)
+      res = sadd(key, members)
+      res.is_a?(Numeric) ? res > 0 : res
+    end
+
     def scard(key)
       with_set_at(key, &:length)
     end
@@ -62,6 +67,12 @@ class MockRedis
 
     def sismember(key, member)
       with_set_at(key) { |s| s.include?(member.to_s) }
+    end
+
+    def smismember(key, *members)
+      with_set_at(key) do |set|
+        members.flatten.map { |m| set.include?(m.to_s) }
+      end
     end
 
     def smembers(key)
@@ -165,7 +176,7 @@ class MockRedis
         with_set_at(keys.first, &blk)
       else
         with_set_at(keys.first) do |set|
-          with_sets_at(*(keys[1..-1])) do |*sets|
+          with_sets_at(*(keys[1..])) do |*sets|
             yield(*([set] + sets))
           end
         end

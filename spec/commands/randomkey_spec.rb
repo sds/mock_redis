@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#randomkey [mock only]' do
+RSpec.describe '#randomkey [mock only]' do
   before { @mock = @redises.mock }
 
   it 'finds a random key' do
@@ -10,11 +10,11 @@ describe '#randomkey [mock only]' do
       @mock.set(k, 1)
     end
 
-    @keys.should include(@mock.randomkey)
+    expect(@keys).to include(@mock.randomkey)
   end
 
   it 'returns nil when there are no keys' do
     @mock.keys('*').each { |k| @mock.del(k) }
-    @mock.randomkey.should be_nil
+    expect(@mock.randomkey).to be_nil
   end
 end

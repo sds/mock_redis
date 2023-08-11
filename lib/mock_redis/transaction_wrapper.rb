@@ -57,13 +57,11 @@ class MockRedis
       @multi_block_given = false
 
       responses = @transaction_futures.map do |future|
-        begin
-          result = send(*future.command)
-          future.store_result(result)
-          future.value
-        rescue StandardError => e
-          e
-        end
+        result = send(*future.command)
+        future.store_result(result)
+        future.value
+      rescue StandardError => e
+        e
       end
 
       @transaction_futures = []

@@ -26,7 +26,7 @@ class MockRedis
     end
 
     def zadd_one_member(key, score, member, zadd_options = {})
-      assert_scorey(score) unless score.to_s =~ /(\+|\-)inf/
+      assert_scorey(score) unless score.to_s =~ /(\+|-)inf/
 
       with_zset_at(key) do |zset|
         if zadd_options[:incr]
@@ -147,7 +147,7 @@ class MockRedis
         else
           retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
           with_zset_at(key) do |z|
-            args.each { |member| z.delete?(member) }
+            args.each { |member| z.delete?(member.to_s) }
           end
         end
       end
@@ -316,7 +316,7 @@ class MockRedis
         with_zset_at(keys.first, coercible: coercible, &blk)
       else
         with_zset_at(keys.first, coercible: coercible) do |set|
-          with_zsets_at(*(keys[1..-1]), coercible: coercible) do |*sets|
+          with_zsets_at(*(keys[1..]), coercible: coercible) do |*sets|
             yield(*([set] + sets))
           end
         end
@@ -351,7 +351,7 @@ class MockRedis
     end
 
     def assert_scorey(value, message = 'ERR value is not a valid float')
-      return if value.to_s =~ /\(?(\-|\+)inf/
+      return if value.to_s =~ /\(?(-|\+)inf/
 
       value = $1 if value.to_s =~ /\((.*)/
       unless looks_like_float?(value)

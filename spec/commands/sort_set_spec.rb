@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#sort(key, options)' do
+RSpec.describe '#sort(key, options)' do
   before do
     @key = 'mock-redis-test:set_sort'
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'MockRedis#clone' do
+RSpec.describe 'MockRedis#clone' do
   before do
     @mock = MockRedis.new
   end
@@ -17,32 +17,32 @@ describe 'MockRedis#clone' do
     end
 
     it 'copies the stored data to the clone' do
-      @clone.get('foo').should == 'bar'
+      expect(@clone.get('foo')).to eq('bar')
     end
 
     it 'performs a deep copy (string values)' do
       @mock.del('foo')
-      @clone.get('foo').should == 'bar'
+      expect(@clone.get('foo')).to eq('bar')
     end
 
     it 'performs a deep copy (list values)' do
       @mock.lpop('foolist')
-      @clone.lrange('foolist', 0, 1).should == ['bar']
+      expect(@clone.lrange('foolist', 0, 1)).to eq(['bar'])
     end
 
     it 'performs a deep copy (hash values)' do
       @mock.hset('foohash', 'bar', 'quux')
-      @clone.hgetall('foohash').should == { 'bar' => 'baz' }
+      expect(@clone.hgetall('foohash')).to eq({ 'bar' => 'baz' })
     end
 
     it 'performs a deep copy (set values)' do
       @mock.srem('fooset', 'bar')
-      @clone.smembers('fooset').should == ['bar']
+      expect(@clone.smembers('fooset')).to eq(['bar'])
     end
 
     it 'performs a deep copy (zset values)' do
       @mock.zadd('foozset', 2, 'bar')
-      @clone.zscore('foozset', 'bar').should == 1.0
+      expect(@clone.zscore('foozset', 'bar')).to eq(1.0)
     end
   end
 
@@ -55,17 +55,17 @@ describe 'MockRedis#clone' do
     end
 
     it 'copies the expiration times' do
-      @clone.ttl('foo').should > 0
+      expect(@clone.ttl('foo')).to be > 0
     end
 
     it 'deep-copies the expiration times' do
       @mock.persist('foo')
-      @clone.ttl('foo').should > 0
+      expect(@clone.ttl('foo')).to be > 0
     end
 
     it 'deep-copies the expiration times' do
       @clone.persist('foo')
-      @mock.ttl('foo').should > 0
+      expect(@mock.ttl('foo')).to be > 0
     end
   end
 
@@ -80,16 +80,16 @@ describe 'MockRedis#clone' do
     end
 
     it 'makes sure the clone is in a transaction' do
-      lambda do
+      expect do
         @clone.exec
-      end.should_not raise_error
+      end.not_to raise_error
     end
 
     it 'deep-copies the queued commands' do
       @clone.incrby('foo', 8)
-      @clone.exec.should == [1, 3, 7, 15]
+      expect(@clone.exec).to eq([1, 3, 7, 15])
 
-      @mock.exec.should == [1, 3, 7]
+      expect(@mock.exec).to eq([1, 3, 7])
     end
   end
 end

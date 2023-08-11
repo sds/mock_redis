@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#restore(key, ttl, value)' do
+RSpec.describe '#restore(key, ttl, value)' do
   before do
     @key = 'mock-redis-test:45794'
     @src = MockRedis.new
@@ -8,7 +8,7 @@ describe '#restore(key, ttl, value)' do
     @dumped_value = @src.dump(@key)
     @dst = MockRedis.new
     @now = Time.now.round
-    Time.stub(:now).and_return(@now)
+    allow(Time).to receive(:now).and_return(@now)
   end
 
   it 'allows dump/restoring values between two redis instances' do

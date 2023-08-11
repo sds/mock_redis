@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#xlen(key)' do
+RSpec.describe '#xlen(key)' do
   before :all do
     sleep 1 - (Time.now.to_f % 1)
     @key = 'mock-redis-test:xlen'

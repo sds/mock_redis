@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe '#sscan' do
+RSpec.describe '#sscan' do
   let(:count) { 10 }
   let(:match) { '*' }
   let(:key) { 'mock-redis-test:sscan' }
 
   before do
     # The return order of the members is non-deterministic, so we sort them to compare
-    expect_any_instance_of(Redis).to receive(:sscan).and_wrap_original do |m, *args|
-      result = m.call(*args)
+    expect_any_instance_of(Redis).to receive(:sscan).and_wrap_original do |m, *args, **kwargs|
+      result = m.call(*args, **kwargs)
       [result[0], result[1].sort]
     end
-    expect_any_instance_of(MockRedis).to receive(:sscan).and_wrap_original do |m, *args|
-      result = m.call(*args)
+    expect_any_instance_of(MockRedis).to receive(:sscan).and_wrap_original do |m, *args, **kwargs|
+      result = m.call(*args, **kwargs)
       [result[0], result[1].sort]
     end
   end

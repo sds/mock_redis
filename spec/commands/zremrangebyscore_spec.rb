@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'date'
 
-describe '#zremrangebyscore(key, min, max)' do
+RSpec.describe '#zremrangebyscore(key, min, max)' do
   before do
     @key = 'mock-redis-test:zremrangebyscore'
     @redises.zadd(@key, 1, 'Washington')
@@ -11,18 +11,18 @@ describe '#zremrangebyscore(key, min, max)' do
   end
 
   it 'returns the number of elements in range' do
-    @redises.zremrangebyscore(@key, 2, 3).should == 2
+    expect(@redises.zremrangebyscore(@key, 2, 3)).to eq(2)
   end
 
   it 'removes the elements' do
     @redises.zremrangebyscore(@key, 2, 3)
-    @redises.zrange(@key, 0, -1).should == %w[Washington Madison]
+    expect(@redises.zrange(@key, 0, -1)).to eq(%w[Washington Madison])
   end
 
   # As seen in http://redis.io/commands/zremrangebyscore
   it 'removes the elements for complex statements' do
     @redises.zremrangebyscore(@key, '-inf', '(4')
-    @redises.zrange(@key, 0, -1).should == %w[Madison]
+    expect(@redises.zrange(@key, 0, -1)).to eq(%w[Madison])
   end
 
   it_should_behave_like 'a zset-only command'

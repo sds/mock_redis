@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#geopos' do
+RSpec.describe '#geopos' do
   let(:key) { 'cities' }
 
   context 'with existing key' do

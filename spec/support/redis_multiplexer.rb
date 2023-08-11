@@ -8,6 +8,7 @@ class RedisMultiplexer < BlankSlate
   MismatchedResponse = Class.new(StandardError)
 
   def initialize(*a)
+    super()
     @mock_redis = MockRedis.new(*a)
     Redis.exists_returns_integer = true
     @real_redis = Redis.new(*a)
@@ -87,7 +88,7 @@ class RedisMultiplexer < BlankSlate
     elsif a.is_a?(Array) && b.is_a?(Array)
       a.collect { |c| masked(c.to_s) }.sort == b.collect { |c| masked(c.to_s) }.sort
     elsif a.is_a?(Exception) && b.is_a?(Exception)
-      a.class == b.class && a.message == b.message
+      a.instance_of?(b.class) && a.message.split("\n", 2).first == b.message.split("\n", 2).first
     elsif a.is_a?(Float) && b.is_a?(Float)
       delta = [a.abs, b.abs].min / 1_000_000.0
       (a - b).abs < delta

@@ -10,7 +10,7 @@ for use in tests.
 
 ## Requirements
 
-Ruby 2.6+
+Ruby 2.7+
 
 The current implementation is tested against Redis 6.2. Older versions may work, but can also return different results or not support some commands.
 
@@ -55,8 +55,8 @@ since it's an in-memory object confined to a single process. MockRedis
 makes every attempt to be Redis-compatible, but there are some
 necessary exceptions.
 
-* Blocking list commands (`#blpop`, `#brpop`, and `#brpoplpush`) work
-  as expected if there is data for them to retrieve. If you use one of
+* Blocking list commands (`#blmove`, `#blpop`, `#brpop`, and `#brpoplpush`)
+  work as expected if there is data for them to retrieve. If you use one of
   these commands with a nonzero timeout and there is no data for it to
   retrieve, then the command returns immediately. However, if you ask
   one of these commands for data with a 0 timeout (means "wait
@@ -105,7 +105,7 @@ We recommend running Redis within a Docker container to make development as simp
 
 1. Start Redis.
    ```bash
-   docker run --rm -p 6379:6379 redis
+   docker run --rm -p 6379:6379 redis:6.2-alpine
    ```
 2. Install dependencies.
    ```bash

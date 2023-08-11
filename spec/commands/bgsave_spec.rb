@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe '#bgsave [mock only]' do
+RSpec.describe '#bgsave [mock only]' do
   it 'just returns a canned string' do
-    @redises.mock.bgsave.should =~ /saving/
+    expect(@redises.mock.bgsave).to match(/saving/)
   end
 end

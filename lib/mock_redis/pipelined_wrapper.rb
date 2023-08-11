@@ -41,22 +41,20 @@ class MockRedis
       end
 
       responses = @pipelined_futures.flat_map do |future|
-        begin
-          result = if future.block
-                     send(*future.command, &future.block)
-                   else
-                     send(*future.command)
-                   end
-          future.store_result(result)
+        result = if future.block
+                   send(*future.command, &future.block)
+                 else
+                   send(*future.command)
+                 end
+        future.store_result(result)
 
-          if future.block
-            result
-          else
-            [result]
-          end
-        rescue StandardError => e
-          e
+        if future.block
+          result
+        else
+          [result]
         end
+      rescue StandardError => e
+        e
       end
       @pipelined_futures = []
       responses

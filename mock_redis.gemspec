@@ -16,16 +16,26 @@ Gem::Specification.new do |s|
    normal Redis object. It supports all the usual Redis operations.
   MSG
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- spec/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.files = Dir.chdir(__dir__) do
+    `git ls-files -z`.split("\x0").select do |file|
+      file.start_with?('lib') || file.end_with?('.md')
+    end
+  end
+
+  s.metadata = {
+    'bug_tracker_uri' => "#{s.homepage}/issues",
+    'changelog_uri' => "#{s.homepage}/blob/v#{s.version}/CHANGELOG.md",
+    'documentation_uri' => "https://www.rubydoc.info/gems/#{s.name}/#{s.version}",
+    'homepage_uri' => s.homepage,
+    'source_code_uri' => "#{s.homepage}/tree/v#{s.version}",
+  }
+
   s.require_paths = ['lib']
 
-  s.required_ruby_version = '>= 2.4'
+  s.required_ruby_version = '>= 2.7'
 
-  s.add_runtime_dependency 'ruby2_keywords'
-
-  s.add_development_dependency 'redis', '~> 4.2.0'
+  s.add_development_dependency 'rake', '~> 13'
+  s.add_development_dependency 'redis', '~> 4.8.0'
   s.add_development_dependency 'rspec', '~> 3.0'
   s.add_development_dependency 'rspec-its', '~> 1.0'
   s.add_development_dependency 'timecop', '~> 0.9.1'

@@ -1,5 +1,36 @@
 # MockRedis Changelog
 
+### 0.37.0
+
+* Require Ruby 2.7 or newer, since Ruby 2.6 and older are EOL
+* Remove unnecessary files from gem contents
+* Add support for popping multiple items with `lpop`
+* Add support for `scan` with type option
+* Add support for `sadd?`
+* Add support for scanning on keys containing hash tags (`{...}`)
+
+### 0.36.0
+
+* Add support for `smismember`
+* Add support for `lmove` and `blmove`
+* Fix `zrem` to support passing array of integers
+
+### 0.35.0
+
+* Add support for `getdel`
+
+### 0.34.0
+
+* Add support for `with`
+
+### 0.33.0
+
+* Add support for `GET` argument to `SET` command
+
+### 0.32.0
+
+* Add support for `psetex`
+
 ### 0.31.0
 
 * Allow `ping` to take argument

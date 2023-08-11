@@ -44,13 +44,17 @@ module TypeCheckingHelper
 end
 
 RSpec.configure do |config|
-  config.expect_with :rspec do |c|
-    c.syntax = [:expect, :should]
+  config.expect_with(:rspec) do |expectations|
+    expectations.syntax = :expect
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  config.mock_with :rspec do |c|
-    c.syntax = [:expect, :should]
+  config.mock_with(:rspec) do |mocks|
+    mocks.syntax = :expect
   end
+
+  config.shared_context_metadata_behavior = :apply_to_host_groups
+  config.disable_monkey_patching!
 
   config.include(TypeCheckingHelper)
 
@@ -62,7 +66,10 @@ RSpec.configure do |config|
     # databases mentioned in our tests
     [1, 0].each do |db|
       @redises.send_without_checking(:select, db)
-      @redises.send_without_checking(:keys, 'mock-redis-test:*').each do |key|
+      keys = @redises.send_without_checking(:keys, 'mock-redis-test:*')
+      next unless keys.is_a?(Enumerable)
+
+      keys.each do |key|
         @redises.send_without_checking(:del, key)
       end
     end

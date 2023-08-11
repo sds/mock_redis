@@ -1,5 +1,4 @@
 require 'set'
-require 'ruby2_keywords'
 
 require 'mock_redis/assertions'
 require 'mock_redis/database'
@@ -86,6 +85,10 @@ class MockRedis
     self
   end
 
+  def with
+    yield self
+  end
+
   def respond_to?(method, include_private = false)
     super || @db.respond_to?(method, include_private)
   end
@@ -126,7 +129,7 @@ class MockRedis
         defaults[:host]     = uri.host
         defaults[:port]     = uri.port if uri.port
         defaults[:password] = uri.password if uri.password
-        defaults[:db]       = uri.path[1..-1].to_i if uri.path
+        defaults[:db]       = uri.path[1..].to_i if uri.path
       end
     end
 

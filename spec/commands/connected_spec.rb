@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe '#connected? [mock only]' do
+RSpec.describe '#connected? [mock only]' do
   it 'returns true' do
-    @redises.mock.connected?.should == true
+    expect(@redises.mock.connected?).to eq(true)
   end
 end

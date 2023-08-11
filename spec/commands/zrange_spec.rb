@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#zrange(key, start, stop [, :with_scores => true])' do
+RSpec.describe '#zrange(key, start, stop [, :with_scores => true])' do
   before do
     @key = 'mock-redis-test:zrange'
     @redises.zadd(@key, 3, 'Jefferson')
@@ -15,17 +15,17 @@ describe '#zrange(key, start, stop [, :with_scores => true])' do
     end
 
     it 'should return an empty array' do
-      @redises.exists?(@key).should == false
-      @redises.zrange(@key, 0, 4).should == []
+      expect(@redises.exists?(@key)).to eq(false)
+      expect(@redises.zrange(@key, 0, 4)).to eq([])
     end
   end
 
   it 'returns the elements when the range is given as strings' do
-    @redises.zrange(@key, '0', '1').should == %w[Washington Adams]
+    expect(@redises.zrange(@key, '0', '1')).to eq(%w[Washington Adams])
   end
 
   it 'returns the elements in order by score' do
-    @redises.zrange(@key, 0, 1).should == %w[Washington Adams]
+    expect(@redises.zrange(@key, 0, 1)).to eq(%w[Washington Adams])
   end
 
   context 'when a subset of elements have the same score' do
@@ -34,46 +34,46 @@ describe '#zrange(key, start, stop [, :with_scores => true])' do
     end
 
     it 'returns the elements in ascending lexicographical order' do
-      @redises.zrange(@key, 0, 1).should == %w[Martha Washington]
+      expect(@redises.zrange(@key, 0, 1)).to eq(%w[Martha Washington])
     end
   end
 
   it 'returns the elements in order by score (negative indices)' do
-    @redises.zrange(@key, -2, -1).should == %w[Jefferson Madison]
+    expect(@redises.zrange(@key, -2, -1)).to eq(%w[Jefferson Madison])
   end
 
   it 'returns empty list when start is too large' do
-    @redises.zrange(@key, 5, -1).should == []
+    expect(@redises.zrange(@key, 5, -1)).to eq([])
   end
 
   it 'returns entire list when start is out of bounds with negative end in bounds' do
-    @redises.zrange(@key, -5, -1).should == %w[Washington Adams Jefferson Madison]
+    expect(@redises.zrange(@key, -5, -1)).to eq(%w[Washington Adams Jefferson Madison])
   end
 
   it 'returns correct subset when start is out of bounds with positive end in bounds' do
-    @redises.zrange(@key, -5, 1).should == %w[Washington Adams]
+    expect(@redises.zrange(@key, -5, 1)).to eq(%w[Washington Adams])
   end
 
   it 'returns empty list when start is in bounds with negative end out of bounds' do
-    @redises.zrange(@key, 1, -5).should == []
+    expect(@redises.zrange(@key, 1, -5)).to eq([])
   end
 
   it 'returns empty list when start is 0 with negative end out of bounds' do
-    @redises.zrange(@key, 0, -5).should == []
+    expect(@redises.zrange(@key, 0, -5)).to eq([])
   end
 
   it 'returns correct subset when start is in bounds with negative end in bounds' do
-    @redises.zrange(@key, 1, -1).should == %w[Adams Jefferson Madison]
+    expect(@redises.zrange(@key, 1, -1)).to eq(%w[Adams Jefferson Madison])
   end
 
   it 'returns the scores when :with_scores is specified' do
-    @redises.zrange(@key, 0, 1, :with_scores => true).
-      should == [['Washington', 1.0], ['Adams', 2.0]]
+    expect(@redises.zrange(@key, 0, 1, :with_scores => true)).
+      to eq([['Washington', 1.0], ['Adams', 2.0]])
   end
 
   it 'returns the scores when :withscores is specified' do
-    @redises.zrange(@key, 0, 1, :withscores => true).
-      should == [['Washington', 1.0], ['Adams', 2.0]]
+    expect(@redises.zrange(@key, 0, 1, :withscores => true)).
+      to eq([['Washington', 1.0], ['Adams', 2.0]])
   end
 
   it_should_behave_like 'a zset-only command'

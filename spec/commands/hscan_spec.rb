@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#hscan' do
+RSpec.describe '#hscan' do
   let(:count) { 10 }
   let(:match) { '*' }
   let(:key) { 'mock-redis-test:hscan' }

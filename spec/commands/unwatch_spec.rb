@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe '#unwatch' do
+RSpec.describe '#unwatch' do
   it "responds with 'OK'" do
-    @redises.unwatch.should == 'OK'
+    expect(@redises.unwatch).to eq('OK')
   end
 end

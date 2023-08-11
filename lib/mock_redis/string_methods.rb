@@ -38,7 +38,7 @@ class MockRedis
         type, offset = args.shift(2)
 
         is_signed = type.slice(0) == 'i'
-        type_size = type[1..-1].to_i
+        type_size = type[1..].to_i
 
         if (type_size > 64 && is_signed) || (type_size >= 64 && !is_signed)
           raise Redis::CommandError,
@@ -47,7 +47,7 @@ class MockRedis
         end
 
         if offset.to_s[0] == '#'
-          offset = offset[1..-1].to_i * type_size
+          offset = offset[1..].to_i * type_size
         end
 
         bits = []
@@ -105,6 +105,12 @@ class MockRedis
       else
         0
       end
+    end
+
+    def getdel(key)
+      value = get(key)
+      del(key)
+      value
     end
 
     def getrange(key, start, stop)
@@ -206,8 +212,10 @@ class MockRedis
 
     # Parameer list required to ensure the ArgumentError is returned correctly
     # rubocop:disable Metrics/ParameterLists
-    def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil)
+    def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil, get: nil)
       key = key.to_s
+      retval = self.get(key) if get
+
       return_true = false
       if nx
         if exists?(key)
@@ -240,7 +248,11 @@ class MockRedis
         pexpire(key, px)
       end
 
-      return_true ? true : 'OK'
+      if get
+        retval
+      else
+        return_true ? true : 'OK'
+      end
     end
     # rubocop:enable Metrics/ParameterLists
 
@@ -328,6 +340,16 @@ class MockRedis
       end
     end
 
+    def psetex(key, milliseconds, value)
+      if milliseconds <= 0
+        raise Redis::CommandError, 'ERR invalid expire time in psetex'
+      else
+        set(key, value)
+        pexpire(key, milliseconds)
+        'OK'
+      end
+    end
+
     def setnx(key, value)
       if exists?(key)
         false
@@ -343,7 +365,7 @@ class MockRedis
       old_value = (data[key] || '')
 
       prefix = zero_pad(old_value[0...offset], offset)
-      data[key] = prefix + value + (old_value[(offset + value.length)..-1] || '')
+      data[key] = prefix + value + (old_value[(offset + value.length)..] || '')
       data[key].length
     end
 

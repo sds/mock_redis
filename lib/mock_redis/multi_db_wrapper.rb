@@ -31,7 +31,7 @@ class MockRedis
 
     # Redis commands
     def flushall
-      @databases.values.each(&:flushdb)
+      @databases.each_value(&:flushdb)
       'OK'
     end
 

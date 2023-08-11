@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe '#sinter(key [, key, ...])' do
+RSpec.describe '#sinter(key [, key, ...])' do
   before do
     @numbers = 'mock-redis-test:sinter:numbers'
     @evens   = 'mock-redis-test:sinter:evens'
@@ -12,28 +12,28 @@ describe '#sinter(key [, key, ...])' do
   end
 
   it 'returns the elements in the resulting set' do
-    @redises.sinter(@evens, @primes).should == ['2']
+    expect(@redises.sinter(@evens, @primes)).to eq(['2'])
   end
 
   it 'treats missing keys as empty sets' do
-    @redises.sinter(@destination, 'mock-redis-test:nonesuch').should == []
+    expect(@redises.sinter(@destination, 'mock-redis-test:nonesuch')).to eq([])
   end
 
   it 'raises an error if given 0 sets' do
-    lambda do
+    expect do
       @redises.sinter
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 
   it 'raises an error if any argument is not a a set' do
     @redises.set('mock-redis-test:notset', 1)
 
-    lambda do
+    expect do
       @redises.sinter(@numbers, 'mock-redis-test:notset')
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
 
-    lambda do
+    expect do
       @redises.sinter('mock-redis-test:notset', @numbers)
-    end.should raise_error(Redis::CommandError)
+    end.to raise_error(Redis::CommandError)
   end
 end

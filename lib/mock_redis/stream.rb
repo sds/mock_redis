@@ -37,7 +37,7 @@ class MockRedis
         @members = if count == 0
                      Set.new
                    else
-                     @members.to_a[-count..-1].to_set
+                     @members.to_a[-count..].to_set
                    end
         deleted
       else
@@ -71,8 +71,8 @@ class MockRedis
       items
     end
 
-    def each
-      members.each { |m| yield m }
+    def each(&block)
+      members.each(&block)
     end
 
     private

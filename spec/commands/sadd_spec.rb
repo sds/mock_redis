@@ -1,43 +1,62 @@
 require 'spec_helper'
 
-describe '#sadd(key, member)' do
+RSpec.describe '#sadd(key, member)' do
   before { @key = 'mock-redis-test:sadd' }
 
-  it 'returns true if the set did not already contain member' do
-    @redises.sadd(@key, 1).should == true
+  context 'sadd' do
+    it 'returns true if the set did not already contain member' do
+      expect(@redises.sadd(@key, 1)).to eq(true)
+    end
+
+    it 'returns false if the set did already contain member' do
+      @redises.sadd(@key, 1)
+      expect(@redises.sadd(@key, 1)).to eq(false)
+    end
+
+    it 'adds member to the set' do
+      @redises.sadd(@key, 1)
+      @redises.sadd(@key, 2)
+      expect(@redises.smembers(@key)).to eq(%w[2 1])
+    end
   end
 
-  it 'returns false if the set did already contain member' do
-    @redises.sadd(@key, 1)
-    @redises.sadd(@key, 1).should == false
-  end
+  context 'sadd?' do
+    it 'returns true if the set did not already contain member' do
+      expect(@redises.sadd?(@key, 1)).to eq(true)
+    end
 
-  it 'adds member to the set' do
-    @redises.sadd(@key, 1)
-    @redises.sadd(@key, 2)
-    @redises.smembers(@key).should == %w[2 1]
+    it 'returns false if the set did already contain member' do
+      @redises.sadd(@key, 1)
+      expect(@redises.sadd?(@key, 1)).to eq(false)
+    end
+
+    it 'adds member to the set' do
+      @redises.sadd?(@key, 1)
+      @redises.sadd?(@key, 2)
+      expect(@redises.smembers(@key)).to eq(%w[2 1])
+    end
   end
 
   describe 'adding multiple members at once' do
     it 'returns the amount of added members' do
-      @redises.sadd(@key, [1, 2, 3]).should == 3
-      @redises.sadd(@key, [1, 2, 3, 4]).should == 1
+      expect(@redises.sadd(@key, [1, 2, 3])).to eq(3)
+      expect(@redises.sadd(@key, [1, 2, 3, 4])).to eq(1)
     end
 
     it 'returns 0 if the set did already contain all members' do
       @redises.sadd(@key, [1, 2, 3])
-      @redises.sadd(@key, [1, 2, 3]).should == 0
+      expect(@redises.sadd(@key, [1, 2, 3])).to eq(0)
     end
 
     it 'adds the members to the set' do
       @redises.sadd(@key, [1, 2, 3])
-      @redises.smembers(@key).should == %w[1 2 3]
+      expect(@redises.smembers(@key)).to eq(%w[1 2 3])
     end
 
     it 'raises an error if an empty array is given' do
-      lambda do
+      expect do
         @redises.sadd(@key, [])
-      end.should raise_error(Redis::CommandError)
+      end.to raise_error(Redis::CommandError)
     end
   end
 

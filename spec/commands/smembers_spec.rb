@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe '#smembers(key)' do
+RSpec.describe '#smembers(key)' do
   before { @key = 'mock-redis-test:smembers' }
 
   it 'returns [] for an empty set' do
-    @redises.smembers(@key).should == []
+    expect(@redises.smembers(@key)).to eq([])
   end
 
   it "returns the set's members" do
     @redises.sadd(@key, 'Hello')
     @redises.sadd(@key, 'World')
     @redises.sadd(@key, 'Test')
-    @redises.smembers(@key).should == %w[Test World Hello]
+    expect(@redises.smembers(@key)).to eq(%w[Test World Hello])
   end
 
   it 'returns unfrozen copies of the input' do

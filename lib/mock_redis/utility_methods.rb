@@ -28,6 +28,7 @@ class MockRedis
       cursor = cursor.to_i
       match = opts[:match] || '*'
       key = opts[:key] || lambda { |x| x }
+      type_opt = opts[:type]
       filtered_values = []
 
       limit = cursor + count
@@ -35,7 +36,8 @@ class MockRedis
 
       unless values[cursor...limit].nil?
         filtered_values = values[cursor...limit].select do |val|
-          redis_pattern_to_ruby_regex(match).match(key.call(val))
+          redis_pattern_to_ruby_regex(match).match(key.call(val)) &&
+            (type_opt.nil? || type(val) == type_opt)
         end
       end
 
@@ -68,7 +70,7 @@ class MockRedis
     end
 
     def left_pad(str, size)
-      str = '0' + str while str.length < size
+      str = "0#{str}" while str.length < size
 
       str
     end
