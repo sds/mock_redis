@@ -267,6 +267,8 @@ class MockRedis
         'set'
       elsif zsety?(key)
         'zset'
+      elsif streamy?(key)
+        'stream'
       else
         raise ArgumentError, "Not sure how #{data[key].inspect} got in here"
       end
