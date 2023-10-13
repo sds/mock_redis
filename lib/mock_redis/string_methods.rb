@@ -210,9 +210,10 @@ class MockRedis
       msetnx(*hash.to_a.flatten)
     end
 
-    # Parameer list required to ensure the ArgumentError is returned correctly
+    # Parameter list required to ensure the ArgumentError is returned correctly
     # rubocop:disable Metrics/ParameterLists
-    def set(key, value, ex: nil, px: nil, nx: nil, xx: nil, keepttl: nil, get: nil)
+    def set(key, value, ex: nil, px: nil, exat: nil, pxat: nil, nx: nil, xx: nil, keepttl: nil,
+      get: nil)
       key = key.to_s
       retval = self.get(key) if get
 
@@ -246,6 +247,20 @@ class MockRedis
           raise Redis::CommandError, 'ERR invalid expire time in set'
         end
         pexpire(key, px)
+      end
+
+      if exat
+        if exat == 0
+          raise Redis::CommandError, 'ERR invalid expire time in set'
+        end
+        expireat(key, exat)
+      end
+
+      if pxat
+        if pxat == 0
+          raise Redis::CommandError, 'ERR invalid expire time in set'
+        end
+        pexpireat(key, pxat)
       end
 
       if get

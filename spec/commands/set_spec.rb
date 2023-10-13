@@ -20,6 +20,18 @@ RSpec.describe '#set(key, value)' do
       end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
     end
 
+    it 'raises an error for EXAT seconds = 0' do
+      expect do
+        @redises.set('mock-redis-test', 1, exat: 0)
+      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
+    end
+
+    it 'raises an error for PXAT seconds = 0' do
+      expect do
+        @redises.set('mock-redis-test', 1, pxat: 0)
+      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
+    end
+
     it 'accepts NX' do
       @redises.del(key)
       expect(@redises.set(key, 1, nx: true)).to eq(true)
@@ -31,6 +43,16 @@ RSpec.describe '#set(key, value)' do
       expect(@redises.set(key, 1, xx: true)).to eq(false)
       expect(@redises.set(key, 1)).to eq('OK')
       expect(@redises.set(key, 1, xx: true)).to eq(true)
+    end
+
+    it 'accepts EXAT' do
+      @redises.del(key)
+      expect(@redises.set(key, 1, exat: 1_697_197_606)).to eq('OK')
+    end
+
+    it 'accepts PXAT' do
+      @redises.del(key)
+      expect(@redises.set(key, 1, exat: 1_697_197_589_362)).to eq('OK')
     end
 
     it 'accepts GET on a string' do
@@ -127,6 +149,22 @@ RSpec.describe '#set(key, value)' do
         allow(Time).to receive(:now).and_return(@now + 300 / 1000.to_f)
         expect(@mock.get(key)).not_to be_nil
         allow(Time).to receive(:now).and_return(@now + 600 / 1000.to_f)
+        expect(@mock.get(key)).to be_nil
+      end
+
+      it 'accepts EXAT seconds' do
+        expect(@mock.set(key, 1, exat: (@now + 1).to_i)).to eq('OK')
+        expect(@mock.get(key)).not_to be_nil
+        allow(Time).to receive(:now).and_return(@now + 2)
+        expect(@mock.get(key)).to be_nil
+      end
+
+      it 'accepts PXAT milliseconds' do
+        expect(@mock.set(key, 1, pxat: ((@now + 500).to_f * 1000).to_i)).to eq('OK')
+        expect(@mock.get(key)).not_to be_nil
+        allow(Time).to receive(:now).and_return(@now + 300)
+        expect(@mock.get(key)).not_to be_nil
+        allow(Time).to receive(:now).and_return(@now + 600)
         expect(@mock.get(key)).to be_nil
       end
     end
