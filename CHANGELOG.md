@@ -2,6 +2,7 @@
 
 ### 0.38.0
 
+* Fix detection of stream key types
 * Add support for `EXAT` AND `PXAT` arguments to `SET` command
 
 ### 0.37.0
