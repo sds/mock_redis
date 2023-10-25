@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.38.0
+
+* Add support for `EXAT` AND `PXAT` arguments to `SET` command
+
 ### 0.37.0
 
 * Require Ruby 2.7 or newer, since Ruby 2.6 and older are EOL
