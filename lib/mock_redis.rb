@@ -49,10 +49,6 @@ class MockRedis
   end
   alias location id
 
-  def call(command, &_block)
-    send(*command)
-  end
-
   def host
     options[:host]
   end

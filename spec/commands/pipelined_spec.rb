@@ -111,4 +111,26 @@ RSpec.describe '#pipelined' do
       expect(results).to eq([value1, value2])
     end
   end
+
+  context 'with `call` method' do
+    let(:key1)   { 'hello' }
+    let(:key2)   { 'world' }
+    let(:value1) { 'foo' }
+    let(:value2) { 'bar' }
+
+    before do
+      @redises.set key1, value1
+      @redises.set key2, value2
+    end
+
+    it 'returns results of pipelined operations' do
+      results = @redises.pipelined do |redis|
+        redis.call(['get', key1])
+        redis.call(['set', key2, 'foobar'])
+        redis.call(['get', key2])
+      end
+
+      expect(results).to eq([value1, 'OK', 'foobar'])
+    end
+  end
 end
