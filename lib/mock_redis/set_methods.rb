@@ -8,7 +8,7 @@ class MockRedis
 
     def sadd(key, members)
       members_class = members.class
-      members = [members].flatten.map(&:to_s)
+      members = Array(members).map(&:to_s)
       assert_has_args(members, 'sadd')
 
       with_set_at(key) do |s|
