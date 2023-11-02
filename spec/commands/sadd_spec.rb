@@ -53,6 +53,11 @@ RSpec.describe '#sadd(key, member)' do
       expect(@redises.smembers(@key)).to eq(%w[1 2 3])
     end
 
+    it 'adds an Array as a stringified member' do
+      @redises.sadd(@key, [[1], 2, 3])
+      expect(@redises.smembers(@key)).to eq(%w[[1] 2 3])
+    end
+
     it 'raises an error if an empty array is given' do
       expect do
         @redises.sadd(@key, [])
