@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.39.0
+
+* Add support for calling `call` in `pipelined` block
+* Fix `sadd` to stringify array
+
 ### 0.38.0
 
 * Fix detection of stream key types
