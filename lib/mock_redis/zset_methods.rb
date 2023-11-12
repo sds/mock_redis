@@ -233,6 +233,15 @@ class MockRedis
       end
     end
 
+    def zmscore(key, *members)
+      with_zset_at(key) do |z|
+        members.map do |member|
+          score = z.score(member.to_s)
+          score&.to_f
+        end
+      end
+    end
+
     def zunionstore(destination, keys, options = {})
       assert_has_args(keys, 'zunionstore')
 
