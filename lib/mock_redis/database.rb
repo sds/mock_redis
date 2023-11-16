@@ -44,7 +44,7 @@ class MockRedis
     # Redis commands go below this line and above 'private'
 
     def call(command, &_block)
-      public_send(*command)
+      public_send(command[0].downcase, *command[1..])
     end
 
     def auth(_)
