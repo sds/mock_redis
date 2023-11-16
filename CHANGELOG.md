@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.40.0
+
+* Add support for `call` method name to be case insensitive
+* Add support for `zmscore`
+
 ### 0.39.0
 
 * Add support for calling `call` in `pipelined` block
