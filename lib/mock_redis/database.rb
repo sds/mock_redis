@@ -43,6 +43,9 @@ class MockRedis
 
     # Redis commands go below this line and above 'private'
 
+    # FIXME: Current implementation of `call` does not work propetly with kwarg-options.
+    # i.e. `call("EXPIRE", "foo", 40, "NX")` (which redis-rb will simply transmit to redis-server)
+    # will be passed to `#expire` without keywords transformation.
     def call(command, &_block)
       public_send(command[0].downcase, *command[1..])
     end
@@ -89,32 +92,42 @@ class MockRedis
       msg.to_s
     end
 
-    def expire(key, seconds)
+    def expire(key, seconds, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
       assert_valid_integer(seconds)
 
-      pexpire(key, seconds.to_i * 1000)
+      pexpire(key, seconds.to_i * 1000, nx: nx, xx: xx, lt: lt, gt: gt)
     end
 
-    def pexpire(key, ms)
+    def pexpire(key, ms, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
       assert_valid_integer(ms)
 
       now, miliseconds = @base.now
       now_ms = (now * 1000) + miliseconds
-      pexpireat(key, now_ms + ms.to_i)
+      pexpireat(key, now_ms + ms.to_i, nx: nx, xx: xx, lt: lt, gt: gt)
     end
 
-    def expireat(key, timestamp)
+    def expireat(key, timestamp, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
       assert_valid_integer(timestamp)
 
-      pexpireat(key, timestamp.to_i * 1000)
+      pexpireat(key, timestamp.to_i * 1000, nx: nx, xx: xx, lt: lt, gt: gt)
     end
 
-    def pexpireat(key, timestamp_ms)
+    def pexpireat(key, timestamp_ms, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
       assert_valid_integer(timestamp_ms)
 
-      if exists?(key)
-        timestamp = Rational(timestamp_ms.to_i, 1000)
-        set_expiration(key, @base.time_at(timestamp))
+      if nx && gt || gt && lt || lt && nx || nx && xx
+        raise Redis::CommandError, <<~TXT.chomp
+          ERR NX and XX, GT or LT options at the same time are not compatible
+        TXT
+      end
+
+      return false unless exists?(key)
+
+      expiry = expiration(key)
+      new_expiry = @base.time_at(Rational(timestamp_ms.to_i, 1000))
+
+      if should_update_expiration?(expiry, new_expiry, nx: nx, xx: xx, lt: lt, gt: gt)
+        set_expiration(key, new_expiry)
         true
       else
         false
@@ -324,7 +337,7 @@ class MockRedis
     end
 
     def expiration(key)
-      expire_times.find { |(_, k)| k == key.to_s }.first
+      expire_times.find { |(_, k)| k == key.to_s }&.first
     end
 
     def has_expiration?(key)
@@ -337,6 +350,14 @@ class MockRedis
 
     def looks_like_float?(str)
       !!Float(str) rescue false
+    end
+
+    def should_update_expiration?(expiry, new_expiry, nx:, xx:, lt:, gt:) # rubocop:disable Metrics/ParameterLists
+      return false if nx && expiry || xx && !expiry
+      return false if lt && expiry && new_expiry > expiry
+      return false if gt && (!expiry || new_expiry < expiry)
+
+      true
     end
 
     def redis_pattern_to_ruby_regex(pattern)
