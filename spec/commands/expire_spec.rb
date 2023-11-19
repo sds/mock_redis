@@ -29,6 +29,19 @@ RSpec.describe '#expire(key, seconds)' do
     expect(@redises.expire(@key.to_sym, 9)).to eq(true)
   end
 
+  it 'works with options', redis: '7.0' do
+    expect(@redises.expire(@key, 20)).to eq(true)
+    expect(@redises.expire(@key, 10, lt: true)).to eq(true)
+    expect(@redises.expire(@key, 15, lt: true)).to eq(false)
+    expect(@redises.expire(@key, 20, gt: true)).to eq(true)
+    expect(@redises.expire(@key, 15, gt: true)).to eq(false)
+    expect(@redises.expire(@key, 10, xx: true)).to eq(true)
+    expect(@redises.expire(@key, 10, nx: true)).to eq(false)
+    expect(@redises.persist(@key)).to eq(true)
+    expect(@redises.expire(@key, 10, xx: true)).to eq(false)
+    expect(@redises.expire(@key, 10, nx: true)).to eq(true)
+  end
+
   context '[mock only]' do
     # These are mock-only since we can't actually manipulate time in
     # the real Redis.
@@ -41,6 +54,8 @@ RSpec.describe '#expire(key, seconds)' do
       @now = Time.now
       allow(Time).to receive(:now).and_return(@now)
     end
+
+    it_should_behave_like 'raises on invalid expire command options', :expire
 
     it 'removes keys after enough time has passed' do
       @mock.expire(@key, 5)
@@ -105,6 +120,68 @@ RSpec.describe '#expire(key, seconds)' do
 
         allow(Time).to receive(:now).and_return(@now + 10)
         expect(@mock.get(other_key)).to be_nil
+      end
+    end
+
+    context 'with `nx` option' do
+      it do
+        @mock.set(@key, 'string')
+
+        expect(@mock.expire(@key, 10)).to eq(true)
+        expect(@mock.expire(@key, 10, nx: true)).to eq(false)
+
+        @mock.persist(@key)
+
+        expect(@mock.expire(@key, 10, nx: true)).to eq(true)
+      end
+    end
+
+    context 'with `xx` option' do
+      it do
+        @mock.set(@key, 'string')
+
+        expect(@mock.expire(@key, 10)).to eq(true)
+        expect(@mock.expire(@key, 10, xx: true)).to eq(true)
+
+        @mock.persist(@key)
+
+        expect(@mock.expire(@key, 10, xx: true)).to eq(false)
+      end
+    end
+
+    context 'with `gt` option' do
+      it do
+        @mock.set(@key, 'string')
+
+        expect(@mock.expire(@key, 10)).to eq(true)
+        expect(@mock.expire(@key, 5, gt: true)).to eq(false)
+        expect(@mock.ttl(@key)).to eq(10)
+        expect(@mock.expire(@key, 20, gt: true)).to eq(true)
+        expect(@mock.ttl(@key)).to eq(20)
+      end
+
+      it 'behaves correcly with non-volatile key' do
+        @mock.set(@key, 'string')
+
+        expect(@mock.expire(@key, 20, gt: true)).to eq(false)
+      end
+    end
+
+    context 'with `lt` option' do
+      it do
+        @mock.set(@key, 'string')
+
+        expect(@mock.expire(@key, 10)).to eq(true)
+        expect(@mock.expire(@key, 20, lt: true)).to eq(false)
+        expect(@mock.ttl(@key)).to eq(10)
+        expect(@mock.expire(@key, 5, lt: true)).to eq(true)
+        expect(@mock.ttl(@key)).to eq(5)
+      end
+
+      it 'behaves correcly with non-volatile key' do
+        @mock.set(@key, 'string')
+
+        expect(@mock.expire(@key, 20, lt: true)).to eq(true)
       end
     end
   end

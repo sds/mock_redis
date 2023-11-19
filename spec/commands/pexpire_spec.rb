@@ -25,6 +25,19 @@ RSpec.describe '#pexpire(key, ms)' do
     end.to raise_error(Redis::CommandError)
   end
 
+  it 'works with options', redis: '7.0' do
+    expect(@redises.expire(@key, 20)).to eq(true)
+    expect(@redises.expire(@key, 10, lt: true)).to eq(true)
+    expect(@redises.expire(@key, 15, lt: true)).to eq(false)
+    expect(@redises.expire(@key, 20, gt: true)).to eq(true)
+    expect(@redises.expire(@key, 15, gt: true)).to eq(false)
+    expect(@redises.expire(@key, 10, xx: true)).to eq(true)
+    expect(@redises.expire(@key, 10, nx: true)).to eq(false)
+    expect(@redises.persist(@key)).to eq(true)
+    expect(@redises.expire(@key, 10, xx: true)).to eq(false)
+    expect(@redises.expire(@key, 10, nx: true)).to eq(true)
+  end
+
   it 'stringifies key' do
     expect(@redises.pexpire(@key.to_sym, 9)).to eq(true)
   end
@@ -41,6 +54,8 @@ RSpec.describe '#pexpire(key, ms)' do
       @now = Time.now.round
       allow(Time).to receive(:now).and_return(@now)
     end
+
+    it_should_behave_like 'raises on invalid expire command options', :pexpire
 
     it 'removes keys after enough time has passed' do
       @mock.pexpire(@key, 5)

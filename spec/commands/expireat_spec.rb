@@ -25,6 +25,19 @@ RSpec.describe '#expireat(key, timestamp)' do
     end.to raise_error(Redis::CommandError)
   end
 
+  it 'works with options', redis: '7.0' do
+    expect(@redises.expire(@key, Time.now.to_i + 20)).to eq(true)
+    expect(@redises.expire(@key, Time.now.to_i + 10, lt: true)).to eq(true)
+    expect(@redises.expire(@key, Time.now.to_i + 15, lt: true)).to eq(false)
+    expect(@redises.expire(@key, Time.now.to_i + 20, gt: true)).to eq(true)
+    expect(@redises.expire(@key, Time.now.to_i + 15, gt: true)).to eq(false)
+    expect(@redises.expire(@key, Time.now.to_i + 10, xx: true)).to eq(true)
+    expect(@redises.expire(@key, Time.now.to_i + 10, nx: true)).to eq(false)
+    expect(@redises.persist(@key)).to eq(true)
+    expect(@redises.expire(@key, Time.now.to_i + 10, xx: true)).to eq(false)
+    expect(@redises.expire(@key, Time.now.to_i + 10, nx: true)).to eq(true)
+  end
+
   context '[mock only]' do
     # These are mock-only since we can't actually manipulate time in
     # the real Redis.
@@ -37,6 +50,8 @@ RSpec.describe '#expireat(key, timestamp)' do
       @now = Time.now
       allow(Time).to receive(:now).and_return(@now)
     end
+
+    it_should_behave_like 'raises on invalid expire command options', :expireat
 
     it 'removes keys after enough time has passed' do
       @mock.expireat(@key, @now.to_i + 5)
