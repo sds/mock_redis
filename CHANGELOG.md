@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.41.0
+
+* Add support for `expire`-related command options `nx`/`xx`/`lt`/`gt`
+
 ### 0.40.0
 
 * Add support for `call` method name to be case insensitive
