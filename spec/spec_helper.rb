@@ -75,4 +75,9 @@ RSpec.configure do |config|
     end
     @redises._gsub_clear
   end
+
+  # By default, all the specs are considered to be compatible with redis 6,
+  # specs for redis 7 should be marked with `redis: 7.0` tag.
+  config.run_all_when_everything_filtered = true
+  config.filter_run_excluding redis: 7.0
 end

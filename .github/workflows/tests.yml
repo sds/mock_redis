@@ -19,6 +19,7 @@ jobs:
           - '3.2'
         redis-version:
           - '6.2'
+          - '7.0'
 
     services:
       redis:
@@ -41,7 +42,7 @@ jobs:
           bundler-cache: true
 
       - name: Run tests
-        run: bundle exec rspec
+        run: bundle exec rspec --tag redis:${{ matrix.redis-version }}
 
       - name: Code coverage reporting
         uses: coverallsapp/github-action@master
