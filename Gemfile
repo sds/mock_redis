@@ -12,6 +12,6 @@ gem 'rubocop', '1.44.1'
 gem 'simplecov', '~> 0.22.0'
 gem 'simplecov-lcov', '~> 0.8.0'
 
-# added gems
+# TODO: gems added for development, remove before merge
 # gem 'pry'
 gem 'redis', '>= 5.0.0'

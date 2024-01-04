@@ -126,7 +126,6 @@ class MockRedis
           s.delete_if { |m| members.include?(m) }
           orig_size - s.size
         else
-          # !!s.delete?(members.to_s)
           s.delete?(members.to_s) ? 1 : 0
         end
       end
