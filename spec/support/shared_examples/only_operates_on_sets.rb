@@ -3,7 +3,7 @@ RSpec.shared_examples_for 'a set-only command' do
     key = 'mock-redis-test:set-only'
 
     method = method_from_description(example)
-    args = [key, args_for_method(method)]
+    args = args_for_method(method).unshift(key)
 
     @redises.set(key, 1)
     expect do

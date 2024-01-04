@@ -4,13 +4,19 @@ RSpec.describe '#sadd(key, member)' do
   before { @key = 'mock-redis-test:sadd' }
 
   context 'sadd' do
-    it 'returns true if the set did not already contain member' do
-      expect(@redises.sadd(@key, 1)).to eq(true)
-    end
+    context "adapts to redis-rd version 4 and 5 outputs" do
+      include MockRedis::UtilityMethods
 
-    it 'returns false if the set did already contain member' do
-      @redises.sadd(@key, 1)
-      expect(@redises.sadd(@key, 1)).to eq(false)
+      let(:positive_response) { redis_gem_v5? ? 1 : true }
+      let(:negative_response) { redis_gem_v5? ? 0 : false }
+      it 'returns true if the set did not already contain member' do
+        expect(@redises.sadd(@key, 1)).to eq(positive_response)
+      end
+
+      it 'returns false if the set did already contain member' do
+        @redises.sadd(@key, 1)
+        expect(@redises.sadd(@key, 1)).to eq(negative_response)
+      end
     end
 
     it 'adds member to the set' do

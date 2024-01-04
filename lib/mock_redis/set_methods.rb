@@ -119,13 +119,15 @@ class MockRedis
     end
 
     def srem(key, members)
-      members = Array(members).map(&:to_s)
-
       with_set_at(key) do |s|
-        if members.size > 1 || redis_gem_v5?
-          size_after(s) { s.delete_if { |m| members.include?(m) } }
+        if members.is_a?(Array)
+          orig_size = s.size
+          members = members.map(&:to_s)
+          s.delete_if { |m| members.include?(m) }
+          orig_size - s.size
         else
-          !!s.delete?(members.first)
+          # !!s.delete?(members.to_s)
+          s.delete?(members.to_s) ? 1 : 0
         end
       end
     end

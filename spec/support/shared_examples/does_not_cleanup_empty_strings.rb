@@ -3,7 +3,7 @@ RSpec.shared_examples_for 'does not remove empty strings on error' do
     key = 'mock-redis-test:not-a-string'
 
     method = method_from_description(example)
-    args = [key, args_for_method(method)]
+    args = args_for_method(method).unshift(key)
 
     @redises.set(key, '')
     expect do
