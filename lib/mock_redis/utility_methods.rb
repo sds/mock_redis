@@ -74,5 +74,15 @@ class MockRedis
 
       str
     end
+
+    def redis_gem_v5?
+      Redis::VERSION.to_i == 5
+    end
+
+    def size_after(obj, &blk)
+      size_before = obj.size
+      yield
+      (obj.size - size_before).abs
+    end
   end
 end

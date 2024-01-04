@@ -3,12 +3,12 @@ RSpec.shared_examples_for 'a set-only command' do
     key = 'mock-redis-test:set-only'
 
     method = method_from_description(example)
-    args = args_for_method(method).unshift(key)
+    args = [key, args_for_method(method)]
 
     @redises.set(key, 1)
     expect do
       @redises.send(method, *args)
-    end.to raise_error(RuntimeError)
+    end.to raise_error(Redis::BaseError)
   end
 
   it_should_behave_like 'does not remove empty strings on error'

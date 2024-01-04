@@ -8,22 +8,29 @@ RSpec.describe '#srem(key, member)' do
     @redises.sadd(@key, 'ernie')
   end
 
-  it 'returns true if member is in the set' do
-    expect(@redises.srem(@key, 'bert')).to eq(true)
-  end
+  context "adapts to redis-rd version 4 and 5 outputs" do
+    include MockRedis::UtilityMethods
 
-  it 'returns false if member is not in the set' do
-    expect(@redises.srem(@key, 'cookiemonster')).to eq(false)
+    let(:positive_response) { redis_gem_v5? ? 1 : true }
+    let(:negative_response) { redis_gem_v5? ? 0 : false }
+
+    it 'returns positive response if member is in the set' do
+      expect(@redises.srem(@key, 'bert')).to eq(positive_response)
+    end
+
+    it 'returns negative response if member is not in the set' do
+      expect(@redises.srem(@key, 'cookiemonster')).to eq(negative_response)
+    end
+
+    it 'stringifies member' do
+      @redises.sadd(@key, '1')
+      expect(@redises.srem(@key, 1)).to eq(positive_response)
+    end
   end
 
   it 'removes member from the set' do
     @redises.srem(@key, 'ernie')
     expect(@redises.smembers(@key)).to eq(['bert'])
-  end
-
-  it 'stringifies member' do
-    @redises.sadd(@key, '1')
-    expect(@redises.srem(@key, 1)).to eq(true)
   end
 
   it 'cleans up empty sets' do

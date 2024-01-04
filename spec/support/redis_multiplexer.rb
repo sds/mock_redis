@@ -10,7 +10,7 @@ class RedisMultiplexer < BlankSlate
   def initialize(*a)
     super()
     @mock_redis = MockRedis.new(*a)
-    Redis.exists_returns_integer = true
+    configure_redis
     @real_redis = Redis.new(*a)
     _gsub_clear
   end
@@ -55,25 +55,25 @@ class RedisMultiplexer < BlankSlate
     elsif !equalish?(mock_retval, real_retval) && !mock_error && !real_error
       # no exceptions, just different behavior
       raise MismatchedResponse,
-        "Mock failure: responses not equal.\n" \
-        "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" \
-        "MockRedis.#{method}(#{args.inspect}) returned #{mock_retval.inspect}\n"
+            "Mock failure: responses not equal.\n" \
+              "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" \
+              "MockRedis.#{method}(#{args.inspect}) returned #{mock_retval.inspect}\n"
     elsif !mock_error && real_error
       raise MismatchedResponse,
-        "Mock failure: didn't raise an error when it should have.\n" \
-        "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" \
-        "MockRedis.#{method}(#{args.inspect}) raised nothing " \
-        "and returned #{mock_retval.inspect}"
+            "Mock failure: didn't raise an error when it should have.\n" \
+              "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" \
+              "MockRedis.#{method}(#{args.inspect}) raised nothing " \
+              "and returned #{mock_retval.inspect}"
     elsif !real_error && mock_error
       raise MismatchedResponse,
-        "Mock failure: raised an error when it shouldn't have.\n" \
-        "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" \
-        "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
+            "Mock failure: raised an error when it shouldn't have.\n" \
+              "Redis.#{method}(#{args.inspect}) returned #{real_retval.inspect}\n" \
+              "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
     elsif mock_error && real_error && !equalish?(mock_error, real_error)
       raise MismatchedResponse,
-        "Mock failure: raised the wrong error.\n" \
-        "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" \
-        "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
+            "Mock failure: raised the wrong error.\n" \
+              "Redis.#{method}(#{args.inspect}) raised #{real_error.inspect}\n" \
+              "MockRedis.#{method}(#{args.inspect}) raised #{mock_error.inspect}"
     end
 
     raise mock_error if mock_error
@@ -120,5 +120,16 @@ class RedisMultiplexer < BlankSlate
     [retval, nil]
   rescue StandardError => e
     [nil, e]
+  end
+
+  private
+
+  def configure_redis
+    case Redis::VERSION.to_i
+    when 5
+      # do nothing
+    else
+      Redis.exists_returns_integer = true
+    end
   end
 end
