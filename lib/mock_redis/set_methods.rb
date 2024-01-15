@@ -137,6 +137,11 @@ class MockRedis
       end
     end
 
+    def srem?(key, members)
+      res = srem(key, members)
+      res.is_a?(Numeric) ? res > 0 : res
+    end
+
     def sscan(key, cursor, opts = {})
       common_scan(smembers(key), cursor, opts)
     end
