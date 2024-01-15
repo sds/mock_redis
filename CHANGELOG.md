@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.42.0
+
+* Drop support for Ruby 2.x
+* Add support for `srem?`
+
 ### 0.41.0
 
 * Add support for `expire`-related command options `nx`/`xx`/`lt`/`gt`
