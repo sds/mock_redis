@@ -41,5 +41,20 @@ RSpec.describe '#srem(key, member)' do
     expect(@redises.srem(@key, [1, 2])).to eq(2)
   end
 
+  context 'srem?' do
+    it 'returns true if member is in the set' do
+      expect(@redises.srem?(@key, 'bert')).to eq(true)
+    end
+
+    it 'returns false if member is not in the set' do
+      expect(@redises.srem?(@key, 'cookiemonster')).to eq(false)
+    end
+
+    it 'removes member from the set' do
+      @redises.srem?(@key, 'ernie')
+      expect(@redises.smembers(@key)).to eq(['bert'])
+    end
+  end
+
   it_should_behave_like 'a set-only command'
 end
