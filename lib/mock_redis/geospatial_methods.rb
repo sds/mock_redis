@@ -1,7 +1,7 @@
 class MockRedis
   module GeospatialMethods
-    LNG_RANGE = (-180..180).freeze
-    LAT_RANGE = (-85.05112878..85.05112878).freeze
+    LNG_RANGE = (-180..180)
+    LAT_RANGE = (-85.05112878..85.05112878)
     STEP = 26
     UNITS = {
       m: 1,

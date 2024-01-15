@@ -4,7 +4,7 @@ source 'http://rubygems.org'
 gemspec
 
 # Run all pre-commit hooks via Overcommit during CI runs
-gem 'overcommit', '0.53.0'
+gem 'overcommit', '0.61.0'
 
 # Pin tool versions (which are executed by Overcommit) for CI builds
 gem 'rubocop', '1.44.1'
