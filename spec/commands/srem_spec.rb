@@ -8,7 +8,7 @@ RSpec.describe '#srem(key, member)' do
     @redises.sadd(@key, 'ernie')
   end
 
-  context "adapts to redis-rd version 4 and 5 outputs" do
+  context 'adapts to redis-rd version 4 and 5 outputs' do
     include MockRedis::UtilityMethods
 
     let(:positive_response) { redis_gem_v5? ? 1 : true }

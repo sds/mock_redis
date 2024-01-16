@@ -79,7 +79,7 @@ class MockRedis
       Redis::VERSION.to_i == 5
     end
 
-    def size_after(obj, &blk)
+    def size_after(obj, &_blk)
       size_before = obj.size
       yield
       (obj.size - size_before).abs
