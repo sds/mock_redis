@@ -212,8 +212,8 @@ class MockRedis
 
     # Parameter list required to ensure the ArgumentError is returned correctly
     # rubocop:disable Metrics/ParameterLists
-    def set(key, value, ex: nil, px: nil, exat: nil, pxat: nil, nx: nil, xx: nil, keepttl: nil,
-      get: nil)
+    def set(key, value, _hash = nil, ex: nil, px: nil, exat: nil, pxat: nil, nx: nil, xx: nil,
+      keepttl: nil, get: nil)
       key = key.to_s
       retval = self.get(key) if get
 
