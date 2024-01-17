@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.43.0
+
+* Fix issue when using with `redis-store` gem
+
 ### 0.42.0
 
 * Drop support for Ruby 2.x
