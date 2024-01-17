@@ -1,10 +1,24 @@
 require 'spec_helper'
 
-RSpec.describe '#set(key, value)' do
+RSpec.describe '#set(key, value, _hash)' do
   let(:key) { 'mock-redis-test' }
 
   it "responds with 'OK'" do
     expect(@redises.set('mock-redis-test', 1)).to eq('OK')
+  end
+
+  context 'when the positional argument _hash exists' do
+    it "responds with 'OK'" do
+      # Testing MockRedis.new.set instead of @redises.set
+      # because the latter doesn't align with Redis's set method.
+      # In mock_redis, set accepts a third positional argument, _hash,
+      # to accommodate the difference with redis-store's set method,
+      # which takes three positional arguments, unlike the standard Redis set.
+      # Reference:
+      # Redis: https://github.com/redis/redis-rb/blob/09acb9026ab2deaca4c851e0bcdb0ef9318b1ee0/lib/redis/commands/strings.rb#L83
+      # Redis-store: https://github.com/redis-store/redis-store/blob/5c3fee1b8fba672eb2bd5bfaedb973b68d12b773/lib/redis/store/ttl.rb#L4
+      expect(MockRedis.new.set('mock-redis-test', 1, { key: 'value' })).to eq('OK')
+    end
   end
 
   context 'options' do
