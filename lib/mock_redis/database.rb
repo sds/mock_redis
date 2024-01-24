@@ -12,6 +12,7 @@ require 'mock_redis/utility_methods'
 require 'mock_redis/geospatial_methods'
 require 'mock_redis/stream_methods'
 require 'mock_redis/connection_method'
+require 'mock_redis/memory_method'
 
 class MockRedis
   class Database
@@ -26,6 +27,7 @@ class MockRedis
     include GeospatialMethods
     include StreamMethods
     include ConnectionMethod
+    include MemoryMethod
 
     attr_reader :data, :expire_times
 
