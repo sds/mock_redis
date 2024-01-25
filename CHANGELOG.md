@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.44.0
+
+* Add suppore for `memory usage` command
+
 ### 0.43.0
 
 * Fix issue when using with `redis-store` gem
