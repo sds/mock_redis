@@ -7,22 +7,16 @@ class MockRedis
     include UtilityMethods
 
     def sadd(key, members)
-      members_class = members.class
       members = Array(members).map(&:to_s)
       assert_has_args(members, 'sadd')
 
       with_set_at(key) do |s|
-        size_before = s.size
         if members.size > 1
-          members.reverse_each { |m| s << m }
-          s.size - size_before
+          size_after(s) { members.reverse_each { |m| s << m } }
+        elsif redis_gem_v5?
+          size_after(s) { s.add?(members.first) }
         else
-          added = !!s.add?(members.first)
-          if members_class == Array
-            s.size - size_before
-          else
-            added
-          end
+          !!s.add?(members.first)
         end
       end
     end
@@ -125,14 +119,13 @@ class MockRedis
     end
 
     def srem(key, members)
+      members = Array(members).map(&:to_s)
+
       with_set_at(key) do |s|
-        if members.is_a?(Array)
-          orig_size = s.size
-          members = members.map(&:to_s)
-          s.delete_if { |m| members.include?(m) }
-          orig_size - s.size
+        if members.size > 1 || redis_gem_v5?
+          size_after(s) { s.delete_if { |m| members.include?(m) } }
         else
-          !!s.delete?(members.to_s)
+          !!s.delete?(members.first)
         end
       end
     end
@@ -195,9 +188,12 @@ class MockRedis
     def assert_sety(key)
       unless sety?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise Redis::CommandError,
-              'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise wrong_type_error, 'WRONGTYPE Operation against a key holding the wrong kind of value'
       end
+    end
+
+    def wrong_type_error
+      redis_gem_v5? ? Redis::WrongTypeError : Redis::CommandError
     end
   end
 end

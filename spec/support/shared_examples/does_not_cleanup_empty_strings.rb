@@ -8,7 +8,7 @@ RSpec.shared_examples_for 'does not remove empty strings on error' do
     @redises.set(key, '')
     expect do
       @redises.send(method, *args)
-    end.to raise_error(defined?(default_error) ? default_error : RuntimeError)
+    end.to raise_error(defined?(default_error) ? default_error : Redis::BaseError)
     expect(@redises.get(key)).to eq('')
   end
 end
