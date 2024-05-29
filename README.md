@@ -27,13 +27,12 @@ call the same methods on it as you can call on a real `Redis` object.
 
 For example:
 
-    >> require 'mock_redis'
-    >> mr = MockRedis.new
-    >> mr.set('some key', 'some value')
-    => "OK"
-    >> mr.get('some key')
-    => "some value"
-
+```ruby
+require 'mock_redis'
+mr = MockRedis.new
+mr.set('some key', 'some value') # => "OK"
+mr.get('some key') # => "some value"
+```
 ## Supported Features
 
 mock_redis supports most of the methods that redis-rb does. Examples
