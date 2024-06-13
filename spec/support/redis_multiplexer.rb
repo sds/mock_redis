@@ -10,7 +10,7 @@ class RedisMultiplexer < BlankSlate
   def initialize(*a)
     super()
     @mock_redis = MockRedis.new(*a)
-    Redis.exists_returns_integer = true
+    configure_redis
     @real_redis = Redis.new(*a)
     _gsub_clear
   end
@@ -120,5 +120,16 @@ class RedisMultiplexer < BlankSlate
     [retval, nil]
   rescue StandardError => e
     [nil, e]
+  end
+
+  private
+
+  def configure_redis
+    case Redis::VERSION.to_i
+    when 5
+      # do nothing
+    else
+      Redis.exists_returns_integer = true
+    end
   end
 end
