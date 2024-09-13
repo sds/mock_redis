@@ -186,7 +186,7 @@ class MockRedis
       end
     end
 
-    def rpop(key)
+    def rpop(key, count = nil)
       with_list_at(key) { |list| list&.pop }
     end
 
