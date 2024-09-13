@@ -1,6 +1,7 @@
 RSpec.shared_examples_for 'a list-only command' do
   let(:method) { |example| method_from_description(example) }
   let(:args) { args_for_method(method) }
+  let(:error) { defined?(default_error) ? default_error : RuntimeError }
 
   it 'raises an error for non-list values' do
     key = 'mock-redis-test:list-only'
@@ -10,7 +11,7 @@ RSpec.shared_examples_for 'a list-only command' do
 
     expect do
       @redises.send(method, *key_and_args)
-    end.to raise_error(defined?(default_error) ? default_error : RuntimeError)
+    end.to raise_error(*error)
   end
 
   it_should_behave_like 'does not remove empty strings on error'
