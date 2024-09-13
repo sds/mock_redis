@@ -1,13 +1,15 @@
 RSpec.shared_examples_for 'a list-only command' do
-  it 'raises an error for non-list values' do |example|
-    key = 'mock-redis-test:list-only'
+  let(:method) { |example| method_from_description(example) }
+  let(:args) { args_for_method(method) }
 
-    method = method_from_description(example)
-    args = args_for_method(method).unshift(key)
+  it 'raises an error for non-list values' do
+    key = 'mock-redis-test:list-only'
+    key_and_args = args.unshift(key)
 
     @redises.set(key, 1)
+
     expect do
-      @redises.send(method, *args)
+      @redises.send(method, *key_and_args)
     end.to raise_error(defined?(default_error) ? default_error : RuntimeError)
   end
 
