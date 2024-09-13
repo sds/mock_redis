@@ -1,8 +1,12 @@
 # MockRedis Changelog
 
+### 0.45.0
+
+* Add support for `count` argument of `rpop`
+
 ### 0.44.0
 
-* Add suppore for `memory usage` command
+* Add support for `memory usage` command
 
 ### 0.43.0
 
