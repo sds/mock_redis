@@ -187,7 +187,12 @@ class MockRedis
     end
 
     def rpop(key, count = nil)
-      with_list_at(key) { |list| list&.pop }
+      return with_list_at(key) { |list| list&.pop } if count.nil?
+
+      record_count = llen(key)
+      return nil if record_count.zero?
+
+      [record_count, count].min.times.map { with_list_at(key, &:pop) }
     end
 
     def rpoplpush(source, destination)
