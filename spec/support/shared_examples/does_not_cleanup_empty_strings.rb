@@ -1,14 +1,16 @@
 RSpec.shared_examples_for 'does not remove empty strings on error' do
-  it 'does not remove empty strings on error' do |example|
-    key = 'mock-redis-test:not-a-string'
+  let(:method) { |example| method_from_description(example) }
+  let(:args) { args_for_method(method) }
+  let(:error) { defined?(default_error) ? default_error : RuntimeError }
 
-    method = method_from_description(example)
-    args = args_for_method(method).unshift(key)
+  it 'does not remove empty strings on error' do
+    key = 'mock-redis-test:not-a-string'
+    key_and_args = args.unshift(key)
 
     @redises.set(key, '')
     expect do
-      @redises.send(method, *args)
-    end.to raise_error(defined?(default_error) ? default_error : RuntimeError)
+      @redises.send(method, *key_and_args)
+    end.to raise_error(*error)
     expect(@redises.get(key)).to eq('')
   end
 end
