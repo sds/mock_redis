@@ -30,6 +30,37 @@ RSpec.describe '#rpop(key)' do
     expect(@redises.get(@key)).to be_nil
   end
 
-  let(:default_error) { RedisMultiplexer::MismatchedResponse }
-  it_should_behave_like 'a list-only command'
+  context 'when count != nil' do
+    it 'returns array with one element if count == 1' do
+      @redises.rpush(@key, %w[one two three four five])
+
+      expect(@redises.rpop(@key, 1)).to eq(%w[five])
+      expect(@redises.lrange(@key, 0, -1)).to eq(%w[one two three four])
+    end
+
+    it 'returns the number of records requested' do
+      @redises.rpush(@key, %w[one two three four five])
+
+      expect(@redises.rpop(@key, 2)).to eq(%w[five four])
+      expect(@redises.lrange(@key, 0, -1)).to eq(%w[one two three])
+    end
+
+    it 'returns nil for nonexistent key' do
+      expect(@redises.rpop(@key, 2)).to be_nil
+    end
+
+    it 'returns all records when requesting more than list length' do
+      @redises.rpush(@key, %w[one two three])
+
+      expect(@redises.rpop(@key, 10)).to eq(%w[three two one])
+      expect(@redises.lrange(@key, 0, -1)).to eq([])
+    end
+  end
+
+  it_should_behave_like 'a list-only command' do
+    let(:args) { [1] }
+    let(:error) do
+      [Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value']
+    end
+  end
 end
