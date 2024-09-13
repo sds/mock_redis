@@ -14,5 +14,5 @@ RSpec.shared_examples_for 'a list-only command' do
     end.to raise_error(*error)
   end
 
-  it_should_behave_like 'does not remove empty strings on error'
+  include_examples 'does not remove empty strings on error'
 end
