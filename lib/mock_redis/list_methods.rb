@@ -90,7 +90,7 @@ class MockRedis
       with_list_at(key, &:length)
     end
 
-    def lmpop(*args, **options)
+    def lmpop(*keys, **options)
       keys.each do |key|
         assert_listy(key)
       end
