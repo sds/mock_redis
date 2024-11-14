@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.46.0
+
+* Fix `hset` for array of key-value pairs
+
 ### 0.45.0
 
 * Add support for `count` argument of `rpop`
