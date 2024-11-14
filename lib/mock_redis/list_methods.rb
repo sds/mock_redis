@@ -106,9 +106,11 @@ class MockRedis
         record_count = llen(key)
         next if record_count.zero?
 
-        [count, record_count].min.times.map do
+        values = [count, record_count].min.times.map do
           modifier == 'left' ? with_list_at(key, &:shift) : with_list_at(key, &:pop)
         end
+
+        return [key, values]
       end
 
       nil
