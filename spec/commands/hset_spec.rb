@@ -39,7 +39,7 @@ RSpec.describe '#hset(key, field)' do
   end
 
   it 'stores array values correctly' do
-    @redises.hset(@key, ['k1', 'v1', 'k2', 'v2'])
+    @redises.hset(@key, %w[k1 v1 k2 v2])
     expect(@redises.hget(@key, 'k1')).to eq('v1')
     expect(@redises.hget(@key, 'k2')).to eq('v2')
   end
