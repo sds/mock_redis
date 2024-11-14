@@ -38,5 +38,17 @@ RSpec.describe '#hset(key, field)' do
     expect(@redises.hset(@key, { 'k1' => 'v1', 'k2' => 'v2' })).to eq(2)
   end
 
+  it 'stores array values correctly' do
+    @redises.hset(@key, ['k1', 'v1', 'k2', 'v2'])
+    expect(@redises.hget(@key, 'k1')).to eq('v1')
+    expect(@redises.hget(@key, 'k2')).to eq('v2')
+  end
+
+  it 'stores multiple arguments correctly' do
+    @redises.hset(@key, 'k1', 'v1', 'k2', 'v2')
+    expect(@redises.hget(@key, 'k1')).to eq('v1')
+    expect(@redises.hget(@key, 'k2')).to eq('v2')
+  end
+
   it_should_behave_like 'a hash-only command'
 end
