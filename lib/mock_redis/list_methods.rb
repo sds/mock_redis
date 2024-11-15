@@ -95,7 +95,7 @@ class MockRedis
         assert_listy(key)
       end
 
-      modifier = options.is_a?(Hash) && options[:timeout]&.to_s&.downcase || 'left'
+      modifier = options.is_a?(Hash) && options[:modifier]&.to_s&.downcase || 'left'
       count = (options.is_a?(Hash) && options[:count]) || 1
 
       unless %w[left right].include?(modifier)
