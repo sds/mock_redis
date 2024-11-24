@@ -95,13 +95,13 @@ class MockRedis
     end
 
     def expire(key, seconds, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
-      assert_valid_integer(seconds)
+      seconds = Integer(seconds)
 
       pexpire(key, seconds.to_i * 1000, nx: nx, xx: xx, lt: lt, gt: gt)
     end
 
     def pexpire(key, ms, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
-      assert_valid_integer(ms)
+      ms = Integer(ms)
 
       now, miliseconds = @base.now
       now_ms = (now * 1000) + miliseconds
@@ -109,18 +109,19 @@ class MockRedis
     end
 
     def expireat(key, timestamp, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
-      assert_valid_integer(timestamp)
+      timestamp = Integer(timestamp)
 
       pexpireat(key, timestamp.to_i * 1000, nx: nx, xx: xx, lt: lt, gt: gt)
     end
 
     def pexpireat(key, timestamp_ms, nx: nil, xx: nil, lt: nil, gt: nil) # rubocop:disable Metrics/ParameterLists
-      assert_valid_integer(timestamp_ms)
+      timestamp_ms = Integer(timestamp_ms)
 
       if nx && gt || gt && lt || lt && nx || nx && xx
-        raise Redis::CommandError, <<~TXT.chomp
-          ERR NX and XX, GT or LT options at the same time are not compatible
-        TXT
+        raise Error.command_error(
+          'ERR NX and XX, GT or LT options at the same time are not compatible',
+          self
+        )
       end
 
       return false unless exists?(key)
@@ -157,7 +158,7 @@ class MockRedis
 
     def restore(key, ttl, value, replace: false)
       if !replace && exists?(key)
-        raise Redis::CommandError, 'BUSYKEY Target key name already exists.'
+        raise Error.command_error('BUSYKEY Target key name already exists.', self)
       end
       data[key] = Marshal.load(value) # rubocop:disable Security/MarshalLoad
       if ttl > 0
@@ -211,7 +212,7 @@ class MockRedis
 
     def rename(key, newkey)
       unless data.include?(key)
-        raise Redis::CommandError, 'ERR no such key'
+        raise Error.command_error('ERR no such key', self)
       end
 
       if key != newkey
@@ -227,7 +228,7 @@ class MockRedis
 
     def renamenx(key, newkey)
       unless data.include?(key)
-        raise Redis::CommandError, 'ERR no such key'
+        raise Error.command_error('ERR no such key', self)
       end
 
       if exists?(newkey)
@@ -301,19 +302,13 @@ class MockRedis
 
     private
 
-    def assert_valid_integer(integer)
-      unless looks_like_integer?(integer.to_s)
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
-      integer
-    end
-
     def assert_valid_timeout(timeout)
-      if !looks_like_integer?(timeout.to_s)
-        raise Redis::CommandError, 'ERR timeout is not an integer or out of range'
-      elsif timeout < 0
-        raise Redis::CommandError, 'ERR timeout is negative'
+      timeout = Integer(timeout)
+
+      if timeout < 0
+        raise ArgumentError, 'time interval must not be negative'
       end
+
       timeout
     end
 
@@ -347,7 +342,7 @@ class MockRedis
     end
 
     def looks_like_integer?(str)
-      str =~ /^-?\d+$/
+      !!Integer(str) rescue false
     end
 
     def looks_like_float?(str)

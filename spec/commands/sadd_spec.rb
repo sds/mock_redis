@@ -5,12 +5,12 @@ RSpec.describe '#sadd(key, member)' do
 
   context 'sadd' do
     it 'returns true if the set did not already contain member' do
-      expect(@redises.sadd(@key, 1)).to eq(true)
+      expect(@redises.sadd(@key, 1)).to eq(1)
     end
 
     it 'returns false if the set did already contain member' do
       @redises.sadd(@key, 1)
-      expect(@redises.sadd(@key, 1)).to eq(false)
+      expect(@redises.sadd(@key, 1)).to eq(0)
     end
 
     it 'adds member to the set' do
@@ -55,7 +55,7 @@ RSpec.describe '#sadd(key, member)' do
 
     it 'adds an Array as a stringified member' do
       @redises.sadd(@key, [[1], 2, 3])
-      expect(@redises.smembers(@key)).to eq(%w[[1] 2 3])
+      expect(@redises.smembers(@key)).to eq(%w[1 2 3])
     end
 
     it 'raises an error if an empty array is given' do

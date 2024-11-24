@@ -25,25 +25,25 @@ RSpec.describe '#set(key, value, _hash)' do
     it 'raises an error for EX seconds = 0' do
       expect do
         @redises.set('mock-redis-test', 1, ex: 0)
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
+      end.to raise_error(Redis::CommandError, /ERR invalid expire time in set/)
     end
 
     it 'raises an error for PX milliseconds = 0' do
       expect do
         @redises.set('mock-redis-test', 1, px: 0)
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
+      end.to raise_error(Redis::CommandError, /ERR invalid expire time in set/)
     end
 
     it 'raises an error for EXAT seconds = 0' do
       expect do
         @redises.set('mock-redis-test', 1, exat: 0)
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
+      end.to raise_error(Redis::CommandError, /ERR invalid expire time in set/)
     end
 
     it 'raises an error for PXAT seconds = 0' do
       expect do
         @redises.set('mock-redis-test', 1, pxat: 0)
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in set')
+      end.to raise_error(Redis::CommandError, /ERR invalid expire time in set/)
     end
 
     it 'accepts NX' do

@@ -1,7 +1,7 @@
 RSpec.shared_examples_for 'does not remove empty strings on error' do
   let(:method) { |example| method_from_description(example) }
   let(:args) { args_for_method(method) }
-  let(:error) { defined?(default_error) ? default_error : RuntimeError }
+  let(:error) { defined?(default_error) ? default_error : Redis::WrongTypeError }
 
   it 'does not remove empty strings on error' do
     key = 'mock-redis-test:not-a-string'

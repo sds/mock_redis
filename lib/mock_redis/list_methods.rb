@@ -46,9 +46,7 @@ class MockRedis
       end
     end
 
-    def brpoplpush(source, destination, options = {})
-      options = { :timeout => options } if options.is_a?(Integer)
-      timeout = options.is_a?(Hash) && options[:timeout] || 0
+    def brpoplpush(source, destination, timeout: 0)
       assert_valid_timeout(timeout)
 
       if llen(source) > 0
@@ -66,7 +64,7 @@ class MockRedis
 
     def linsert(key, position, pivot, value)
       unless %w[before after].include?(position.to_s)
-        raise Redis::CommandError, 'ERR syntax error'
+        raise Error.command_error('ERR syntax error', self)
       end
 
       assert_listy(key)
@@ -99,9 +97,8 @@ class MockRedis
       wherefrom = wherefrom.to_s.downcase
       whereto = whereto.to_s.downcase
 
-      unless %w[left right].include?(wherefrom) && %w[left right].include?(whereto)
-        raise Redis::CommandError, 'ERR syntax error'
-      end
+      assert_where_field(wherefrom, 'where_source')
+      assert_where_field(whereto, 'where_destination')
 
       value = wherefrom == 'left' ? lpop(source) : rpop(source)
       (whereto == 'left' ? lpush(destination, value) : rpush(destination, value)) unless value.nil?
@@ -127,7 +124,7 @@ class MockRedis
     def lpushx(key, value)
       value = [value] unless value.is_a?(Array)
       if value.empty?
-        raise Redis::CommandError, "ERR wrong number of arguments for 'lpushx' command"
+        raise Error.command_error("ERR wrong number of arguments for 'lpushx' command", self)
       end
       assert_listy(key)
       return 0 unless list_at?(key)
@@ -140,10 +137,7 @@ class MockRedis
     end
 
     def lrem(key, count, value)
-      unless looks_like_integer?(count.to_s)
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
-      count = count.to_i
+      count = Integer(count)
       value = value.to_s
 
       with_list_at(key) do |list|
@@ -167,12 +161,12 @@ class MockRedis
       assert_listy(key)
 
       unless list_at?(key)
-        raise Redis::CommandError, 'ERR no such key'
+        raise Error.command_error('ERR no such key', self)
       end
 
       index = index.to_i
       unless (0...llen(key)).cover?(index)
-        raise Redis::CommandError, 'ERR index out of range'
+        raise Error.command_error('ERR index out of range', self)
       end
 
       data[key][index] = value.to_s
@@ -211,7 +205,7 @@ class MockRedis
     def rpushx(key, value)
       value = [value] unless value.is_a?(Array)
       if value.empty?
-        raise Redis::CommandError, "ERR wrong number of arguments for 'rpushx' command"
+        raise Error.command_error("ERR wrong number of arguments for 'rpushx' command", self)
       end
       assert_listy(key)
       return 0 unless list_at?(key)
@@ -235,8 +229,13 @@ class MockRedis
     def assert_listy(key)
       unless listy?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise Redis::CommandError,
-              'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Error.wrong_type_error(self)
+      end
+    end
+
+    def assert_where_field(where, argument_name)
+      unless %w[left right].include?(where)
+        raise ArgumentError, "#{argument_name} must be 'LEFT' or 'RIGHT'"
       end
     end
 

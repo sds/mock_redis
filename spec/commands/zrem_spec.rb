@@ -41,9 +41,7 @@ RSpec.describe '#zrem(key, member)' do
   end
 
   it 'no longer raises an error if member is an empty array' do
-    expect do
-      @redises.zrem(@key, [])
-    end.not_to raise_error(Redis::CommandError)
+    expect(@redises.zrem(@key, [])).to eq 0
   end
 
   it_should_behave_like 'a zset-only command'

@@ -6,9 +6,10 @@ class MockRedis
     include Assertions
     include UtilityMethods
 
-    def sadd(key, members)
+    def sadd(key, *members)
       members_class = members.class
-      members = Array(members).map(&:to_s)
+      members = Array(members).flatten.map(&:to_s)
+      assert_type(key, *members)
       assert_has_args(members, 'sadd')
 
       with_set_at(key) do |s|
@@ -21,7 +22,7 @@ class MockRedis
           if members_class == Array
             s.size - size_before
           else
-            added
+            added ? 1 : 0
           end
         end
       end
@@ -33,6 +34,7 @@ class MockRedis
     end
 
     def scard(key)
+      assert_type(key)
       with_set_at(key, &:length)
     end
 
@@ -42,6 +44,7 @@ class MockRedis
     end
 
     def sdiffstore(destination, *keys)
+      assert_type(destination, *keys)
       assert_has_args(keys, 'sdiffstore')
       with_set_at(destination) do |set|
         set.replace(sdiff(*keys))
@@ -58,6 +61,7 @@ class MockRedis
     end
 
     def sinterstore(destination, *keys)
+      assert_type(destination, *keys)
       assert_has_args(keys, 'sinterstore')
       with_set_at(destination) do |set|
         set.replace(sinter(*keys))
@@ -66,16 +70,21 @@ class MockRedis
     end
 
     def sismember(key, member)
+      assert_type(key, member)
       with_set_at(key) { |s| s.include?(member.to_s) }
     end
 
     def smismember(key, *members)
+      members.flatten!
+
+      assert_type(key, *members)
       with_set_at(key) do |set|
-        members.flatten.map { |m| set.include?(m.to_s) }
+        members.map { |m| set.include?(m.to_s) }
       end
     end
 
     def smembers(key)
+      assert_type(key)
       with_set_at(key, &:to_a).map(&:dup).reverse
     end
 
@@ -93,6 +102,7 @@ class MockRedis
     end
 
     def spop(key, count = nil)
+      assert_type(key)
       with_set_at(key) do |set|
         if count.nil?
           member = set.first
@@ -112,6 +122,7 @@ class MockRedis
     end
 
     def srandmember(key, count = nil)
+      assert_type(key)
       members = with_set_at(key, &:to_a)
       if count
         if count > 0
@@ -124,7 +135,10 @@ class MockRedis
       end
     end
 
-    def srem(key, members)
+    def srem(key, *members)
+      members = members.flatten.uniq
+      assert_type(key, *members)
+
       with_set_at(key) do |s|
         if members.is_a?(Array)
           orig_size = s.size
@@ -177,6 +191,9 @@ class MockRedis
 
     def with_sets_at(*keys, &blk)
       keys = keys.flatten
+
+      assert_type(*keys)
+
       if keys.length == 1
         with_set_at(keys.first, &blk)
       else
@@ -195,8 +212,7 @@ class MockRedis
     def assert_sety(key)
       unless sety?(key)
         # Not the most helpful error, but it's what redis-rb barfs up
-        raise Redis::CommandError,
-              'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Error.wrong_type_error(self)
       end
     end
   end

@@ -22,7 +22,7 @@ RSpec.describe '#pexpire(key, ms)' do
   it 'raises an error if ms is bogus' do
     expect do
       @redises.pexpire(@key, 'a couple minutes or so')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it 'works with options', redis: '7.0' do

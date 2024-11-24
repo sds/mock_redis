@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe '#brpoplpush(source, destination, timeout)' do
+  let(:default_error) { ArgumentError }
+
   before do
     @list1 = 'mock-redis-test:brpoplpush1'
     @list2 = 'mock-redis-test:brpoplpush2'
@@ -25,7 +27,7 @@ RSpec.describe '#brpoplpush(source, destination, timeout)' do
   it 'raises an error on negative timeout' do
     expect do
       @redises.brpoplpush(@list1, @list2, :timeout => -1)
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'a list-only command'
@@ -36,9 +38,10 @@ RSpec.describe '#brpoplpush(source, destination, timeout)' do
         to be_nil
     end
 
-    it 'ignores positive legacy timeouts and returns nil' do
-      expect(@redises.mock.brpoplpush('mock-redis-test:not-here', @list1, 1)).
-        to be_nil
+    it 'raises error if there is extra argument' do
+      expect do
+        @redises.mock.brpoplpush('mock-redis-test:not-here', @list1, 1)
+      end.to raise_error(ArgumentError)
     end
 
     it 'raises WouldBlock on zero timeout (no blocking in the mock)' do

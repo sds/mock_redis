@@ -8,7 +8,7 @@ RSpec.shared_examples_for 'a zset-only command' do
     @redises.set(key, 1)
     expect do
       @redises.send(method, *args)
-    end.to raise_error(RuntimeError)
+    end.to raise_error(Redis::WrongTypeError)
   end
 
   it_should_behave_like 'does not remove empty strings on error'
@@ -54,6 +54,6 @@ RSpec.shared_examples_for 'arg N is a score' do
 
   it 'rejects non-numbers' do
     @args[@_arg_index] = 'foo'
-    expect { @redises.send(@method, *@args) }.to raise_error(RuntimeError)
+    expect { @redises.send(@method, *@args) }.to raise_error(Redis::CommandError)
   end
 end

@@ -14,7 +14,7 @@ class MockRedis
 
     def bitfield(*args)
       if args.length < 4
-        raise Redis::CommandError, 'ERR wrong number of arguments for BITFIELD'
+        raise Error.command_error('ERR wrong number of arguments for BITFIELD', self)
       end
 
       key = args.shift
@@ -28,7 +28,7 @@ class MockRedis
           new_overflow_method = args.shift.to_s.downcase
 
           unless %w[wrap sat fail].include? new_overflow_method
-            raise Redis::CommandError, 'ERR Invalid OVERFLOW type specified'
+            raise Error.command_error('ERR Invalid OVERFLOW type specified', self)
           end
 
           overflow_method = new_overflow_method
@@ -41,9 +41,11 @@ class MockRedis
         type_size = type[1..].to_i
 
         if (type_size > 64 && is_signed) || (type_size >= 64 && !is_signed)
-          raise Redis::CommandError,
+          raise Error.command_error(
             'ERR Invalid bitfield type. Use something like i16 u8. ' \
-            'Note that u64 is not supported but i64 is.'
+            'Note that u64 is not supported but i64 is.',
+            self
+          )
         end
 
         if offset.to_s[0] == '#'
@@ -130,12 +132,10 @@ class MockRedis
 
     def incrby(key, n)
       assert_stringy(key)
-      unless can_incr?(data[key])
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
-      end
+      n = Integer(n)
 
-      unless looks_like_integer?(n.to_s)
-        raise Redis::CommandError, 'ERR value is not an integer or out of range'
+      unless can_incr?(data[key])
+        raise Error.command_error('ERR value is not an integer or out of range', self)
       end
 
       new_value = data[key].to_i + n.to_i
@@ -146,12 +146,9 @@ class MockRedis
 
     def incrbyfloat(key, n)
       assert_stringy(key)
+      n = Float(n)
       unless can_incr_float?(data[key])
-        raise Redis::CommandError, 'ERR value is not a valid float'
-      end
-
-      unless looks_like_float?(n.to_s)
-        raise Redis::CommandError, 'ERR value is not a valid float'
+        raise Error.command_error('ERR value is not a valid float', self)
       end
 
       new_value = data[key].to_f + n.to_f
@@ -181,7 +178,7 @@ class MockRedis
       kvpairs = kvpairs.first if kvpairs.size == 1 && kvpairs.first.is_a?(Enumerable)
 
       if kvpairs.length.odd?
-        raise Redis::CommandError, 'ERR wrong number of arguments for MSET'
+        raise Error.command_error('ERR wrong number of arguments for MSET', self)
       end
 
       kvpairs.each_slice(2) do |(k, v)|
@@ -237,28 +234,28 @@ class MockRedis
       remove_expiration(key) unless keepttl
       if ex
         if ex == 0
-          raise Redis::CommandError, 'ERR invalid expire time in set'
+          raise Error.command_error('ERR invalid expire time in set', self)
         end
         expire(key, ex)
       end
 
       if px
         if px == 0
-          raise Redis::CommandError, 'ERR invalid expire time in set'
+          raise Error.command_error('ERR invalid expire time in set', self)
         end
         pexpire(key, px)
       end
 
       if exat
         if exat == 0
-          raise Redis::CommandError, 'ERR invalid expire time in set'
+          raise Error.command_error('ERR invalid expire time in set', self)
         end
         expireat(key, exat)
       end
 
       if pxat
         if pxat == 0
-          raise Redis::CommandError, 'ERR invalid expire time in set'
+          raise Error.command_error('ERR invalid expire time in set', self)
         end
         pexpireat(key, pxat)
       end
@@ -347,7 +344,7 @@ class MockRedis
 
     def setex(key, seconds, value)
       if seconds <= 0
-        raise Redis::CommandError, 'ERR invalid expire time in setex'
+        raise Error.command_error('ERR invalid expire time in setex', self)
       else
         set(key, value)
         expire(key, seconds)
@@ -357,7 +354,7 @@ class MockRedis
 
     def psetex(key, milliseconds, value)
       if milliseconds <= 0
-        raise Redis::CommandError, 'ERR invalid expire time in psetex'
+        raise Error.command_error('ERR invalid expire time in psetex', self)
       else
         set(key, value)
         pexpire(key, milliseconds)
@@ -377,7 +374,7 @@ class MockRedis
     def setrange(key, offset, value)
       assert_stringy(key)
       value = value.to_s
-      old_value = (data[key] || '')
+      old_value = data[key] || ''
 
       prefix = zero_pad(old_value[0...offset], offset)
       data[key] = prefix + value + (old_value[(offset + value.length)..] || '')
@@ -395,10 +392,13 @@ class MockRedis
       data[key].nil? || data[key].is_a?(String)
     end
 
-    def assert_stringy(key,
-        message = 'WRONGTYPE Operation against a key holding the wrong kind of value')
+    def assert_stringy(key, message = nil)
       unless stringy?(key)
-        raise Redis::CommandError, message
+        if message
+          raise Error.command_error(message, self)
+        else
+          raise Error.wrong_type_error(self)
+        end
       end
     end
 

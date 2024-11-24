@@ -5,7 +5,7 @@ class MockRedis
     include Assertions
 
     def sort(key, options = {})
-      return [] if key.nil?
+      assert_type(key)
 
       enumerable = data[key]
 

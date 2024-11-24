@@ -1,6 +1,6 @@
 RSpec.shared_examples_for 'a sortable' do
   it 'returns empty array on nil' do
-    expect(@redises.sort(nil)).to eq([])
+    expect { @redises.sort(nil) }.to raise_error(TypeError)
   end
 
   context 'ordering' do

@@ -51,7 +51,7 @@ RSpec.describe '#hincrby(key, field, increment)' do
   it 'raises an error if the delta does not look like an integer' do
     expect do
       @redises.hincrby(@key, @field, 'foo')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'a hash-only command'

@@ -9,11 +9,11 @@ RSpec.describe '#srem(key, member)' do
   end
 
   it 'returns true if member is in the set' do
-    expect(@redises.srem(@key, 'bert')).to eq(true)
+    expect(@redises.srem(@key, 'bert')).to eq(1)
   end
 
   it 'returns false if member is not in the set' do
-    expect(@redises.srem(@key, 'cookiemonster')).to eq(false)
+    expect(@redises.srem(@key, 'cookiemonster')).to eq(0)
   end
 
   it 'removes member from the set' do
@@ -23,7 +23,7 @@ RSpec.describe '#srem(key, member)' do
 
   it 'stringifies member' do
     @redises.sadd(@key, '1')
-    expect(@redises.srem(@key, 1)).to eq(true)
+    expect(@redises.srem(@key, 1)).to eq(1)
   end
 
   it 'cleans up empty sets' do

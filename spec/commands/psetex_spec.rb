@@ -27,18 +27,22 @@ RSpec.describe '#psetex(key, miliseconds, value)' do
   end
 
   context 'when expiration time is zero' do
+    let(:message) { /ERR invalid expire time in psetex/ }
+
     it 'raises Redis::CommandError' do
       expect do
         @redises.psetex(@key, 0, 'value')
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in psetex')
+      end.to raise_error(Redis::CommandError, message)
     end
   end
 
   context 'when expiration time is negative' do
+    let(:message) { /ERR invalid expire time in psetex/ }
+
     it 'raises Redis::CommandError' do
       expect do
         @redises.psetex(@key, -2, 'value')
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in psetex')
+      end.to raise_error(Redis::CommandError, message)
     end
   end
 end

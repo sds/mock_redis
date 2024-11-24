@@ -44,6 +44,18 @@ RSpec.describe '#hset(key, field)' do
     expect(@redises.hget(@key, 'k2')).to eq('v2')
   end
 
+  it 'raises error when key is nil' do
+    expect do
+      @redises.hset(nil, 'abc')
+    end.to raise_error(TypeError)
+  end
+
+  it 'raises error when hash key is nil' do
+    expect do
+      @redises.hset(@key, nil, 'abc')
+    end.to raise_error(TypeError)
+  end
+
   it 'stores multiple arguments correctly' do
     @redises.hset(@key, 'k1', 'v1', 'k2', 'v2')
     expect(@redises.hget(@key, 'k1')).to eq('v1')

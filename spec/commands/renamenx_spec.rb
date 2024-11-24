@@ -25,7 +25,7 @@ RSpec.describe '#renamenx(key, newkey)' do
   it 'raises an error when the source key is nonexistant' do
     @redises.del(@key)
     expect do
-      @redises.rename(@key, @newkey)
+      @redises.renamenx(@key, @newkey)
     end.to raise_error(Redis::CommandError)
   end
 

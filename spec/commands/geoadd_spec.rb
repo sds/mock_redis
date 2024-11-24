@@ -20,9 +20,9 @@ RSpec.describe '#geoadd' do
     end
   end
 
-  context 'with invalud points' do
+  context 'with invalid points' do
     context 'when number of arguments wrong' do
-      let(:message) { "ERR wrong number of arguments for 'geoadd' command" }
+      let(:message) { /ERR wrong number of arguments for 'geoadd' command/ }
 
       it 'raises Redis::CommandError' do
         expect { @redises.geoadd(key, 1, 1) }
@@ -34,7 +34,7 @@ RSpec.describe '#geoadd' do
       let(:coords) { [181, 86] }
       let(:message) do
         formatted_coords = coords.map { |c| format('%<coords>.6f', coords: c) }
-        "ERR invalid longitude,latitude pair #{formatted_coords.join(',')}"
+        /ERR invalid longitude,latitude pair #{formatted_coords.join(',')}/
       end
 
       after { @redises.zrem(key, 'SF') }
@@ -47,7 +47,7 @@ RSpec.describe '#geoadd' do
 
     context 'when coordinates are not valid floats' do
       let(:coords) { ['x', 35] }
-      let(:message) { 'ERR value is not a valid float' }
+      let(:message) { /ERR value is not a valid float/ }
 
       it 'raises Redis::CommandError' do
         expect { @redises.geoadd key, *coords, 'SF' }

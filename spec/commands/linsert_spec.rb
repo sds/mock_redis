@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe '#linsert(key, :before|:after, pivot, value)' do
+  let(:default_error) { Redis::CommandError }
+
   before { @key = 'mock-redis-test:48733' }
 
   it 'returns the new size of the list when the pivot is found' do

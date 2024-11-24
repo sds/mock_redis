@@ -158,7 +158,7 @@ RSpec.describe '#xrange("mystream", first: "0-1", last: "0-3", count: 10)' do
     expect { @redises.xrange(@key, 'X', '+') }
       .to raise_error(
         Redis::CommandError,
-        'ERR Invalid stream ID specified as stream command argument'
+        /ERR Invalid stream ID specified as stream command argument/
       )
   end
 end

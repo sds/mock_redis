@@ -51,5 +51,5 @@ RSpec.describe '#setbit(key, offset)' do
     expect(@redises.getbit(@key, 23)).to eq(0)
   end
 
-  it_should_behave_like 'a string-only command'
+  it_should_behave_like 'a string-only command', Redis::CommandError
 end

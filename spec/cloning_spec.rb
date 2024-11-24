@@ -70,26 +70,27 @@ RSpec.describe 'MockRedis#clone' do
   end
 
   context 'transactional info' do
-    before do
-      @mock.multi
-      @mock.incr('foo')
-      @mock.incrby('foo', 2)
-      @mock.incrby('foo', 4)
+    def test_clone
+      @mock.multi do |r|
+        r.incr('foo')
+        r.incrby('foo', 2)
+        r.incrby('foo', 4)
 
-      @clone = @mock.clone
+        yield r.clone
+      end
     end
 
     it 'makes sure the clone is in a transaction' do
-      expect do
-        @clone.exec
-      end.not_to raise_error
+      expect { test_clone(&:exec) }.not_to raise_error
     end
 
     it 'deep-copies the queued commands' do
-      @clone.incrby('foo', 8)
-      expect(@clone.exec).to eq([1, 3, 7, 15])
+      result = test_clone do |clone|
+        clone.incrby('foo', 8)
+        expect(clone.exec).to eq([1, 3, 7, 15])
+      end
 
-      expect(@mock.exec).to eq([1, 3, 7])
+      expect(result).to eq([1, 3, 7])
     end
   end
 end

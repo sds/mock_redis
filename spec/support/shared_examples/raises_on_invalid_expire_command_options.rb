@@ -5,7 +5,7 @@ RSpec.shared_examples_for 'raises on invalid expire command options' do |command
         expect { @mock.public_send(command, @key, 1, **options.zip([true, true]).to_h) }
           .to raise_error(
             Redis::CommandError,
-            'ERR NX and XX, GT or LT options at the same time are not compatible'
+            /ERR NX and XX, GT or LT options at the same time are not compatible/
           )
       end
     end
