@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe '#lmpop(*keys)' do
+RSpec.describe '#lmpop(*keys)', redis: 7.0 do
   before do
     @list1 = 'mock-redis-test:lmpop-list'
     @list2 = 'mock-redis-test:lmpop-list2'
