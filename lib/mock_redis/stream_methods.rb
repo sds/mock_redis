@@ -35,6 +35,8 @@ class MockRedis
         stream.add id, entry
         stream.trim opts[:maxlen] if opts[:maxlen]
         return stream.last_id
+      rescue Redis::CommandError => e
+        raise Error.command_error(e.message, self)
       end
     end
 
@@ -55,6 +57,8 @@ class MockRedis
       args += ['COUNT', count] if count
       with_stream_at(key) do |stream|
         return stream.range(*args)
+      rescue Redis::CommandError => e
+        raise Error.command_error(e.message, self)
       end
     end
 
@@ -63,6 +67,8 @@ class MockRedis
       args += ['COUNT', count] if count
       with_stream_at(key) do |stream|
         return stream.range(*args)
+      rescue Redis::CommandError => e
+        raise Error.command_error(e.message, self)
       end
     end
 
@@ -94,8 +100,7 @@ class MockRedis
 
     def assert_streamy(key)
       unless streamy?(key)
-        raise Redis::CommandError,
-          'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Error.wrong_type_error(self)
       end
     end
   end

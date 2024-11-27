@@ -69,7 +69,7 @@ RSpec.describe '#hdel(key, field)' do
   it 'raises error if an empty array is passed' do
     expect { @redises.hdel(@key, []) }.to raise_error(
       Redis::CommandError,
-      "ERR wrong number of arguments for 'hdel' command"
+      /ERR wrong number of arguments for 'hdel' command/
     )
   end
 

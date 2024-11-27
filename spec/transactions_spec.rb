@@ -6,15 +6,18 @@ RSpec.describe 'transactions (multi/exec/discard)' do
   end
 
   context '#multi' do
-    it "responds with 'OK'" do
-      expect(@redises.multi).to eq('OK')
+    it 'raises error' do
+      expect { @redises.multi }.to raise_error(LocalJumpError, 'no block given (yield)')
     end
 
     it 'does not permit nesting' do
-      @redises.multi
       expect do
-        @redises.multi
-      end.to raise_error(Redis::CommandError, 'ERR MULTI calls can not be nested')
+        @redises.multi do |r1|
+          r1.multi do |r2|
+            r2.set('foo', 'bar')
+          end
+        end
+      end.to raise_error(Redis::BaseError, "Can't nest multi transaction")
     end
 
     it 'cleans state of transaction wrapper if exception occurs during transaction' do
@@ -52,7 +55,7 @@ RSpec.describe 'transactions (multi/exec/discard)' do
       @redises.mock.multi do |r|
         expect do
           r.multi {}
-        end.not_to raise_error
+        end.to raise_error(Redis::BaseError, "Can't nest multi transaction")
       end
     end
 
@@ -86,9 +89,17 @@ RSpec.describe 'transactions (multi/exec/discard)' do
   end
 
   context '#discard' do
-    it "responds with 'OK' after #multi" do
-      @redises.multi
-      expect(@redises.discard).to eq 'OK'
+    it 'runs automatically inside multi block if there is error' do
+      begin
+        @redises.multi do |r|
+          r.set('foo', 'bar')
+          raise StandardError
+        end
+      rescue StandardError
+        # do nothing
+      end
+
+      expect(@redises.get('foo')).to eq nil
     end
 
     it "can't be run outside of #multi/#exec" do
@@ -100,41 +111,51 @@ RSpec.describe 'transactions (multi/exec/discard)' do
 
   context '#exec' do
     it 'raises an error outside of #multi' do
-      lambda do
-        expect(@redises.exec).to raise_error
-      end
+      expect { @redises.exec }.to raise_error(Redis::CommandError)
     end
   end
 
   context 'saving up commands for later' do
     before(:each) do
-      @redises.multi
       @string = 'mock-redis-test:string'
       @list = 'mock-redis-test:list'
     end
 
-    it "makes commands respond with 'QUEUED'" do
-      expect(@redises.set(@string, 'string')).to eq 'QUEUED'
-      expect(@redises.lpush(@list, 'list')).to eq 'QUEUED'
+    it 'makes commands respond with MockRedis::Future' do
+      result = []
+
+      @redises.multi do |r|
+        result << r.set(@string, 'string')
+        result << r.lpush(@list, 'list')
+      end
+
+      expect(result[0].is_a?(Redis::Future)).to eq true
+      expect(result[1].is_a?(Redis::Future)).to eq true
+      expect(result[2]).to be_a(MockRedis::Future)
+      expect(result[3]).to be_a(MockRedis::Future)
+
+      expect(result[2].command).to eq [:set, @string, 'string']
+      expect(result[3].command).to eq [:lpush, @list, 'list']
     end
 
     it "gives you the commands' responses when you call #exec" do
-      @redises.set(@string, 'string')
-      @redises.lpush(@list, 'list')
-      @redises.lpush(@list, 'list')
+      result = @redises.multi do |r|
+        r.set(@string, 'string')
+        r.lpush(@list, 'list')
+        r.lpush(@list, 'list')
+      end
 
-      expect(@redises.exec).to eq ['OK', 1, 2]
+      expect(result).to eq ['OK', 1, 2]
     end
 
-    it "does not raise exceptions, but rather puts them in #exec's response" do
-      @redises.set(@string, 'string')
-      @redises.lpush(@string, 'oops!')
-      @redises.lpush(@list, 'list')
-
-      responses = @redises.exec
-      expect(responses[0]).to eq 'OK'
-      expect(responses[1]).to be_a(Redis::CommandError)
-      expect(responses[2]).to eq 1
+    it 'raises exceptions if one command fails' do
+      expect do
+        @redises.multi do |r|
+          r.set(@string, 'string')
+          r.lpush(@string, 'oops!')
+          r.lpush(@list, 'list')
+        end
+      end.to raise_error(Redis::WrongTypeError)
     end
   end
 

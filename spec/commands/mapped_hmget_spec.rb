@@ -15,8 +15,8 @@ RSpec.describe '#mapped_hmget(key, *fields)' do
       to eq({ 'k1' => 'v1', 'mock-redis-test:nonesuch' => nil })
   end
 
-  it 'treats an array as the first key' do
-    expect(@redises.mapped_hmget(@key, %w[k1 k2])).to eq({ %w[k1 k2] => 'v1' })
+  it 'treats an array as multiple keys' do
+    expect(@redises.mapped_hmget(@key, %w[k1 k2])).to eq({ 'k1' => 'v1', 'k2' => 'v2' })
   end
 
   it 'raises an error if given no fields' do

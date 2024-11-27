@@ -15,8 +15,10 @@ RSpec.describe '#sinter(key [, key, ...])' do
     expect(@redises.sinter(@evens, @primes)).to eq(['2'])
   end
 
-  it 'treats missing keys as empty sets' do
-    expect(@redises.sinter(@destination, 'mock-redis-test:nonesuch')).to eq([])
+  it 'raises error when key is not set' do
+    expect do
+      @redises.sinter(nil, 'mock-redis-test:nonesuch')
+    end.to raise_error(TypeError)
   end
 
   it 'raises an error if given 0 sets' do

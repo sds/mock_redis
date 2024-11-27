@@ -37,7 +37,7 @@ RSpec.describe '#incrbyfloat(key, increment)' do
   it 'raises an error if the delta does not look like an float' do
     expect do
       @redises.incrbyfloat(@key, 'foobar.baz')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'a string-only command'

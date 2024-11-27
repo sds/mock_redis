@@ -27,9 +27,9 @@ RSpec.describe '#zremrangebyscore(key, min, max)' do
 
   it_should_behave_like 'a zset-only command'
 
-  it 'throws a command error' do
+  it 'throws a type error' do
     expect do
       @redises.zrevrangebyscore(@key, DateTime.now, '-inf')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(TypeError)
   end
 end

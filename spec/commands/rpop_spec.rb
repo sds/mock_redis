@@ -60,7 +60,10 @@ RSpec.describe '#rpop(key)' do
   it_should_behave_like 'a list-only command' do
     let(:args) { [1] }
     let(:error) do
-      [Redis::CommandError, 'WRONGTYPE Operation against a key holding the wrong kind of value']
+      [
+        Redis::CommandError,
+        /WRONGTYPE Operation against a key holding the wrong kind of value/
+      ]
     end
   end
 end

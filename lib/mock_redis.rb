@@ -1,6 +1,7 @@
 require 'set'
 
 require 'mock_redis/assertions'
+require 'mock_redis/error'
 require 'mock_redis/database'
 require 'mock_redis/expire_wrapper'
 require 'mock_redis/future'

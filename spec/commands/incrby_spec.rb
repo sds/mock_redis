@@ -37,7 +37,7 @@ RSpec.describe '#incrby(key, increment)' do
   it 'raises an error if the delta does not look like an integer' do
     expect do
       @redises.incrby(@key, 'foo')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'a string-only command'

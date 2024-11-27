@@ -119,9 +119,13 @@ RSpec.describe '#zadd(key, score, member)' do
   end
 
   it 'no longer raises an error if an empty array is given' do
+    expect(@redises.zadd(@key, [])).to eq(0)
+  end
+
+  it 'raises error if no argument is set' do
     expect do
-      @redises.zadd(@key, [])
-    end.not_to raise_error(Redis::CommandError)
+      @redises.zadd(@key)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'arg 1 is a score'

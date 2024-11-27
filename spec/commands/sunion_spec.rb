@@ -32,11 +32,11 @@ RSpec.describe '#sunion(key [, key, ...])' do
     @redises.set('mock-redis-test:notset', 1)
 
     expect do
-      @redises.sunion(@numbers, 'mock-redis-test:notset')
-    end.to raise_error(Redis::CommandError)
+      @redises.sunion(nil, 'mock-redis-test:notset')
+    end.to raise_error(TypeError)
 
     expect do
-      @redises.sunion('mock-redis-test:notset', @numbers)
-    end.to raise_error(Redis::CommandError)
+      @redises.sunion('mock-redis-test:notset', nil)
+    end.to raise_error(TypeError)
   end
 end

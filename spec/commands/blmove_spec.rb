@@ -26,7 +26,7 @@ RSpec.describe '#blmove(source, destination, wherefrom, whereto, timeout)' do
   it 'raises an error on negative timeout' do
     expect do
       @redises.blmove(@list1, @list2, 'left', 'right', :timeout => -1)
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   let(:default_error) { RedisMultiplexer::MismatchedResponse }

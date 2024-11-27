@@ -19,10 +19,8 @@ RSpec.describe '#expireat(key, timestamp)' do
     expect(@redises.get(@key)).to be_nil
   end
 
-  it "raises an error if you don't give it a Unix timestamp" do
-    expect do
-      @redises.expireat(@key, Time.now) # oops, forgot .to_i
-    end.to raise_error(Redis::CommandError)
+  it 'returns true when time is a Time object' do
+    expect(@redises.expireat(@key, Time.now)).to eq true
   end
 
   it 'works with options', redis: '7.0' do

@@ -31,7 +31,7 @@ RSpec.describe '#blpop(key [, key, ...,], timeout)' do
   it 'raises an error on negative timeout' do
     expect do
       @redises.blpop(@list1, @list2, :timeout => -1)
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'a list-only command'

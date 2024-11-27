@@ -12,7 +12,10 @@ class MockRedis
       zadd_options = args.pop if args.last.is_a?(Hash)
 
       if zadd_options&.include?(:nx) && zadd_options&.include?(:xx)
-        raise Redis::CommandError, 'ERR XX and NX options at the same time are not compatible'
+        raise Error.command_error(
+          'ERR XX and NX options at the same time are not compatible',
+          self
+        )
       end
 
       if args.size == 1 && args[0].is_a?(Array)
@@ -21,7 +24,7 @@ class MockRedis
         score, member = args
         zadd_one_member(key, score, member, zadd_options)
       else
-        raise Redis::CommandError, 'ERR wrong number of arguments'
+        raise ArgumentError, 'wrong number of arguments'
       end
     end
 
@@ -57,12 +60,13 @@ class MockRedis
     private :zadd_one_member
 
     def zadd_multiple_members(key, args, zadd_options = {})
-      assert_has_args(args, 'zadd')
-
       args = args.each_slice(2).to_a unless args.first.is_a?(Array)
       with_zset_at(key) do |zset|
         if zadd_options[:incr]
-          raise Redis::CommandError, 'ERR INCR option supports a single increment-element pair'
+          raise Error.command_error(
+            'ERR INCR option supports a single increment-element pair',
+            self
+          )
         elsif zadd_options[:xx]
           args.each { |score, member| zset.include?(member) && zset.add(score, member.to_s) }
           0
@@ -143,7 +147,7 @@ class MockRedis
       else
         args = args.first
         if args.empty?
-          raise Redis::CommandError, "ERR wrong number of arguments for 'zrem' command"
+          retval = 0
         else
           retval = args.map { |member| !!zscore(key, member.to_s) }.count(true)
           with_zset_at(key) do |z|
@@ -257,7 +261,7 @@ class MockRedis
           offset, count = limit
           collection.drop(offset).take(count)
         else
-          raise Redis::CommandError, 'ERR syntax error'
+          raise Error.syntax_error(self)
         end
       else
         collection
@@ -277,7 +281,7 @@ class MockRedis
     def combine_weighted_zsets(keys, options, how)
       weights = options.fetch(:weights, keys.map { 1 })
       if weights.length != keys.length
-        raise Redis::CommandError, 'ERR syntax error'
+        raise Error.syntax_error(self)
       end
 
       aggregator = case options.fetch(:aggregate, :sum).to_s.downcase.to_sym
@@ -288,7 +292,7 @@ class MockRedis
                    when :max
                      proc { |a, b| [a, b].compact.max }
                    else
-                     raise Redis::CommandError, 'ERR syntax error'
+                     raise Error.syntax_error(self)
                    end
 
       with_zsets_at(*keys, coercible: true) do |*zsets|
@@ -342,15 +346,13 @@ class MockRedis
 
     def assert_zsety(key)
       unless zsety?(key)
-        raise Redis::CommandError,
-          'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Error.wrong_type_error(self)
       end
     end
 
     def assert_coercible_zsety(key)
       unless coercible_zsety?(key)
-        raise Redis::CommandError,
-          'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Error.wrong_type_error(self)
       end
     end
 
@@ -363,9 +365,10 @@ class MockRedis
       return if value.to_s =~ /\(?(-|\+)inf/
 
       value = $1 if value.to_s =~ /\((.*)/
-      unless looks_like_float?(value)
-        raise Redis::CommandError, message
-      end
+
+      assert_type(value)
+
+      raise Error.command_error(message, self) unless looks_like_float?(value)
     end
 
     def assert_range_args(min, max)

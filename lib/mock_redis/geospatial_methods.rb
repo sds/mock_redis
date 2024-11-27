@@ -1,3 +1,5 @@
+require 'mock_redis/error'
+
 class MockRedis
   module GeospatialMethods
     LNG_RANGE = (-180..180)
@@ -81,8 +83,7 @@ class MockRedis
       points = args.each_slice(3).to_a
 
       if points.last.size != 3
-        raise Redis::CommandError,
-          "ERR wrong number of arguments for 'geoadd' command"
+        raise Error.command_error("ERR wrong number of arguments for 'geoadd' command", self)
       end
 
       points.map do |point|
@@ -97,13 +98,15 @@ class MockRedis
       unless LNG_RANGE.include?(lng) && LAT_RANGE.include?(lat)
         lng = format('%<long>.6f', long: lng)
         lat = format('%<lat>.6f', lat: lat)
-        raise Redis::CommandError,
-          "ERR invalid longitude,latitude pair #{lng},#{lat}"
+        raise Error.command_error(
+          "ERR invalid longitude,latitude pair #{lng},#{lat}",
+          self
+        )
       end
 
       { key: point[2], lng: lng, lat: lat }
     rescue ArgumentError
-      raise Redis::CommandError, 'ERR value is not a valid float'
+      raise Error.command_error('ERR value is not a valid float', self)
     end
 
     # Returns ZSET score for passed coordinates
@@ -212,8 +215,7 @@ class MockRedis
       unit = unit.to_sym
       return UNITS[unit] if UNITS[unit]
 
-      raise Redis::CommandError,
-        'ERR unsupported unit provided. please use m, km, ft, mi'
+      raise Error.command_error('ERR unsupported unit provided. please use m, km, ft, mi', self)
     end
 
     def geohash_distance(lng1d, lat1d, lng2d, lat2d)

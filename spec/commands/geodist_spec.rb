@@ -108,7 +108,7 @@ RSpec.describe '#geodist' do
   end
 
   context 'with wrong unit' do
-    let(:message) { 'ERR unsupported unit provided. please use m, km, ft, mi' }
+    let(:message) { /ERR unsupported unit provided. please use m, km, ft, mi/ }
 
     it 'raises an error' do
       expect { @redises.geodist(key, 'SF', 'LA', 'a') }

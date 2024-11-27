@@ -47,8 +47,7 @@ RSpec.describe '#xadd("mystream", { f1: "v1", f2: "v2" }, '\
     expect { @redises.xadd(@key, { key: 'value' }, id: '1234567891233-0') }
       .to raise_error(
         Redis::CommandError,
-        'ERR The ID specified in XADD is equal or smaller than the target ' \
-        'stream top item'
+        /ERR The ID specified in XADD is equal or smaller than the target stream top item/
       )
   end
 
@@ -56,7 +55,7 @@ RSpec.describe '#xadd("mystream", { f1: "v1", f2: "v2" }, '\
     expect { @redises.xadd('mock-redis-test:unknown-stream', { key: 'value' }, id: '0') }
       .to raise_error(
         Redis::CommandError,
-        'ERR The ID specified in XADD must be greater than 0-0'
+        /ERR The ID specified in XADD must be greater than 0-0/
       )
   end
 
@@ -80,7 +79,7 @@ RSpec.describe '#xadd("mystream", { f1: "v1", f2: "v2" }, '\
     expect { @redises.xadd(@key, { key: 'value' }, id: 'X') }
       .to raise_error(
         Redis::CommandError,
-        'ERR Invalid stream ID specified as stream command argument'
+        /ERR Invalid stream ID specified as stream command argument/
       )
   end
 

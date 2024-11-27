@@ -68,7 +68,7 @@ RSpec.describe '#lrem(key, count, value)' do
   it 'raises an error if the value does not look like an integer' do
     expect do
       @redises.lrem(@key, 'foo', 'bottles')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it 'removes empty lists' do

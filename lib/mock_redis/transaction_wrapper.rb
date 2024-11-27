@@ -1,4 +1,5 @@
 require 'mock_redis/undef_redis_methods'
+require 'mock_redis/error'
 
 class MockRedis
   class TransactionWrapper
@@ -12,18 +13,12 @@ class MockRedis
       @db = db
       @transaction_futures = []
       @multi_stack = []
-      @multi_block_given = false
     end
 
     ruby2_keywords def method_missing(method, *args, &block)
       if in_multi?
-        future = MockRedis::Future.new([method, *args], block)
-        @transaction_futures << future
-
-        if @multi_block_given
-          future
-        else
-          'QUEUED'
+        MockRedis::Future.new([method, *args], block).tap do |future|
+          @transaction_futures << future
         end
       else
         @db.expire_keys
@@ -40,7 +35,7 @@ class MockRedis
 
     def discard
       unless in_multi?
-        raise Redis::CommandError, 'ERR DISCARD without MULTI'
+        raise Error.command_error('ERR DISCARD without MULTI', self)
       end
       pop_multi
 
@@ -50,22 +45,23 @@ class MockRedis
 
     def exec
       unless in_multi?
-        raise Redis::CommandError, 'ERR EXEC without MULTI'
+        raise Error.command_error('ERR EXEC without MULTI', self)
       end
+
       pop_multi
       return if in_multi?
-      @multi_block_given = false
 
       responses = @transaction_futures.map do |future|
         result = send(*future.command)
         future.store_result(result)
         future.value
-      rescue StandardError => e
-        e
       end
 
-      @transaction_futures = []
       responses
+    ensure
+      # At this point, multi is done, so we can't call discard anymore.
+      # Therefore, we need to clear the transaction futures manually.
+      @transaction_futures = []
     end
 
     def in_multi?
@@ -81,20 +77,16 @@ class MockRedis
     end
 
     def multi
-      if block_given?
-        push_multi
-        @multi_block_given = true
-        begin
-          yield(self)
-          exec
-        rescue StandardError => e
-          discard
-          raise e
-        end
-      else
-        raise Redis::CommandError, 'ERR MULTI calls can not be nested' if in_multi?
-        push_multi
-        'OK'
+      raise Redis::BaseError, "Can't nest multi transaction" if in_multi?
+
+      push_multi
+
+      begin
+        yield(self)
+        exec
+      rescue StandardError => e
+        discard if in_multi?
+        raise e
       end
     end
 

@@ -22,7 +22,7 @@ RSpec.describe '#expire(key, seconds)' do
   it 'raises an error if seconds is bogus' do
     expect do
       @redises.expire(@key, 'a couple minutes or so')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it 'stringifies key' do

@@ -67,6 +67,18 @@ RSpec.describe '#lmove(source, destination, wherefrom, whereto)' do
     end.to raise_error(Redis::CommandError)
   end
 
+  it 'raises error if wherefrom is not left or right' do
+    expect do
+      @redises.lmove(@list1, @list2, 'oops', 'right')
+    end.to raise_error(ArgumentError, "where_source must be 'LEFT' or 'RIGHT'")
+  end
+
+  it 'raises error if whereto is not left or right' do
+    expect do
+      @redises.lmove(@list1, @list2, 'left', 'oops')
+    end.to raise_error(ArgumentError, "where_destination must be 'LEFT' or 'RIGHT'")
+  end
+
   let(:default_error) { RedisMultiplexer::MismatchedResponse }
   it_should_behave_like 'a list-only command'
 end

@@ -24,7 +24,7 @@ RSpec.describe '#setex(key, seconds, value)' do
     it 'raises Redis::CommandError' do
       expect do
         @redises.setex(@key, 0, 'value')
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in setex')
+      end.to raise_error(Redis::CommandError, /ERR invalid expire time in setex/)
     end
   end
 
@@ -32,7 +32,7 @@ RSpec.describe '#setex(key, seconds, value)' do
     it 'raises Redis::CommandError' do
       expect do
         @redises.setex(@key, -2, 'value')
-      end.to raise_error(Redis::CommandError, 'ERR invalid expire time in setex')
+      end.to raise_error(Redis::CommandError, /ERR invalid expire time in setex/)
     end
   end
 end

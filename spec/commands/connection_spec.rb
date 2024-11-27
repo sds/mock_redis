@@ -6,11 +6,11 @@ RSpec.describe '#connection' do
   it 'returns the correct values' do
     expect(redis.connection).to eq(
       {
-        :host => '127.0.0.1',
+        :host => 'localhost',
         :port => 6379,
         :db => 0,
-        :id => 'redis://127.0.0.1:6379/0',
-        :location => '127.0.0.1:6379'
+        :id => 'redis://localhost:6379/0',
+        :location => 'localhost:6379'
       }
     )
   end

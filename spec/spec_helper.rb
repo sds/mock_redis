@@ -59,7 +59,7 @@ RSpec.configure do |config|
   config.include(TypeCheckingHelper)
 
   config.before(:all) do
-    @redises = RedisMultiplexer.new
+    @redises = RedisMultiplexer.new(url: 'redis://localhost:6379')
   end
 
   config.before(:each) do

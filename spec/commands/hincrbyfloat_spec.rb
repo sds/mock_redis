@@ -51,7 +51,7 @@ RSpec.describe '#hincrbyfloat(key, field, increment)' do
   it 'raises an error if the delta does not look like a float' do
     expect do
       @redises.hincrbyfloat(@key, @field, 'foobar.baz')
-    end.to raise_error(Redis::CommandError)
+    end.to raise_error(ArgumentError)
   end
 
   it_should_behave_like 'a hash-only command'

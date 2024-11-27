@@ -1,5 +1,6 @@
 require 'mock_redis/assertions'
 require 'mock_redis/utility_methods'
+require 'mock_redis/error'
 
 class MockRedis
   module HashMethods
@@ -7,12 +8,16 @@ class MockRedis
     include UtilityMethods
 
     def hdel(key, *fields)
+      assert_type(key)
+
       with_hash_at(key) do |hash|
         orig_size = hash.size
         fields = Array(fields).flatten.map(&:to_s)
 
+        assert_type(*fields)
+
         if fields.empty?
-          raise Redis::CommandError, "ERR wrong number of arguments for 'hdel' command"
+          raise Error.command_error("ERR wrong number of arguments for 'hdel' command", self)
         end
 
         hash.delete_if { |k, _v| fields.include?(k) }
@@ -21,25 +26,31 @@ class MockRedis
     end
 
     def hexists(key, field)
+      assert_type(key, field)
+
       with_hash_at(key) { |h| h.key?(field.to_s) }
     end
 
     def hget(key, field)
+      assert_type(key, field)
+
       with_hash_at(key) { |h| h[field.to_s] }
     end
 
     def hgetall(key)
+      assert_type(key)
+
       with_hash_at(key) { |h| h }
     end
 
     def hincrby(key, field, increment)
+      assert_type(key, field)
+
       with_hash_at(key) do |hash|
         field = field.to_s
+        increment = Integer(increment)
         unless can_incr?(data[key][field])
-          raise Redis::CommandError, 'ERR hash value is not an integer'
-        end
-        unless looks_like_integer?(increment.to_s)
-          raise Redis::CommandError, 'ERR value is not an integer or out of range'
+          raise Error.command_error('ERR hash value is not an integer', self)
         end
 
         new_value = (hash[field] || '0').to_i + increment.to_i
@@ -49,14 +60,13 @@ class MockRedis
     end
 
     def hincrbyfloat(key, field, increment)
+      assert_type(key, field)
+
       with_hash_at(key) do |hash|
         field = field.to_s
+        increment = Float(increment)
         unless can_incr_float?(data[key][field])
-          raise Redis::CommandError, 'ERR hash value is not a float'
-        end
-
-        unless looks_like_float?(increment.to_s)
-          raise Redis::CommandError, 'ERR value is not a valid float'
+          raise Error.command_error('ERR hash value is not a float', self)
         end
 
         new_value = (hash[field] || '0').to_f + increment.to_f
@@ -67,21 +77,28 @@ class MockRedis
     end
 
     def hkeys(key)
+      assert_type(key)
+
       with_hash_at(key, &:keys)
     end
 
     def hlen(key)
+      assert_type(key)
+
       hkeys(key).length
     end
 
     def hmget(key, *fields)
       fields.flatten!
 
+      assert_type(key, *fields)
       assert_has_args(fields, 'hmget')
       fields.map { |f| hget(key, f) }
     end
 
     def mapped_hmget(key, *fields)
+      fields.flatten!
+
       reply = hmget(key, *fields)
       if reply.is_a?(Array)
         Hash[fields.zip(reply)]
@@ -98,10 +115,15 @@ class MockRedis
       end
 
       kvpairs.flatten!
+
+      assert_type(key, *kvpairs)
       assert_has_args(kvpairs, 'hmset')
 
       if kvpairs.length.odd?
-        raise Redis::CommandError, err_msg || 'ERR wrong number of arguments for \'hmset\' command'
+        raise Error.command_error(
+          err_msg || "ERR wrong number of arguments for 'hmset' command",
+          self
+        )
       end
 
       kvpairs.each_slice(2) do |(k, v)|
@@ -111,21 +133,27 @@ class MockRedis
     end
 
     def mapped_hmset(key, hash)
-      kvpairs = hash.to_a.flatten
+      kvpairs = hash.flatten
+
+      assert_type(key, *kvpairs)
       assert_has_args(kvpairs, 'hmset')
       if kvpairs.length.odd?
-        raise Redis::CommandError, "ERR wrong number of arguments for 'hmset' command"
+        raise Error.command_error("ERR wrong number of arguments for 'hmset' command", self)
       end
 
       hmset(key, *kvpairs)
     end
 
     def hscan(key, cursor, opts = {})
+      assert_type(key, cursor)
+
       opts = opts.merge(key: lambda { |x| x[0] })
       common_scan(hgetall(key).to_a, cursor, opts)
     end
 
     def hscan_each(key, opts = {}, &block)
+      assert_type(key)
+
       return to_enum(:hscan_each, key, opts) unless block_given?
       cursor = 0
       loop do
@@ -138,10 +166,14 @@ class MockRedis
     def hset(key, *args)
       added = 0
       args.flatten!(1)
+      assert_type(key)
+
       with_hash_at(key) do |hash|
         if args.length == 1 && args[0].is_a?(Hash)
           args = args[0].to_a.flatten
         end
+
+        assert_type(*args)
 
         args.each_slice(2) do |field, value|
           added += 1 unless hash.key?(field.to_s)
@@ -152,6 +184,7 @@ class MockRedis
     end
 
     def hsetnx(key, field, value)
+      assert_type(key, field, value)
       if hget(key, field)
         false
       else
@@ -161,6 +194,8 @@ class MockRedis
     end
 
     def hvals(key)
+      assert_type(key)
+
       with_hash_at(key, &:values)
     end
 
@@ -176,8 +211,7 @@ class MockRedis
 
     def assert_hashy(key)
       unless hashy?(key)
-        raise Redis::CommandError,
-              'WRONGTYPE Operation against a key holding the wrong kind of value'
+        raise Error.wrong_type_error(self)
       end
     end
   end
