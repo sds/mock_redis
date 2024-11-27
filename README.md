@@ -10,9 +10,10 @@ for use in tests.
 
 ## Requirements
 
-Ruby 3.0+
+Ruby 3.x
+redis-rb 5.x
 
-The current implementation is tested against Redis 6.2. Older versions may work, but can also return different results or not support some commands.
+The current implementation is **tested against Redis 6.2 and 7.0**. Older versions may work, but can also return different results or not support some commands.
 
 ## Getting Started
 

@@ -1,5 +1,10 @@
 # MockRedis Changelog
 
+### 0.47.0
+
+* Add support for `redis-rb` gem versions 5.x
+* Drop support for `redis-rb` gem versions < 5.x
+
 ### 0.46.0
 
 * Fix `hset` for array of key-value pairs
