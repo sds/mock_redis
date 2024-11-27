@@ -90,6 +90,32 @@ class MockRedis
       with_list_at(key, &:length)
     end
 
+    def lmpop(*keys, **options)
+      keys.each do |key|
+        assert_listy(key)
+      end
+
+      modifier = options.is_a?(Hash) && options[:modifier]&.to_s&.downcase || 'left'
+      count = (options.is_a?(Hash) && options[:count]) || 1
+
+      unless %w[left right].include?(modifier)
+        raise Redis::CommandError, 'ERR syntax error'
+      end
+
+      keys.each do |key|
+        record_count = llen(key)
+        next if record_count.zero?
+
+        values = [count, record_count].min.times.map do
+          modifier == 'left' ? with_list_at(key, &:shift) : with_list_at(key, &:pop)
+        end
+
+        return [key, values]
+      end
+
+      nil
+    end
+
     def lmove(source, destination, wherefrom, whereto)
       assert_listy(source)
       assert_listy(destination)
