@@ -15,35 +15,35 @@ RSpec.describe '#lmpop(*keys)' do
   end
 
   it 'returns and removes the first element of the first non-empty list' do
-    expect(@redises.lmpop('empty', @list1, @list2)).to eq([@list2, ['a']])
+    expect(@redises.lmpop('empty', @list1, @list2)).to eq([@list1, ['a']])
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[b c])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
   end
 
   it 'returns and removes the first element of the first non-empty list when modifier is LEFT' do
-    expect(@redises.lmpop('empty', @list1, @list2), modifier: 'LEFT').to eq([@list2, ['a']])
+    expect(@redises.lmpop('empty', @list1, @list2, modifier: 'LEFT')).to eq([@list1, ['a']])
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[b c])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
   end
 
   it 'returns and removes the last element of the first non-empty list when modifier is RIGHT' do
-    expect(@redises.lmpop('empty', @list1, @list2, modifier: 'RIGHT')).to eq([@list2, ['c']])
+    expect(@redises.lmpop('empty', @list1, @list2, modifier: 'RIGHT')).to eq([@list1, ['c']])
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[a b])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
   end
 
   it 'returns and removes multiple elements from the front when count is given' do
-    expect(@redises.lmpop('empty', @list1, @list2, count: 2)).to eq([@list2, ['a', 'b']])
+    expect(@redises.lmpop('empty', @list1, @list2, count: 2)).to eq([@list1, ['a', 'b']])
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[c])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
   end
 
   it 'returns and removes multiple elements from the back when count is given and modifier is RIGHT' do
-    expect(@redises.lmpop('empty', @list1, @list2, count: 2, modifier: 'RIGHT')).to eq([@list2, ['c', 'b']])
+    expect(@redises.lmpop('empty', @list1, @list2, count: 2, modifier: 'RIGHT')).to eq([@list1, ['c', 'b']])
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[a])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
@@ -53,7 +53,7 @@ RSpec.describe '#lmpop(*keys)' do
     expect(@redises.lmpop('empty')).to be_nil
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[a b c])
-    expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y c])
+    expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
   end
 
   it 'removes empty lists' do
