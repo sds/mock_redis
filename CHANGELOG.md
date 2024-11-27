@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.48.0
+
+* Add support for `lmpop` on Redis 7+
+
 ### 0.47.0
 
 * Add support for `redis-rb` gem versions 5.x
