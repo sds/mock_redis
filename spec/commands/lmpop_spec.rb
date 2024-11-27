@@ -36,14 +36,16 @@ RSpec.describe '#lmpop(*keys)', redis: 7.0 do
   end
 
   it 'returns and removes multiple elements from the front when count is given' do
-    expect(@redises.lmpop('empty', @list1, @list2, count: 2)).to eq([@list1, ['a', 'b']])
+    expect(@redises.lmpop('empty', @list1, @list2, count: 2)).to eq([@list1, %w[a b]])
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[c])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
   end
 
-  it 'returns and removes multiple elements from the back when count is given and modifier is RIGHT' do
-    expect(@redises.lmpop('empty', @list1, @list2, count: 2, modifier: 'RIGHT')).to eq([@list1, ['c', 'b']])
+  it 'returns and removes multiple elements from the back when count given and modifier is RIGHT' do
+    expect(@redises.lmpop('empty', @list1, @list2, count: 2, modifier: 'RIGHT')).to(
+      eq([@list1, %w[c b]])
+    )
 
     expect(@redises.lrange(@list1, 0, -1)).to eq(%w[a])
     expect(@redises.lrange(@list2, 0, -1)).to eq(%w[x y z])
