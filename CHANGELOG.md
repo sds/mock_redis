@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.48.1
+
+* Fix load issue with `redis-client` gem
+
 ### 0.48.0
 
 * Add support for `lmpop` on Redis 7+
