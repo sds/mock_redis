@@ -1,3 +1,4 @@
+require 'redis-client'
 require 'mock_redis/error'
 
 class MockRedis
