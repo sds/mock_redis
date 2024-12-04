@@ -1,6 +1,6 @@
 # MockRedis Changelog
 
-### main (unreleased)
+### 0.49.0
 
 * Move `redis` from development dependency to runtime dependency
 
