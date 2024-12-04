@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### main (unreleased)
+
+* Move `redis` from development dependency to runtime dependency
+
 ### 0.48.1
 
 * Fix load issue with `redis-client` gem
