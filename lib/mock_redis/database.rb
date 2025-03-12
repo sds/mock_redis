@@ -48,7 +48,8 @@ class MockRedis
     # FIXME: Current implementation of `call` does not work propetly with kwarg-options.
     # i.e. `call("EXPIRE", "foo", 40, "NX")` (which redis-rb will simply transmit to redis-server)
     # will be passed to `#expire` without keywords transformation.
-    def call(command, &_block)
+    def call(*command, &_block)
+      command = command[0] if command.length == 1 # allow for single array argument or multiple arguments
       public_send(command[0].downcase, *command[1..])
     end
 
