@@ -28,7 +28,7 @@ class MockRedis
       cursor = cursor.to_i
       match = opts[:match] || '*'
       key = opts[:key] || lambda { |x| x }
-      type_opt = opts[:type]
+      type_opt = opts[:type]&.to_s
       filtered_values = []
 
       limit = cursor + count
