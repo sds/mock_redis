@@ -30,6 +30,7 @@ RSpec.describe '#brpoplpush(source, destination, timeout)' do
     end.to raise_error(ArgumentError)
   end
 
+  let(:default_error) { Redis::WrongTypeError }
   it_should_behave_like 'a list-only command'
 
   context '[mock only]' do
