@@ -33,11 +33,11 @@ module TypeCheckingHelper
   end
 
   def args_for_method(method)
-    # using parameters instead of arity because arity cannot properly account for keyword vs positional arguments
-    # when it is negative arity
+    # using parameters instead of arity because arity cannot properly account for keyword vs
+    # positional arguments when it is negative arity
     parameters = @redises.real.method(method).parameters
-    base_parameters = parameters.count{ |type, _| type == :req || type == :opt }
-    rest_params = parameters.count{ |type, _| type == :rest }
+    base_parameters = parameters.count { |type, _| [:req, :opt].include?(type) }
+    rest_params = parameters.count { |type, _| type == :rest }
     total_params = (rest_params * 2) + base_parameters
 
     (1..(total_params - 1)).to_a
