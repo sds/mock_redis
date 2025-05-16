@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe '#brpoplpush(source, destination, timeout)' do
-  let(:default_error) { ArgumentError }
-
   before do
     @list1 = 'mock-redis-test:brpoplpush1'
     @list2 = 'mock-redis-test:brpoplpush2'

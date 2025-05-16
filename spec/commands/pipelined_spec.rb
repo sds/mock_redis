@@ -142,5 +142,15 @@ RSpec.describe '#pipelined' do
 
       expect(results).to eq([value1, 'OK', 'foobar'])
     end
+
+    it 'works correctly with mixed-case commands not using array' do
+      results = @redises.pipelined do |redis|
+        redis.call('Get', key1)
+        redis.call('SET', key2, 'foobar')
+        redis.call('gET', key2)
+      end
+
+      expect(results).to eq([value1, 'OK', 'foobar'])
+    end
   end
 end
