@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.50.0
+
+* Allow `#call` to accept array or multiple arguments
+
 ### 0.49.0
 
 * Move `redis` from development dependency to runtime dependency
