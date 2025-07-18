@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.51.0
+
+* Improve performance of `hmget` when fetching many fields
+
 ### 0.50.0
 
 * Allow `#call` to accept array or multiple arguments
