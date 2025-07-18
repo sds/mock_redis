@@ -15,7 +15,7 @@ RSpec.describe '#hmget(key, field [, field, ...])' do
     expect(@redises.hmget(@key, %w[k1 k2]).sort).to eq(%w[v1 v2])
   end
 
-  it 'treats the fielsd as strings' do
+  it 'treats the fields as strings' do
     @redises.hset(@key, 1, 'one')
     @redises.hset(@key, 2, 'two')
     expect(@redises.hmget(@key, 1, 2).sort).to eq(%w[one two])
