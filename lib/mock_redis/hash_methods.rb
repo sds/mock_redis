@@ -93,7 +93,7 @@ class MockRedis
 
       assert_type(key, *fields)
       assert_has_args(fields, 'hmget')
-      fields.map { |f| hget(key, f) }
+      with_hash_at(key) { |h| h.values_at(*fields.map(&:to_s)) }
     end
 
     def mapped_hmget(key, *fields)
