@@ -51,7 +51,12 @@ class MockRedis
     def call(*command, &_block)
       # allow for single array argument or multiple arguments
       command = command[0] if command.length == 1
-      public_send(command[0].downcase, *command[1..])
+
+      if command[0].downcase.to_s.include?('expire')
+        send_expires(command)
+      else
+        public_send(command[0].downcase, *command[1..])
+      end
     end
 
     def auth(_)
@@ -349,6 +354,11 @@ class MockRedis
 
     def looks_like_float?(str)
       !!Float(str) rescue false
+    end
+
+    def send_expires(command)
+      command, key, ttl, option = *command
+      public_send(command, key, ttl, option.downcase.to_sym => option)
     end
 
     def should_update_expiration?(expiry, new_expiry, nx:, xx:, lt:, gt:) # rubocop:disable Metrics/ParameterLists
