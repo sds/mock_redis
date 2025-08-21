@@ -20,6 +20,8 @@ RSpec.describe '#pexpireat(key, timestamp_ms)' do
   end
 
   it 'removes a key immediately when timestamp is now' do
+    # Solves inconsistent failures when running test one after another
+    sleep 0.001
     @redises.pexpireat(@key, now_ms)
     expect(@redises.get(@key)).to be_nil
   end
