@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.52.0
+
+* Fix handling of `expire*` via `.call`
+
 ### 0.51.0
 
 * Improve performance of `hmget` when fetching many fields
