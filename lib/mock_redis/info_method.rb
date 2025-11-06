@@ -142,6 +142,7 @@ class MockRedis
     ].inject({}) { |memo, info| memo.merge(info) }
 
     def info(section = :default)
+      section = section.to_sym if section.is_a?(String)
       case section
       when :default;      DEFAULT_INFO
       when :all;          ALL_INFO

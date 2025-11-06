@@ -59,4 +59,13 @@ RSpec.describe '#info [mock only]' do
   it 'gets commandstats info' do
     expect(redis.info(:commandstats)['sunionstore']['usec']).to be_a(String)
   end
+
+  it 'works when called through call method' do
+    expect(redis.call('info')).to be_a(Hash)
+  end
+
+  it 'works when called through call method with section' do
+    info = redis.call('info', 'server')
+    expect(info['arch_bits']).to be_a(String)
+  end
 end
