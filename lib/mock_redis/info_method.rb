@@ -125,35 +125,65 @@ class MockRedis
     }.freeze
     # rubocop:enable Layout/LineLength
 
-    DEFAULT_INFO = [
-      SERVER_INFO,
-      CLIENTS_INFO,
-      MEMORY_INFO,
-      PERSISTENCE_INFO,
-      STATS_INFO,
-      REPLICATION_INFO,
-      CPU_INFO,
-      KEYSPACE_INFO,
-    ].inject({}) { |memo, info| memo.merge(info) }
-
-    ALL_INFO = [
-      DEFAULT_INFO,
-      COMMAND_STATS_COMBINED_INFO,
-    ].inject({}) { |memo, info| memo.merge(info) }
+    SECTIONS = {
+      server: SERVER_INFO,
+      clients: CLIENTS_INFO,
+      memory: MEMORY_INFO,
+      persistence: PERSISTENCE_INFO,
+      stats: STATS_INFO,
+      replication: REPLICATION_INFO,
+      cpu: CPU_INFO,
+      keyspace: KEYSPACE_INFO,
+      commandstats: COMMAND_STATS_COMBINED_INFO,
+    }.freeze
+    SECTION_NAMES = {
+      server: 'Server',
+      clients: 'Clients',
+      memory: 'Memory',
+      persistence: 'Persistence',
+      stats: 'Stats',
+      replication: 'Replication',
+      cpu: 'Cpu',
+      keyspace: 'Keyspace',
+      commandstats: 'Commandstats',
+    }.freeze
+    DEFAULT_SECTIONS = [
+      :server, :clients, :memory, :persistence, :stats, :replication, :cpu, :keyspace
+    ].freeze
+    ALL_SECTIONS = DEFAULT_SECTIONS + [:commandstats].freeze
 
     def info(section = :default)
+      if section.to_s.downcase == 'commandstats'
+        # `redis.info(:commandstats)` gives a nested hash structure,
+        # unlike when commandstats is printed as part of `redis.info(:all)`
+        COMMAND_STATS_SOLO_INFO
+      else
+        sections = relevant_info_sections(section)
+        sections.inject({}) { |memo, name| memo.merge(SECTIONS[name]) }
+      end
+    end
+
+    private
+
+    # Format info hash as raw string (used by call("info"))
+    def info_raw(section = :default)
+      sections = relevant_info_sections(section)
+      sections.map do |name|
+        header = "# #{SECTION_NAMES[name]}"
+        lines = SECTIONS[name].map { |k, v| "#{k}:#{v}" }
+        [header, *lines].join("\n")
+      end.join("\n\n") << "\n"
+    end
+
+    def relevant_info_sections(section)
+      section = section.to_s.downcase.to_sym
       case section
-      when :default;      DEFAULT_INFO
-      when :all;          ALL_INFO
-      when :server;       SERVER_INFO
-      when :clients;      CLIENTS_INFO
-      when :memory;       MEMORY_INFO
-      when :persistence;  PERSISTENCE_INFO
-      when :stats;        STATS_INFO
-      when :replication;  REPLICATION_INFO
-      when :cpu;          CPU_INFO
-      when :keyspace;     KEYSPACE_INFO
-      when :commandstats; COMMAND_STATS_SOLO_INFO
+      when :default
+        DEFAULT_SECTIONS
+      when :all
+        ALL_SECTIONS
+      else
+        [section]
       end
     end
   end

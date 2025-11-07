@@ -59,4 +59,19 @@ RSpec.describe '#info [mock only]' do
   it 'gets commandstats info' do
     expect(redis.info(:commandstats)['sunionstore']['usec']).to be_a(String)
   end
+
+  it 'returns raw string when called through call method' do
+    result = redis.call('info')
+    expect(result).to be_a(String)
+    expect(result).to include('# Server')
+    expect(result).to include('arch_bits:64')
+  end
+
+  it 'returns raw string with section when called through call method' do
+    result = redis.call('info', 'server')
+    expect(result).to be_a(String)
+    expect(result).to include('# Server')
+    expect(result).to include('arch_bits:64')
+    expect(result).not_to include('# Clients')
+  end
 end

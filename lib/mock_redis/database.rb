@@ -49,13 +49,18 @@ class MockRedis
     # i.e. `call("EXPIRE", "foo", 40, "NX")` (which redis-rb will simply transmit to redis-server)
     # will be passed to `#expire` without keywords transformation.
     def call(*command, &_block)
-      # allow for single array argument or multiple arguments
-      command = command[0] if command.length == 1
+      # flatten any nested arrays (eg from [:call, ["GET", "X"]] in pipelined commands)
+      command = command.flatten
 
-      if command[0].downcase.to_s.include?('expire')
+      cmd_name = command[0].downcase.to_s
+
+      if cmd_name.include?('expire')
         send_expires(command)
+      elsif cmd_name == 'info'
+        # call(:info) returns a string, not a parsed hash
+        info_raw(*command[1..])
       else
-        public_send(command[0].downcase, *command[1..])
+        public_send(cmd_name, *command[1..])
       end
     end
 
