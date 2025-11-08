@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.53.0
+
+* Fix `redis.call("info")`
+
 ### 0.52.0
 
 * Fix handling of `expire*` via `.call`
