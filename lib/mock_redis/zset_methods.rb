@@ -253,6 +253,34 @@ class MockRedis
       zcard(destination)
     end
 
+    def bzpopmin(*args)
+      keys, timeout = extract_timeout(args)
+      nonempty_zset = first_nonempty_zset(keys)
+
+      if nonempty_zset
+        member, score = zpopmin(nonempty_zset)
+        [nonempty_zset, member, score]
+      elsif timeout > 0
+        nil
+      else
+        raise MockRedis::WouldBlock, "Can't block forever"
+      end
+    end
+
+    def bzpopmax(*args)
+      keys, timeout = extract_timeout(args)
+      nonempty_zset = first_nonempty_zset(keys)
+
+      if nonempty_zset
+        member, score = zpopmax(nonempty_zset)
+        [nonempty_zset, member, score]
+      elsif timeout > 0
+        nil
+      else
+        raise MockRedis::WouldBlock, "Can't block forever"
+      end
+    end
+
     private
 
     def apply_limit(collection, limit)
@@ -375,6 +403,10 @@ class MockRedis
       [min, max].each do |value|
         assert_scorey(value, 'ERR min or max is not a float')
       end
+    end
+
+    def first_nonempty_zset(keys)
+      keys.find { |k| zcard(k) > 0 }
     end
   end
 end
