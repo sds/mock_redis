@@ -281,6 +281,64 @@ class MockRedis
       end
     end
 
+    def zmpop(*keys, **options)
+      keys.each do |key|
+        assert_zsety(key)
+      end
+
+      modifier = options.is_a?(Hash) && options[:modifier]&.to_s&.downcase || 'min'
+      count = (options.is_a?(Hash) && options[:count]) || 1
+
+      unless %w[min max].include?(modifier)
+        raise ArgumentError, 'Pick either MIN or MAX'
+      end
+
+      keys.each do |key|
+        record_count = zcard(key)
+        next if record_count.zero?
+
+        values = [count, record_count].min.times.map do
+          modifier == 'min' ? zpopmin(key) : zpopmax(key)
+        end
+
+        return [key, values]
+      end
+
+      nil
+    end
+
+    def bzmpop(timeout, *keys, **options)
+      timeout = assert_valid_timeout(timeout)
+
+      keys.each do |key|
+        assert_zsety(key)
+      end
+
+      modifier = options.is_a?(Hash) && options[:modifier]&.to_s&.downcase || 'min'
+      count = (options.is_a?(Hash) && options[:count]) || 1
+
+      unless %w[min max].include?(modifier)
+        raise ArgumentError, 'Pick either MIN or MAX'
+      end
+
+      keys.each do |key|
+        record_count = zcard(key)
+        next if record_count.zero?
+
+        values = [count, record_count].min.times.map do
+          modifier == 'min' ? zpopmin(key) : zpopmax(key)
+        end
+
+        return [key, values]
+      end
+
+      if timeout > 0
+        nil
+      else
+        raise MockRedis::WouldBlock, "Can't block forever"
+      end
+    end
+
     private
 
     def apply_limit(collection, limit)
