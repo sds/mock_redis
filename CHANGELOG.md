@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.54.0
+
+* Add `(B)ZMPOP`, `BZPOPMIN`, and `BZPOPMAX` commands
+
 ### 0.53.0
 
 * Fix `redis.call("info")`
