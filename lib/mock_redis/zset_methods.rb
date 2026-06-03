@@ -51,21 +51,25 @@ class MockRedis
           end
 
           zincrby(key, score, member)
+        elsif zadd_options[:gt]
+          current_score = zset.score(member.to_s)
+          new_score = score.to_f
+
+          if current_score.nil?
+            return false if zadd_options[:xx]
+             
+            zset.add(new_score, member.to_s)
+            true
+          else
+            zset.add(new_score, member.to_s) if new_score > current_score
+            false
+          end
         elsif zadd_options[:xx]
+          # NOTE: gt and xx options are handled at the gt branch above, so its not handled here.
           zset.add(score, member.to_s) if zset.include?(member)
           false
         elsif zadd_options[:nx]
           !zset.include?(member) && !!zset.add(score, member.to_s)
-        elsif zadd_options[:gt]
-          current_score = zset.score(member.to_s)
-          if current_score.nil?
-            zset.add(score.to_f, member.to_s)
-            true
-          else
-            score_f = score.to_f
-            zset.add(score_f, member.to_s) if score_f > current_score
-            false
-          end
         else
           retval = !zscore(key, member)
           zset.add(score, member.to_s)

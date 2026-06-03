@@ -116,6 +116,26 @@ RSpec.describe '#zadd(key, score, member)' do
     expect(@redises.zscore(@key, 'foo')).to eq(3.0)
   end
 
+  it 'with GT and XX options, member does not does not add new member' do
+    result = @redises.zadd(@key, 1, 'foo', gt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to be_nil
+  end
+
+  it 'with GT and XX options updates existing member when new score is greater' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 5, 'foo', gt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and XX options does not update existing member when new score is lower' do
+    @redises.zadd(@key, 5, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', gt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
   it 'with INCR is act like zincrby' do
     expect(@redises.zadd(@key, 10, 'bert', incr: true)).to eq(10.0)
     expect(@redises.zadd(@key, 3, 'bert', incr: true)).to eq(13.0)
