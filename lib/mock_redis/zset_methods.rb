@@ -40,6 +40,16 @@ class MockRedis
 
       with_zset_at(key) do |zset|
         if zadd_options[:incr]
+          if zadd_options[:gt]
+            current_score = zset.score(member.to_s)
+            if current_score.nil?
+              return zadd_options[:xx] ? nil : zincrby(key, score, member)
+            else
+              new_score = current_score + score.to_f
+              return new_score > current_score ? zincrby(key, score, member) : nil
+            end
+          end
+
           if zadd_options[:xx]
             member_present = zset.include?(member)
             return member_present ? zincrby(key, score, member) : nil

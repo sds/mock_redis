@@ -136,6 +136,39 @@ RSpec.describe '#zadd(key, score, member)' do
     expect(@redises.zscore(@key, 'foo')).to eq(5.0)
   end
 
+  it 'with GT and INCR adds new member with increment as initial score' do
+    result = @redises.zadd(@key, 5, 'foo', gt: true, incr: true)
+    expect(result).to eq(5.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and INCR updates existing member when positive increment makes score greater' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true, incr: true)
+    expect(result).to eq(5.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and INCR does not update existing member when negative increment makes score lower' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, -1, 'foo', gt: true, incr: true)
+    expect(result).to be_nil
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+  end
+
+  it 'with GT and INCR and XX, member does not exist, does not add new member' do
+    result = @redises.zadd(@key, 5, 'foo', gt: true, incr: true, xx: true)
+    expect(result).to be_nil
+    expect(@redises.zscore(@key, 'foo')).to be_nil
+  end
+
+  it 'with GT and INCR and XX updates existing member when positive increment makes score greater' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true, incr: true, xx: true)
+    expect(result).to eq(5.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
   it 'with INCR is act like zincrby' do
     expect(@redises.zadd(@key, 10, 'bert', incr: true)).to eq(10.0)
     expect(@redises.zadd(@key, 3, 'bert', incr: true)).to eq(13.0)
