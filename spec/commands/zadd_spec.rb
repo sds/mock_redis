@@ -83,6 +83,39 @@ RSpec.describe '#zadd(key, score, member)' do
     end.to raise_error(Redis::CommandError)
   end
 
+  it 'with GT and NX options at the same time raise error' do
+    expect do
+      @redises.zadd(@key, 1, 'foo', gt: true, nx: true)
+    end.to raise_error(Redis::CommandError)
+  end
+
+  it 'with GT option adds new member' do
+    result = @redises.zadd(@key, 1, 'foo', gt: true)
+    expect(result).to eq(true)
+    expect(@redises.zscore(@key, 'foo')).to eq(1.0)
+  end
+
+  it 'with GT option updates existing member when new score is greater' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with GT option does not update existing member when new score is equal' do
+    @redises.zadd(@key, 2, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with GT option does not update existing member when new score is lower' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', gt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+  end
+
   it 'with INCR is act like zincrby' do
     expect(@redises.zadd(@key, 10, 'bert', incr: true)).to eq(10.0)
     expect(@redises.zadd(@key, 3, 'bert', incr: true)).to eq(13.0)

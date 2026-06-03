@@ -18,6 +18,13 @@ class MockRedis
         )
       end
 
+      if zadd_options&.include?(:gt) && zadd_options&.include?(:nx)
+        raise Error.command_error(
+          'ERR GT, LT, and/or NX options at the same time are not compatible',
+          self
+        )
+      end
+
       if args.size == 1 && args[0].is_a?(Array)
         zadd_multiple_members(key, args.first, zadd_options)
       elsif args.size == 2
@@ -49,6 +56,16 @@ class MockRedis
           false
         elsif zadd_options[:nx]
           !zset.include?(member) && !!zset.add(score, member.to_s)
+        elsif zadd_options[:gt]
+          current_score = zset.score(member.to_s)
+          if current_score.nil?
+            zset.add(score.to_f, member.to_s)
+            true
+          else
+            score_f = score.to_f
+            zset.add(score_f, member.to_s) if score_f > current_score
+            false
+          end
         else
           retval = !zscore(key, member)
           zset.add(score, member.to_s)
