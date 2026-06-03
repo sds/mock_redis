@@ -98,6 +98,20 @@ class MockRedis
             'ERR INCR option supports a single increment-element pair',
             self
           )
+        elsif zadd_options[:gt]
+          args.reduce(0) do |retval, (score, member)|
+            current_score = zset.score(member.to_s)
+            if current_score.nil?
+              unless zadd_options[:xx]
+                zset.add(score.to_f, member.to_s)
+                retval += 1
+              end
+            else
+              score_f = score.to_f
+              zset.add(score_f, member.to_s) if score_f > current_score
+            end
+            retval
+          end
         elsif zadd_options[:xx]
           args.each { |score, member| zset.include?(member) && zset.add(score, member.to_s) }
           0

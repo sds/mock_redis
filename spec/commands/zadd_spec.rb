@@ -198,6 +198,30 @@ RSpec.describe '#zadd(key, score, member)' do
     end.to raise_error(Redis::CommandError)
   end
 
+  it 'with GT option and multiple members counts only newly added members' do
+    @redises.zadd(@key, 3, 'foo')
+    count = @redises.zadd(@key, [[5, 'foo'], [1, 'bar']], gt: true)
+    expect(count).to eq(1)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+    expect(@redises.zscore(@key, 'bar')).to eq(1.0)
+  end
+
+  it 'with GT option and multiple members does not update existing member when new score is lower' do
+    @redises.zadd(@key, 3, 'foo')
+    count = @redises.zadd(@key, [[1, 'foo'], [2, 'bar']], gt: true)
+    expect(count).to eq(1)
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+    expect(@redises.zscore(@key, 'bar')).to eq(2.0)
+  end
+
+  it 'with GT and XX options and multiple members, when member does not exist, does not add new members' do
+    @redises.zadd(@key, 1, 'foo')
+    count = @redises.zadd(@key, [[5, 'foo'], [9, 'bar']], gt: true, xx: true)
+    expect(count).to eq(0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+    expect(@redises.zscore(@key, 'bar')).to be_nil
+  end
+
   it 'supports a variable number of arguments' do
     @redises.zadd(@key, [[1, 'one'], [2, 'two']])
     @redises.zadd(@key, [[3, 'three']])
