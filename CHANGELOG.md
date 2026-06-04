@@ -1,5 +1,9 @@
 # MockRedis Changelog
 
+### 0.55.0
+
+* Add `GT` option support to `ZADD`
+
 ### 0.54.0
 
 * Add `(B)ZMPOP`, `BZPOPMIN`, and `BZPOPMAX` commands
