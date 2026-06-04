@@ -83,6 +83,92 @@ RSpec.describe '#zadd(key, score, member)' do
     end.to raise_error(Redis::CommandError)
   end
 
+  it 'with GT and NX options at the same time raise error' do
+    expect do
+      @redises.zadd(@key, 1, 'foo', gt: true, nx: true)
+    end.to raise_error(Redis::CommandError)
+  end
+
+  it 'with GT option adds new member' do
+    result = @redises.zadd(@key, 1, 'foo', gt: true)
+    expect(result).to eq(true)
+    expect(@redises.zscore(@key, 'foo')).to eq(1.0)
+  end
+
+  it 'with GT option updates existing member when new score is greater' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with GT option does not update existing member when new score is equal' do
+    @redises.zadd(@key, 2, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with GT option does not update existing member when new score is lower' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', gt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+  end
+
+  it 'with GT and XX options, member does not exist, does not add new member' do
+    result = @redises.zadd(@key, 1, 'foo', gt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to be_nil
+  end
+
+  it 'with GT and XX options updates existing member when new score is greater' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 5, 'foo', gt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and XX options does not update existing member when new score is lower' do
+    @redises.zadd(@key, 5, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', gt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and INCR adds new member with increment as initial score' do
+    result = @redises.zadd(@key, 5, 'foo', gt: true, incr: true)
+    expect(result).to eq(5.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and INCR updates existing member when positive increment makes score greater' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true, incr: true)
+    expect(result).to eq(5.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
+  it 'with GT and INCR does not update existing member when negative increment makes score lower' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, -1, 'foo', gt: true, incr: true)
+    expect(result).to be_nil
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+  end
+
+  it 'with GT and INCR and XX, member does not exist, does not add new member' do
+    result = @redises.zadd(@key, 5, 'foo', gt: true, incr: true, xx: true)
+    expect(result).to be_nil
+    expect(@redises.zscore(@key, 'foo')).to be_nil
+  end
+
+  it 'with GT, INCR and XX updates existing member when positive increment makes score greater' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', gt: true, incr: true, xx: true)
+    expect(result).to eq(5.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+  end
+
   it 'with INCR is act like zincrby' do
     expect(@redises.zadd(@key, 10, 'bert', incr: true)).to eq(10.0)
     expect(@redises.zadd(@key, 3, 'bert', incr: true)).to eq(13.0)
@@ -110,6 +196,30 @@ RSpec.describe '#zadd(key, score, member)' do
     expect do
       @redises.zadd(@key, [[1, 'one'], [2, 'two']], incr: true)
     end.to raise_error(Redis::CommandError)
+  end
+
+  it 'with GT option and multiple members counts only newly added members' do
+    @redises.zadd(@key, 3, 'foo')
+    count = @redises.zadd(@key, [[5, 'foo'], [1, 'bar']], gt: true)
+    expect(count).to eq(1)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+    expect(@redises.zscore(@key, 'bar')).to eq(1.0)
+  end
+
+  it 'with GT option, multiple members does not update existing member, when new score is lower' do
+    @redises.zadd(@key, 3, 'foo')
+    count = @redises.zadd(@key, [[1, 'foo'], [2, 'bar']], gt: true)
+    expect(count).to eq(1)
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+    expect(@redises.zscore(@key, 'bar')).to eq(2.0)
+  end
+
+  it 'with GT and XX options, multiple members and member doesnt exist, doesnt add new members' do
+    @redises.zadd(@key, 1, 'foo')
+    count = @redises.zadd(@key, [[5, 'foo'], [9, 'bar']], gt: true, xx: true)
+    expect(count).to eq(0)
+    expect(@redises.zscore(@key, 'foo')).to eq(5.0)
+    expect(@redises.zscore(@key, 'bar')).to be_nil
   end
 
   it 'supports a variable number of arguments' do

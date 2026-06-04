@@ -18,6 +18,13 @@ class MockRedis
         )
       end
 
+      if zadd_options&.include?(:gt) && zadd_options&.include?(:nx)
+        raise Error.command_error(
+          'ERR GT, LT, and/or NX options at the same time are not compatible',
+          self
+        )
+      end
+
       if args.size == 1 && args[0].is_a?(Array)
         zadd_multiple_members(key, args.first, zadd_options)
       elsif args.size == 2
@@ -33,6 +40,24 @@ class MockRedis
 
       with_zset_at(key) do |zset|
         if zadd_options[:incr]
+          if zadd_options[:gt]
+            current_score = zset.score(member.to_s)
+
+            # NOTE: does nothing if the member doesn't exist and XX option is set.
+            return nil if current_score.nil? && zadd_options[:xx]
+
+            # NOTE: zincrby add the increment if the member doesn't exist and XX option is not set.
+            return zincrby(key, score, member) if current_score.nil? && !zadd_options[:xx]
+
+            new_score = current_score + score.to_f
+
+            # NOTE: does nothing if the new score is not greater than the current score.
+            return nil if current_score && new_score <= current_score
+
+            # NOTE: zincrby update the score if the new score is greater than the current score.
+            return zincrby(key, score, member)
+          end
+
           if zadd_options[:xx]
             member_present = zset.include?(member)
             return member_present ? zincrby(key, score, member) : nil
@@ -44,7 +69,21 @@ class MockRedis
           end
 
           zincrby(key, score, member)
+        elsif zadd_options[:gt]
+          current_score = zset.score(member.to_s)
+          new_score = score.to_f
+
+          if current_score.nil?
+            return false if zadd_options[:xx]
+
+            zset.add(new_score, member.to_s)
+            true
+          else
+            zset.add(new_score, member.to_s) if new_score > current_score
+            false
+          end
         elsif zadd_options[:xx]
+          # NOTE: gt and xx options are handled at the gt branch above, so its not handled here.
           zset.add(score, member.to_s) if zset.include?(member)
           false
         elsif zadd_options[:nx]
@@ -67,6 +106,20 @@ class MockRedis
             'ERR INCR option supports a single increment-element pair',
             self
           )
+        elsif zadd_options[:gt]
+          args.reduce(0) do |retval, (score, member)|
+            current_score = zset.score(member.to_s)
+            if current_score.nil?
+              unless zadd_options[:xx]
+                zset.add(score.to_f, member.to_s)
+                retval += 1
+              end
+            else
+              score_f = score.to_f
+              zset.add(score_f, member.to_s) if score_f > current_score
+            end
+            retval
+          end
         elsif zadd_options[:xx]
           args.each { |score, member| zset.include?(member) && zset.add(score, member.to_s) }
           0
