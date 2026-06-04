@@ -116,7 +116,7 @@ RSpec.describe '#zadd(key, score, member)' do
     expect(@redises.zscore(@key, 'foo')).to eq(3.0)
   end
 
-  it 'with GT and XX options, member does not does not add new member' do
+  it 'with GT and XX options, member does not exist, does not add new member' do
     result = @redises.zadd(@key, 1, 'foo', gt: true, xx: true)
     expect(result).to eq(false)
     expect(@redises.zscore(@key, 'foo')).to be_nil
