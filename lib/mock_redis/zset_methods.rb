@@ -42,12 +42,20 @@ class MockRedis
         if zadd_options[:incr]
           if zadd_options[:gt]
             current_score = zset.score(member.to_s)
-            if current_score.nil?
-              return zadd_options[:xx] ? nil : zincrby(key, score, member)
-            else
-              new_score = current_score + score.to_f
-              return new_score > current_score ? zincrby(key, score, member) : nil
-            end
+
+            # NOTE: does nothing if the member doesn't exist and XX option is set.
+            return nil if current_score.nil? && zadd_options[:xx]
+
+            # NOTE: zincrby add the increment if the member doesn't exist and XX option is not set.
+            return zincrby(key, score, member) if current_score.nil? && !zadd_options[:xx]
+
+            new_score = current_score + score.to_f
+
+            # NOTE: does nothing if the new score is not greater than the current score.
+            return nil if current_score && new_score <= current_score
+
+            # NOTE: zincrby update the score if the new score is greater than the current score.
+            return zincrby(key, score, member)
           end
 
           if zadd_options[:xx]
@@ -67,7 +75,7 @@ class MockRedis
 
           if current_score.nil?
             return false if zadd_options[:xx]
-             
+
             zset.add(new_score, member.to_s)
             true
           else
