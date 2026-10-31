@@ -8,7 +8,7 @@ on:
 jobs:
   overcommit:
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - uses: actions/checkout@v7
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0
+          ruby-version: '3.3'
 
       - name: Install dependencies
         run: bundle install
@@ -29,3 +29,5 @@ jobs:
 
       - name: Run pre-commit checks
         run: bundle exec overcommit --run
+        env:
+          RUBYOPT: '-W0'
