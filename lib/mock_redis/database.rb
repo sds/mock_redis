@@ -56,6 +56,8 @@ class MockRedis
 
       if cmd_name.include?('expire')
         send_expires(command)
+      elsif cmd_name == 'set'
+        send_set(command)
       elsif cmd_name == 'info'
         # call(:info) returns a string, not a parsed hash
         info_raw(*command[1..])
@@ -368,6 +370,28 @@ class MockRedis
       else
         public_send(cmd, key, ttl)
       end
+    end
+
+    def send_set(command)
+      _cmd, key, value, *options = *command
+      kwargs = {}
+
+      i = 0
+      while i < options.length
+        opt = options[i].to_s.downcase
+        case opt
+        when 'ex', 'px', 'exat', 'pxat'
+          kwargs[opt.to_sym] = options[i + 1].to_i
+          i += 2
+        when 'nx', 'xx', 'keepttl', 'get'
+          kwargs[opt.to_sym] = true
+          i += 1
+        else
+          i += 1
+        end
+      end
+
+      set(key, value, **kwargs)
     end
 
     def should_update_expiration?(expiry, new_expiry, nx:, xx:, lt:, gt:) # rubocop:disable Metrics/ParameterLists
