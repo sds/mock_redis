@@ -25,6 +25,20 @@ class MockRedis
         )
       end
 
+      if zadd_options.include?(:lt) && zadd_options.include?(:nx)
+        raise Error.command_error(
+          'ERR GT, LT, and/or NX options at the same time are not compatible',
+          self
+        )
+      end
+
+      if zadd_options.include?(:gt) && zadd_options.include?(:lt)
+        raise Error.command_error(
+          'ERR GT, LT, and/or NX options at the same time are not compatible',
+          self
+        )
+      end
+
       if args.size == 1 && args[0].is_a?(Array)
         zadd_multiple_members(key, args.first, zadd_options)
       elsif args.size == 2
@@ -58,6 +72,24 @@ class MockRedis
             return zincrby(key, score, member)
           end
 
+          if zadd_options[:lt]
+            current_score = zset.score(member.to_s)
+
+            # NOTE: does nothing if the member doesn't exist and XX option is set.
+            return nil if current_score.nil? && zadd_options[:xx]
+
+            # NOTE: zincrby add the increment if the member doesn't exist and XX option is not set.
+            return zincrby(key, score, member) if current_score.nil? && !zadd_options[:xx]
+
+            new_score = current_score + score.to_f
+
+            # NOTE: does nothing if the new score is not less than the current score.
+            return nil if current_score && new_score >= current_score
+
+            # NOTE: zincrby update the score if the new score is less than the current score.
+            return zincrby(key, score, member)
+          end
+
           if zadd_options[:xx]
             member_present = zset.include?(member)
             return member_present ? zincrby(key, score, member) : nil
@@ -79,8 +111,23 @@ class MockRedis
             zset.add(new_score, member.to_s)
             true
           else
-            zset.add(new_score, member.to_s) if new_score > current_score
-            false
+            changed = new_score > current_score
+            zset.add(new_score, member.to_s) if changed
+            zadd_options[:ch] ? changed : false
+          end
+        elsif zadd_options[:lt]
+          current_score = zset.score(member.to_s)
+          new_score = score.to_f
+
+          if current_score.nil?
+            return false if zadd_options[:xx]
+
+            zset.add(new_score, member.to_s)
+            true
+          else
+            changed = new_score < current_score
+            zset.add(new_score, member.to_s) if changed
+            zadd_options[:ch] ? changed : false
           end
         elsif zadd_options[:xx]
           # NOTE: gt and xx options are handled at the gt branch above, so its not handled here.
@@ -89,9 +136,14 @@ class MockRedis
         elsif zadd_options[:nx]
           !zset.include?(member) && !!zset.add(score, member.to_s)
         else
-          retval = !zscore(key, member)
+          is_new = !zscore(key, member)
+          old_score = zset.score(member.to_s)
           zset.add(score, member.to_s)
-          retval
+          if zadd_options[:ch]
+            is_new || (old_score && old_score != score.to_f) # rubocop:disable Lint/FloatComparison
+          else
+            is_new
+          end
         end
       end
     end
@@ -116,13 +168,44 @@ class MockRedis
               end
             else
               score_f = score.to_f
-              zset.add(score_f, member.to_s) if score_f > current_score
+              if score_f > current_score
+                zset.add(score_f, member.to_s)
+                retval += 1 if zadd_options[:ch]
+              end
+            end
+            retval
+          end
+        elsif zadd_options[:lt]
+          args.reduce(0) do |retval, (score, member)|
+            current_score = zset.score(member.to_s)
+            if current_score.nil?
+              unless zadd_options[:xx]
+                zset.add(score.to_f, member.to_s)
+                retval += 1
+              end
+            else
+              score_f = score.to_f
+              if score_f < current_score
+                zset.add(score_f, member.to_s)
+                retval += 1 if zadd_options[:ch]
+              end
             end
             retval
           end
         elsif zadd_options[:xx]
-          args.each { |score, member| zset.include?(member) && zset.add(score, member.to_s) }
-          0
+          if zadd_options[:ch]
+            args.reduce(0) do |retval, (score, member)|
+              if zset.include?(member)
+                old_score = zset.score(member.to_s)
+                zset.add(score, member.to_s)
+                retval += 1 if old_score != score.to_f # rubocop:disable Lint/FloatComparison
+              end
+              retval
+            end
+          else
+            args.each { |score, member| zset.include?(member) && zset.add(score, member.to_s) }
+            0
+          end
         elsif zadd_options[:nx]
           args.reduce(0) do |retval, (score, member)|
             unless zset.include?(member)
@@ -133,8 +216,13 @@ class MockRedis
           end
         else
           args.reduce(0) do |retval, (score, member)|
-            retval += 1 unless zset.include?(member)
+            is_new = !zset.include?(member)
+            old_score = zset.score(member.to_s)
             zset.add(score, member.to_s)
+            # rubocop:disable Lint/FloatComparison
+            changed = is_new || (zadd_options[:ch] && old_score && old_score != score.to_f)
+            # rubocop:enable Lint/FloatComparison
+            retval += 1 if changed
             retval
           end
         end
@@ -175,9 +263,50 @@ class MockRedis
 
     def zrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
-        start = [start.to_i, -z.sorted.size].max
-        stop = stop.to_i
-        to_response(z.sorted[start..stop] || [], options)
+        if options[:byscore]
+          # With REV, arguments are (max, min) not (min, max)
+          min = options[:rev] ? stop : start
+          max = options[:rev] ? start : stop
+          assert_range_args(min, max)
+          results = z.in_range(min, max)
+          results = results.reverse if options[:rev]
+          results = apply_limit(results, options[:limit])
+          to_response(results, options)
+        elsif options[:bylex]
+          # With REV, arguments are (max, min) not (min, max)
+          lex_min = options[:rev] ? stop : start
+          lex_max = options[:rev] ? start : stop
+          results = z.sorted.select do |_score, member|
+            in_lex_range?(member, lex_min, lex_max)
+          end
+          results = results.reverse if options[:rev]
+          results = apply_limit(results, options[:limit])
+          to_response(results, options)
+        else
+          sorted = options[:rev] ? z.sorted.reverse : z.sorted
+          start_idx = [start.to_i, -sorted.size].max
+          stop_idx = stop.to_i
+          to_response(sorted[start_idx..stop_idx] || [], options)
+        end
+      end
+    end
+
+    def in_lex_range?(member, min, max)
+      return false if min != '-' && !lex_compare(member, min, :min)
+      return false if max != '+' && !lex_compare(member, max, :max)
+
+      true
+    end
+
+    def lex_compare(member, bound, direction)
+      if bound.start_with?('[')
+        value = bound[1..]
+        direction == :min ? member >= value : member <= value
+      elsif bound.start_with?('(')
+        value = bound[1..]
+        direction == :min ? member > value : member < value
+      else
+        false
       end
     end
 
