@@ -175,9 +175,44 @@ class MockRedis
 
     def zrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
-        start = [start.to_i, -z.sorted.size].max
-        stop = stop.to_i
-        to_response(z.sorted[start..stop] || [], options)
+        if options[:byscore]
+          assert_range_args(start, stop)
+          results = z.in_range(start, stop)
+          results = results.reverse if options[:rev]
+          results = apply_limit(results, options[:limit])
+          to_response(results, options)
+        elsif options[:bylex]
+          results = z.sorted.select do |_score, member|
+            in_lex_range?(member, start, stop)
+          end
+          results = results.reverse if options[:rev]
+          results = apply_limit(results, options[:limit])
+          to_response(results, options)
+        else
+          sorted = options[:rev] ? z.sorted.reverse : z.sorted
+          start_idx = [start.to_i, -sorted.size].max
+          stop_idx = stop.to_i
+          to_response(sorted[start_idx..stop_idx] || [], options)
+        end
+      end
+    end
+
+    def in_lex_range?(member, min, max)
+      return false if min != '-' && !lex_compare(member, min, :min)
+      return false if max != '+' && !lex_compare(member, max, :max)
+
+      true
+    end
+
+    def lex_compare(member, bound, direction)
+      if bound.start_with?('[')
+        value = bound[1..]
+        direction == :min ? member >= value : member <= value
+      elsif bound.start_with?('(')
+        value = bound[1..]
+        direction == :min ? member > value : member < value
+      else
+        false
       end
     end
 
