@@ -71,9 +71,7 @@ class MockRedis
         next nil unless score
         hash = { bits: score.to_i, step: STEP }
         lng, lat = geohash_decode(hash)
-        lng = format_decoded_coord(lng)
-        lat = format_decoded_coord(lat)
-        [lng, lat]
+        [format_decoded_coord(lng), format_decoded_coord(lat)].map { |c| resp3? ? c.to_f : c }
       end
     end
 
@@ -201,6 +199,11 @@ class MockRedis
       y = (y | (y >> s[5])) & b[5]
 
       x | (y << 32)
+    end
+
+    # redis-rb 6 defaults to RESP3, which returns GEO coordinates as Floats
+    def resp3?
+      @base.options.fetch(:protocol) { Redis::VERSION.to_i >= 6 ? 3 : 2 }.to_i == 3
     end
 
     def format_decoded_coord(coord)

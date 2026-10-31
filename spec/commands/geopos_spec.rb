@@ -6,6 +6,13 @@ RSpec.describe '#geopos' do
   context 'with existing key' do
     let(:san_francisco) { [-122.5076404, 37.757815, 'SF'] }
     let(:los_angeles) { [-118.6919259, 34.0207305, 'LA'] }
+    let(:sf_coords) { coords(%w[-122.5076410174369812 37.75781598995183685]) }
+    let(:la_coords) { coords(%w[-118.69192510843276978 34.020729570911179]) }
+
+    # redis-rb 6 uses RESP3 by default, which returns coordinates as Floats
+    def coords(pair)
+      Redis::VERSION.to_i >= 6 ? pair.map(&:to_f) : pair
+    end
 
     before { @redises.geoadd(key, *san_francisco, *los_angeles) }
 
@@ -13,10 +20,7 @@ RSpec.describe '#geopos' do
 
     context 'with existing points only' do
       let(:expected_result) do
-        [
-          %w[-122.5076410174369812 37.75781598995183685],
-          %w[-118.69192510843276978 34.020729570911179]
-        ]
+        [sf_coords, la_coords]
       end
 
       it 'returns decoded coordinates pairs for each point' do
@@ -33,7 +37,7 @@ RSpec.describe '#geopos' do
 
       context 'with both existing and non-existing points' do
         let(:expected_result) do
-          [%w[-122.5076410174369812 37.75781598995183685], nil]
+          [sf_coords, nil]
         end
 
         it 'returns mixture of nil and coordinates pair' do
