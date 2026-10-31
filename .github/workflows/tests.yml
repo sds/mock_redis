@@ -8,7 +8,7 @@ on:
 jobs:
   rspec:
     timeout-minutes: 10
-    runs-on: ${{ matrix.ruby-version == '3.3' && 'ubuntu-latest' || 'ubuntu-24.04' }}
+    runs-on: ${{ matrix.runner }}
 
     strategy:
       matrix:
@@ -20,6 +20,13 @@ jobs:
         redis-version:
           - '6.2'
           - '7.0'
+        runner:
+          - ubuntu-26.04
+        include:
+          # setup-ruby has no builds of these Rubies for ubuntu-26.04
+          - { ruby-version: '3.0', runner: ubuntu-24.04 }
+          - { ruby-version: '3.1', runner: ubuntu-24.04 }
+          - { ruby-version: '3.2', runner: ubuntu-24.04 }
 
     services:
       redis:
@@ -53,7 +60,7 @@ jobs:
 
   finish:
     needs: rspec
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Finalize code coverage report
