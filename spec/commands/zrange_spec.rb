@@ -102,7 +102,7 @@ RSpec.describe '#zrange(key, start, stop [, :with_scores => true])' do
     end
 
     it 'returns elements in reverse order with byscore', redis: '6.2' do
-      expect(@redises.zrange(@key, 1, 3, byscore: true, rev: true)).
+      expect(@redises.zrange(@key, 3, 1, byscore: true, rev: true)).
         to eq(%w[Jefferson Adams Washington])
     end
   end

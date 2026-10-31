@@ -264,14 +264,20 @@ class MockRedis
     def zrange(key, start, stop, options = {})
       with_zset_at(key) do |z|
         if options[:byscore]
-          assert_range_args(start, stop)
-          results = z.in_range(start, stop)
+          # With REV, arguments are (max, min) not (min, max)
+          min = options[:rev] ? stop : start
+          max = options[:rev] ? start : stop
+          assert_range_args(min, max)
+          results = z.in_range(min, max)
           results = results.reverse if options[:rev]
           results = apply_limit(results, options[:limit])
           to_response(results, options)
         elsif options[:bylex]
+          # With REV, arguments are (max, min) not (min, max)
+          lex_min = options[:rev] ? stop : start
+          lex_max = options[:rev] ? start : stop
           results = z.sorted.select do |_score, member|
-            in_lex_range?(member, start, stop)
+            in_lex_range?(member, lex_min, lex_max)
           end
           results = results.reverse if options[:rev]
           results = apply_limit(results, options[:limit])
