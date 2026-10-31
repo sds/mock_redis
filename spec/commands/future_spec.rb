@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe MockRedis::Future do
   let(:command) { [:get, 'foo'] }
   let(:result)  { 'bar' }
-  let(:block)   { ->(value) { value.upcase } }
+  let(:block)   { :upcase.to_proc }
 
   before do
     @future = MockRedis::Future.new(command)

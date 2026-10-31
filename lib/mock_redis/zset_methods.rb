@@ -11,14 +11,14 @@ class MockRedis
       zadd_options = {}
       zadd_options = args.pop if args.last.is_a?(Hash)
 
-      if zadd_options&.include?(:nx) && zadd_options&.include?(:xx)
+      if zadd_options.include?(:nx) && zadd_options.include?(:xx)
         raise Error.command_error(
           'ERR XX and NX options at the same time are not compatible',
           self
         )
       end
 
-      if zadd_options&.include?(:gt) && zadd_options&.include?(:nx)
+      if zadd_options.include?(:gt) && zadd_options.include?(:nx)
         raise Error.command_error(
           'ERR GT, LT, and/or NX options at the same time are not compatible',
           self
