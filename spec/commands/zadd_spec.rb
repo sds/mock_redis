@@ -238,6 +238,118 @@ RSpec.describe '#zadd(key, score, member)' do
     end.to raise_error(ArgumentError)
   end
 
+  # LT option tests
+  it 'with LT and NX options at the same time raise error' do
+    expect do
+      @redises.zadd(@key, 1, 'foo', lt: true, nx: true)
+    end.to raise_error(Redis::CommandError)
+  end
+
+  it 'with LT and GT options at the same time raise error' do
+    expect do
+      @redises.zadd(@key, 1, 'foo', lt: true, gt: true)
+    end.to raise_error(Redis::CommandError)
+  end
+
+  it 'with LT option adds new member' do
+    result = @redises.zadd(@key, 1, 'foo', lt: true)
+    expect(result).to eq(true)
+    expect(@redises.zscore(@key, 'foo')).to eq(1.0)
+  end
+
+  it 'with LT option updates existing member when new score is lower' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', lt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(1.0)
+  end
+
+  it 'with LT option does not update existing member when new score is equal' do
+    @redises.zadd(@key, 2, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', lt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with LT option does not update existing member when new score is greater' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 3, 'foo', lt: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to eq(1.0)
+  end
+
+  it 'with LT and XX options, member does not exist, does not add new member' do
+    result = @redises.zadd(@key, 1, 'foo', lt: true, xx: true)
+    expect(result).to eq(false)
+    expect(@redises.zscore(@key, 'foo')).to be_nil
+  end
+
+  it 'with LT and INCR updates existing member when negative increment makes score lower' do
+    @redises.zadd(@key, 5, 'foo')
+    result = @redises.zadd(@key, -2, 'foo', lt: true, incr: true)
+    expect(result).to eq(3.0)
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+  end
+
+  it 'with LT and INCR does not update when positive increment makes score higher' do
+    @redises.zadd(@key, 3, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', lt: true, incr: true)
+    expect(result).to be_nil
+    expect(@redises.zscore(@key, 'foo')).to eq(3.0)
+  end
+
+  it 'with LT option and multiple members counts only newly added members' do
+    @redises.zadd(@key, 3, 'foo')
+    count = @redises.zadd(@key, [[1, 'foo'], [5, 'bar']], lt: true)
+    expect(count).to eq(1)
+    expect(@redises.zscore(@key, 'foo')).to eq(1.0)
+    expect(@redises.zscore(@key, 'bar')).to eq(5.0)
+  end
+
+  # CH option tests
+  it 'with CH option returns 1 when adding new member' do
+    result = @redises.zadd(@key, 1, 'foo', ch: true)
+    expect(result).to eq(true)
+  end
+
+  it 'with CH option returns 1 when updating existing member score' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 2, 'foo', ch: true)
+    expect(result).to eq(true)
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with CH option returns 0 when setting same score on existing member' do
+    @redises.zadd(@key, 1, 'foo')
+    result = @redises.zadd(@key, 1, 'foo', ch: true)
+    expect(result).to eq(false)
+  end
+
+  it 'with CH option and multiple members counts added and changed members' do
+    @redises.zadd(@key, 1, 'foo')
+    count = @redises.zadd(@key, [[2, 'foo'], [3, 'bar']], ch: true)
+    expect(count).to eq(2) # foo score changed, bar added
+    expect(@redises.zscore(@key, 'foo')).to eq(2.0)
+  end
+
+  it 'with CH option and multiple members does not count unchanged members' do
+    @redises.zadd(@key, 1, 'foo')
+    count = @redises.zadd(@key, [[1, 'foo'], [3, 'bar']], ch: true)
+    expect(count).to eq(1) # only bar added, foo unchanged
+  end
+
+  it 'with GT and CH options counts changed members' do
+    @redises.zadd(@key, 2, 'foo')
+    count = @redises.zadd(@key, [[5, 'foo'], [1, 'bar']], gt: true, ch: true)
+    expect(count).to eq(2) # foo updated (5 > 2), bar added
+  end
+
+  it 'with LT and CH options counts changed members' do
+    @redises.zadd(@key, 5, 'foo')
+    count = @redises.zadd(@key, [[2, 'foo'], [1, 'bar']], lt: true, ch: true)
+    expect(count).to eq(2) # foo updated (2 < 5), bar added
+  end
+
   it_should_behave_like 'arg 1 is a score'
   it_should_behave_like 'a zset-only command'
 end
