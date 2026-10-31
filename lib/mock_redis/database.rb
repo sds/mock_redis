@@ -362,8 +362,12 @@ class MockRedis
     end
 
     def send_expires(command)
-      command, key, ttl, option = *command
-      public_send(command, key, ttl, option.downcase.to_sym => option)
+      cmd, key, ttl, option = *command
+      if option
+        public_send(cmd, key, ttl, option.downcase.to_sym => true)
+      else
+        public_send(cmd, key, ttl)
+      end
     end
 
     def should_update_expiration?(expiry, new_expiry, nx:, xx:, lt:, gt:) # rubocop:disable Metrics/ParameterLists
