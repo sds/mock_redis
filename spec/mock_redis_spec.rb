@@ -15,6 +15,30 @@ RSpec.describe MockRedis do
     its(:id) { should == url }
 
     its(:location) { should == url }
+
+    context 'with username and password' do
+      subject { MockRedis.new(:username => 'testuser', :password => 'testpass') }
+
+      it 'accepts username option' do
+        expect(subject.username).to eq('testuser')
+      end
+
+      it 'accepts password option' do
+        expect(subject.password).to eq('testpass')
+      end
+    end
+
+    context 'with username and password in URL' do
+      let(:url) { 'redis://myuser:mypass@127.0.0.1:6379/1' }
+
+      it 'parses username from URL' do
+        expect(subject.username).to eq('myuser')
+      end
+
+      it 'parses password from URL' do
+        expect(subject.password).to eq('mypass')
+      end
+    end
   end
 
   describe '.connect' do

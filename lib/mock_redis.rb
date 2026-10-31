@@ -21,6 +21,7 @@ class MockRedis
     :port => 6379,
     :path => nil,
     :timeout => 5.0,
+    :username => nil,
     :password => nil,
     :logger => nil,
     :db => 0,
@@ -60,6 +61,14 @@ class MockRedis
 
   def db
     options[:db]
+  end
+
+  def username
+    options[:username]
+  end
+
+  def password
+    options[:password]
   end
 
   def logger
@@ -125,6 +134,7 @@ class MockRedis
         defaults[:scheme]   = uri.scheme
         defaults[:host]     = uri.host
         defaults[:port]     = uri.port if uri.port
+        defaults[:username] = uri.user if uri.user
         defaults[:password] = uri.password if uri.password
         defaults[:db]       = uri.path[1..].to_i if uri.path
       end
