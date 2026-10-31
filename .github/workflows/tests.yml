@@ -8,7 +8,7 @@ on:
 jobs:
   rspec:
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.ruby-version == '3.3' && 'ubuntu-latest' || 'ubuntu-24.04' }}
 
     strategy:
       matrix:
