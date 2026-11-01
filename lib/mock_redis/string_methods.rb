@@ -212,6 +212,9 @@ class MockRedis
     def set(key, value, _hash = nil, ex: nil, px: nil, exat: nil, pxat: nil, nx: nil, xx: nil,
       keepttl: nil, get: nil)
       key = key.to_s
+      if [ex, px, exat, pxat].any? { |expiration| expiration && Integer(expiration) <= 0 }
+        raise Error.command_error('ERR invalid expire time in set', self)
+      end
       retval = self.get(key) if get
 
       return_true = false
@@ -233,30 +236,18 @@ class MockRedis
 
       remove_expiration(key) unless keepttl
       if ex
-        if ex == 0
-          raise Error.command_error('ERR invalid expire time in set', self)
-        end
         expire(key, ex)
       end
 
       if px
-        if px == 0
-          raise Error.command_error('ERR invalid expire time in set', self)
-        end
         pexpire(key, px)
       end
 
       if exat
-        if exat == 0
-          raise Error.command_error('ERR invalid expire time in set', self)
-        end
         expireat(key, exat)
       end
 
       if pxat
-        if pxat == 0
-          raise Error.command_error('ERR invalid expire time in set', self)
-        end
         pexpireat(key, pxat)
       end
 
