@@ -50,7 +50,7 @@ jobs:
           git push origin "$TAG"
 
       - name: Configure RubyGems credentials
-        uses: rubygems/configure-rubygems-credentials@v1
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
 
       - name: Publish to RubyGems
         run: gem push mock_redis-${{ steps.version.outputs.version }}.gem
