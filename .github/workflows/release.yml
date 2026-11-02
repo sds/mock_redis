@@ -25,11 +25,6 @@ jobs:
           ruby-version: '3.3'
           bundler-cache: true
 
-      - name: Configure git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Parse version
         id: version
         run: |
@@ -38,19 +33,6 @@ jobs:
           VERSION="${VERSION#v}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Update version file
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          sed -i "s/VERSION = '[^']*'/VERSION = '$VERSION'/" lib/mock_redis/version.rb
-          cat lib/mock_redis/version.rb
-
-      - name: Commit version bump
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          git add lib/mock_redis/version.rb
-          git commit -m "Cut version $VERSION"
-          git push
 
       - name: Build gem
         run: gem build mock_redis.gemspec
