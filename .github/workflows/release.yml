@@ -1,0 +1,80 @@
+name: Release Gem
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., "1.2.3" or "v1.2.3")'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Parse version
+        id: version
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          # Strip leading 'v' if present
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update version file
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          sed -i "s/VERSION = '[^']*'/VERSION = '$VERSION'/" lib/mock_redis/version.rb
+          cat lib/mock_redis/version.rb
+
+      - name: Commit version bump
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          git add lib/mock_redis/version.rb
+          git commit -m "Cut version $VERSION"
+          git push
+
+      - name: Build gem
+        run: gem build mock_redis.gemspec
+
+      - name: Create tag
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Publish to RubyGems
+        run: |
+          mkdir -p ~/.gem
+          echo -e "---\n:rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          gem push mock_redis-${{ steps.version.outputs.version }}.gem
+
+      - name: Create GitHub Release
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+          gh release create "$TAG" \
+            --title "$VERSION" \
+            --generate-notes \
+            mock_redis-$VERSION.gem
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
