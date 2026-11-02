@@ -1,5 +1,15 @@
 # MockRedis Changelog
 
+### 0.56.0
+
+* Add support for `redis-rb` 6 and return `GEOPOS` coordinates as floats under RESP3
+* Add support for `username` option to Redis connection
+* Fix `send_expires` when option is `nil`
+* Fix `SET` command with positional arguments via `call` method
+* Add `BYSCORE`, `BYLEX`, and `REV` options to `ZRANGE`
+* Add `LT` and `CH` options to `ZADD` command
+* Fix handling of nonpositive SET expirations before changing key state
+
 ### 0.55.0
 
 * Add `GT` option support to `ZADD`
