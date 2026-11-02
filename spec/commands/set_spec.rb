@@ -46,6 +46,109 @@ RSpec.describe '#set(key, value, _hash)' do
       end.to raise_error(Redis::CommandError, /ERR invalid expire time in set/)
     end
 
+    context 'expiration validation [mock only]' do
+      let(:mock) { MockRedis.new }
+
+      [:ex, :px, :exat, :pxat].product([0, -1]).each do |option, expiration|
+        context "#{option}: #{expiration}" do
+          let(:options) { { option => expiration } }
+
+          it 'does not create a missing key' do
+            expect { mock.set(key, 'new', **options) }.to raise_error(Redis::CommandError)
+            expect(mock.exists?(key)).to eq(false)
+          end
+
+          it 'preserves an existing value and TTL' do
+            Timecop.freeze do
+              mock.set(key, 'old', ex: 3600)
+              expect { mock.set(key, 'new', **options) }.to raise_error(Redis::CommandError)
+              expect(mock.get(key)).to eq('old')
+              expect(mock.pttl(key)).to eq(3_600_000)
+            end
+          end
+
+          it 'preserves an existing list' do
+            mock.rpush(key, 'old')
+            expect { mock.set(key, 'new', **options) }.to raise_error(Redis::CommandError)
+            expect(mock.type(key)).to eq('list')
+            expect(mock.lrange(key, 0, -1)).to eq(['old'])
+          end
+
+          it 'validates before returning for NX on an existing key' do
+            mock.set(key, 'old')
+            expect { mock.set(key, 'new', nx: true, **options) }.to raise_error(Redis::CommandError)
+            expect(mock.get(key)).to eq('old')
+          end
+
+          it 'validates before returning for XX on a missing key' do
+            expect { mock.set(key, 'new', xx: true, **options) }.to raise_error(Redis::CommandError)
+            expect(mock.exists?(key)).to eq(false)
+          end
+
+          it 'validates before GET checks the existing type' do
+            mock.rpush(key, 'old')
+            expect do
+              mock.set(key, 'new', get: true, **options)
+            end.to raise_error(Redis::CommandError, /ERR invalid expire time in set/)
+            expect(mock.lrange(key, 0, -1)).to eq(['old'])
+          end
+
+          it 'also preserves state when invoked through call' do
+            mock.set(key, 'old')
+            expect do
+              mock.call('SET', key, 'new', option.to_s.upcase, expiration)
+            end.to raise_error(Redis::CommandError)
+            expect(mock.get(key)).to eq('old')
+          end
+        end
+      end
+
+      [:ex, :px, :exat, :pxat].product(['0', '-1']).each do |option, expiration|
+        it "rejects #{option}: #{expiration.inspect} without changing the key" do
+          Timecop.freeze do
+            mock.set(key, 'old', ex: 3600)
+            expect do
+              mock.set(key, 'new', **{ option => expiration })
+            end.to raise_error(Redis::CommandError)
+            expect(mock.get(key)).to eq('old')
+            expect(mock.pttl(key)).to eq(3_600_000)
+          end
+        end
+      end
+
+      [:ex, :px, :exat, :pxat].product([nil, false]).each do |option, expiration|
+        it "treats #{option}: #{expiration.inspect} as an omitted expiration" do
+          expect(mock.set(key, 'new', **{ option => expiration })).to eq('OK')
+          expect(mock.get(key)).to eq('new')
+          expect(mock.pttl(key)).to eq(-1)
+        end
+      end
+
+      [:ex, :px, :exat, :pxat].each do |option|
+        it "accepts a positive integer string for #{option}" do
+          Timecop.freeze do
+            expiration = {
+              ex: 30,
+              px: 30_000,
+              exat: Time.now.to_i + 30,
+              pxat: (Time.now.to_f * 1000).to_i + 30_000
+            }.fetch(option)
+            expect(mock.set(key, 'new', **{ option => expiration.to_s })).to eq('OK')
+            expect(mock.get(key)).to eq('new')
+            expect(mock.pttl(key)).to be > 0
+          end
+        end
+      end
+
+      [:exat, :pxat].each do |option|
+        it "accepts a positive #{option} timestamp in the past" do
+          mock.set(key, 'old')
+          expect(mock.set(key, 'new', **{ option => 1 })).to eq('OK')
+          expect(mock.exists?(key)).to eq(false)
+        end
+      end
+    end
+
     it 'accepts NX' do
       @redises.del(key)
       expect(@redises.set(key, 1, nx: true)).to eq(true)
